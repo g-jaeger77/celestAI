@@ -169,43 +169,28 @@ const Onboarding: React.FC = () => {
         session_id: sessionId
       };
 
-      // Simulate API delay for UX
+      // Simulate processing delay for UX
       await new Promise(r => setTimeout(r, 1500));
 
-      const response = await fetch('http://localhost:8000/agent/onboarding', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      // OFFLINE MODE: Store locally and proceed without backend
+      // Backend API is not available on Vercel static hosting
+      const offlineUserId = `demo_${Date.now()}`;
 
-      if (!response.ok) {
-        if (response.status === 402) {
-          setErrors(prev => ({ ...prev, full_name: "Pagamento não identificado." }));
-          // We use standard alert for critical system errors if needed, but prefer UI feedback
-          alert("Pagamento não identificado. Por favor, realize a compra.");
-        } else {
-          throw new Error(`Server error: ${response.status}`);
-        }
-        setLoading(false);
-        return;
-      }
+      console.log("Offline Mode: User Created:", offlineUserId);
+      localStorage.setItem('celest_user_id', offlineUserId);
+      localStorage.setItem('user_birth_data', JSON.stringify(payload));
+      sessionStorage.removeItem('onboarding_form');
 
-      const data = await response.json();
-
-      if (data.user_id) {
-        console.log("User Created:", data.user_id);
-        localStorage.setItem('celest_user_id', data.user_id);
-        localStorage.setItem('user_birth_data', JSON.stringify(payload));
-        sessionStorage.removeItem('onboarding_form');
-        navigate(`/loading?user_id=${data.user_id}`);
-      }
+      // Navigate to loading then dashboard
+      navigate(`/loading?user_id=${offlineUserId}`);
 
     } catch (e) {
       console.error(e);
-      alert("Falha ao registrar na matrix. Verifique o servidor.");
+      alert("Falha ao processar. Tente novamente.");
     } finally {
       setLoading(false);
     }
+
   };
 
   // Helper to check validity for visual feedback
