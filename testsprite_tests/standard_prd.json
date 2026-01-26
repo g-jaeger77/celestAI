@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "project": "Celest AI Soul-Guide",
+    "date": "2026-01-21",
+    "prepared_by": "Standard PRD Generator"
+  },
+  "product_overview": "Celest AI is an AI-driven astrological Soul-Guide providing personalized, precise, real-time cosmic and psychological insights through advanced astronomical calculations and large language models, offering a modern mystical experience with therapeutic self-knowledge.",
+  "core_goals": [
+    "Ensure astronomical calculation precision to the second using local libraries like kerykeion or swisseph.",
+    "Deliver deep psychological interpretations with empathy and personal context using GPT-4o-mini LLM.",
+    "Achieve technological sovereignty by performing backend astrology calculations to reduce dependence on costly external APIs.",
+    "Provide an immersive, premium user interface showcasing celestial aesthetics and interactive animations for a modern mystical user experience."
+  ],
+  "key_features": [
+    "Cosmic Onboarding capturing birth date, time, and location to compute natal charts and generate astrological profiles.",
+    "AI Astrological Chat offering real-time, personalized guidance using natal charts and current transits with a caring, mystical persona.",
+    "Daily Dashboard summarizing key planetary transits and personalized 'Astral Climate' insights highlighting daily focus, challenges, and opportunities.",
+    "Trends & Alignment dashboard displaying personal and relationship (synastry) alignment trends based on user and partner data.",
+    "Synastry/Resonance relationship compatibility calculator analyzing conflict and harmony vectors between users.",
+    "Backend architecture utilizing Python, FastAPI, and precise astrology libraries integrated with GPT-4o-mini for rich interpretations.",
+    "Monetization via Stripe for subscription management unlocking premium features."
+  ],
+  "user_flow_summary": [
+    "Onboarding: User submits birth details to trigger natal chart calculation and profile creation.",
+    "Chat: User interacts with AI chat; system uses cached natal chart and planetary transits to generate contextual prompts for GPT-4o-mini.",
+    "Insights: User accesses daily dashboard to review critical planetary transits and personalized astral climate.",
+    "Trends: User views daily and weekly alignment and partnership synergy on the Trends page.",
+    "Subscription: User completes Stripe payment to upgrade account status, updated in Supabase database."
+  ],
+  "validation_criteria": [
+    "Astrological calculations verified for second-level precision against standard ephemerides.",
+    "LLM outputs are contextually relevant, empathetic, and strictly based on astrological data without hallucinations.",
+    "System performance ensures latency is masked by UI animations enhancing user experience.",
+    "Data integrity of user profiles and chat history maintained with Supabase consistency checks.",
+    "Payment workflows correctly update user premium status and subscription state in the system."
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "TypeScript",
+      "React",
+      "Vite",
+      "TailwindCSS",
+      "Supabase",
+      "Python",
+      "FastAPI"
+    ],
+    "features": [
+      {
+        "name": "Onboarding",
+        "description": "User onboarding flow capturing birth details.",
+        "files": [
+          "pages/Onboarding.tsx"
+        ]
+      },
+      {
+        "name": "Dashboard",
+        "description": "Daily dashboard with charts and scores.",
+        "files": [
+          "pages/Dashboard.tsx",
+          "components/charts/DailySyncRings.tsx"
+        ]
+      },
+      {
+        "name": "Chat",
+        "description": "AI Astrological Chat interface.",
+        "files": [
+          "pages/Chat.tsx"
+        ]
+      },
+      {
+        "name": "Trends",
+        "description": "Dynamic daily trends and alignment with partner support.",
+        "files": [
+          "pages/Trends.tsx",
+          "utils/trendsLogic.ts"
+        ]
+      },
+      {
+        "name": "Synastry",
+        "description": "Relationship compatibility calculator.",
+        "files": [
+          "pages/Synastry.tsx",
+          "utils/synastryCalculator.ts"
+        ]
+      }
+    ]
+  }
+}

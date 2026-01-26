@@ -1,0 +1,51 @@
+{
+    "tech_stack": [
+        "TypeScript",
+        "React",
+        "Vite",
+        "TailwindCSS",
+        "Supabase",
+        "Python",
+        "FastAPI"
+    ],
+    "features": [
+        {
+            "name": "Onboarding",
+            "description": "User onboarding flow capturing birth details.",
+            "files": [
+                "pages/Onboarding.tsx"
+            ]
+        },
+        {
+            "name": "Dashboard",
+            "description": "Daily dashboard with charts and scores.",
+            "files": [
+                "pages/Dashboard.tsx",
+                "components/charts/DailySyncRings.tsx"
+            ]
+        },
+        {
+            "name": "Chat",
+            "description": "AI Astrological Chat interface.",
+            "files": [
+                "pages/Chat.tsx"
+            ]
+        },
+        {
+            "name": "Trends",
+            "description": "Dynamic daily trends and alignment with partner support.",
+            "files": [
+                "pages/Trends.tsx",
+                "utils/trendsLogic.ts"
+            ]
+        },
+        {
+            "name": "Synastry",
+            "description": "Relationship compatibility calculator.",
+            "files": [
+                "pages/Synastry.tsx",
+                "utils/synastryCalculator.ts"
+            ]
+        }
+    ]
+}

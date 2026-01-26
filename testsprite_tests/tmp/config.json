@@ -1,0 +1,16 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3001",
+  "executionArgs": {
+    "projectName": "celest-ai",
+    "projectPath": "C:\\Users\\Giancarlo\\Documents\\Antigravity\\05.1 Celest AI Antigravity Workspace\\celest-ai",
+    "testIds": [],
+    "additionalInstruction": "Use best practices. Focus on new dynamic features (Trends, Synastry).",
+    "envs": {
+      "API_KEY": "sk-user-S1uQKb_kf01cW1W2A-TwtNjpueR4dqcj_imZvCOUtXLiG6zE2xPlljHsOKQBOi_6aSA-tDUd1LY6uygYMh8x6NnLbxVFHbSPBWfjgj4tzSa4ZfvzJ50Yu3WjsCEws54LlUs"
+    }
+  },
+  "proxy": "http://a08946c8-51ff-4dd8-b7fe-44e1a602759a:2Anmh2AquOhyEZM6X70E8GkKzuPT930x@tun.testsprite.com:8080"
+}

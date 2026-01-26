@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #000000;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-color: #000000;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Utilities */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(28, 28, 30, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel {
+  @apply bg-[#1C1C1E] border border-white/5 rounded-[24px] overflow-hidden;
+}
+
+/* Animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Gyroscope Animations */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-3s { animation: spin 3s linear infinite; }
+.animate-spin-4s { animation: spin 4s linear infinite; }
+.animate-spin-5s { animation: spin 5s linear infinite; }
+.animate-spin-15s { animation: spin 15s linear infinite; }
+
+.animate-spin-reverse-4s { animation: spin 4s linear infinite reverse; }
+
+/* Precession (Orbit Rotation) */
+.animate-precession-12s { animation: spin 12s linear infinite; }
+.animate-precession-15s-rev { animation: spin 15s linear infinite reverse; }
+.animate-precession-18s { animation: spin 18s linear infinite; }
+.animate-precession-20s { animation: spin 20s linear infinite; }
+
+@keyframes pulse-gold {
+
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+    filter: drop-shadow(0 0 30px rgba(255, 140, 0, 0.4));
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 80px rgba(255, 215, 0, 0.8));
+  }
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 3s ease-in-out infinite;
+}
+
+/* Text Overlays */
+.text-glow {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #fff 0%, #999 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
