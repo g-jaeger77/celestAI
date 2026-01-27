@@ -1,318 +1,226 @@
-import React from 'react';
-import { Check, Shield, Lock, Zap, ChevronDown, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Icon from '../components/Icon';
+import { SEOHead } from '../components/SEOHead';
 
-const LandingPage = () => {
+const LandingPage: React.FC = () => {
+
     const navigate = useNavigate();
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const handleStart = () => {
+        navigate('/onboarding');
+    };
 
     return (
-        <div className="min-h-screen bg-[#050508] text-white font-sans selection:bg-[#D6582C] selection:text-white">
+        <div className="min-h-screen bg-[#010409] text-white font-display overflow-x-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
+            <SEOHead
+                title="O GPS da sua Alma"
+                description="Astrologia de precisão suíça unida à inteligência artificial avançada. Descubra sua origem, entenda seu presente e navegue seu futuro."
+                path="/"
+            />
 
-            {/* DOBRA 1: HEADLINE (FUNDO ESCURO) */}
-            <section className="relative flex flex-col items-center justify-center min-h-[90vh] px-6 text-center bg-[#050508] overflow-hidden">
-                {/* Glow de fundo */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#D6582C] opacity-20 blur-[120px] rounded-full pointer-events-none"></div>
+            {/* Background Ambient Effects */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+                <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-blue-600/10 blur-[120px] rounded-full opacity-50 animate-pulse-slow"></div>
+                <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-cyan-400/10 blur-[100px] rounded-full opacity-40 animate-pulse-slow delay-1000"></div>
+                <div className="absolute top-[40%] left-[20%] w-[400px] h-[400px] bg-purple-500/5 blur-[80px] rounded-full opacity-30"></div>
+            </div>
 
-                <div className="z-10 mb-6 flex items-center gap-2">
-                    {/* Ícone Simplificado Celest AI */}
-                    <div className="w-8 h-8 md:w-10 md:h-10 text-[#D6582C]">
-                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-[0_0_15px_rgba(214,88,44,0.6)]">
-                            <path d="M50 0L85 20V80L50 100L15 80V20L50 0Z" fill="url(#paint0_linear)" />
-                            <defs>
-                                <linearGradient id="paint0_linear" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-                                    <stop stopColor="#D6582C" /> <stop offset="1" stopColor="#38271F" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
+            {/* Navigation */}
+            <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-[#010409]/80 backdrop-blur-md py-4 border-b border-white/5' : 'bg-transparent py-6'}`}>
+                <div className="container mx-auto px-6 flex justify-between items-center">
+                    <div className="flex items-center gap-2 group cursor-pointer" onClick={handleStart}>
+                        <div className="relative w-8 h-8">
+                            <div className="absolute inset-0 bg-cyan-400 blur-sm rounded-full opacity-50 group-hover:opacity-80 transition-opacity"></div>
+                            <img src="/assets/logo_v3.png" alt="Celest AI" className="relative z-10 w-full h-full object-contain mix-blend-screen" />
+                        </div>
+                        <span className="font-bold text-xl tracking-wider text-white group-hover:text-cyan-400 transition-colors">CELEST AI</span>
                     </div>
-                    <span className="text-2xl font-bold tracking-tight">Celest<span className="font-light text-[#D6582C]">AI</span></span>
+                    <button
+                        onClick={handleStart}
+                        className="hidden md:flex px-6 py-2 rounded-full border border-white/10 hover:border-cyan-400/50 hover:bg-cyan-400/10 transition-all text-sm font-medium tracking-wide items-center gap-2"
+                    >
+                        LOGIN <Icon name="login" className="text-sm" />
+                    </button>
+                </div>
+            </nav>
+
+            {/* Hero Section */}
+            <header className="relative z-10 pt-32 pb-20 px-6 container mx-auto text-center flex flex-col items-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8 animate-fade-in-up backdrop-blur-sm">
+                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                    <span className="text-xs font-semibold tracking-widest text-slate-300 uppercase">Vagas Limitadas para Beta</span>
                 </div>
 
-                <h1 className="z-10 text-4xl md:text-6xl font-extrabold tracking-tight leading-tight max-w-4xl mb-6">
-                    Pare de adivinhar como você está. <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D6582C] to-[#9B5D33]">
-                        Controle sua energia em 30s.
-                    </span>
+                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-slate-500 animate-fade-in-up delay-100 max-w-4xl mx-auto">
+                    O GPS da sua <br />
+                    <span className="text-cyan-400 drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]">Alma</span>
                 </h1>
 
-                <p className="z-10 text-lg md:text-xl text-gray-400 max-w-2xl mb-8">
-                    Não é horóscopo. É engenharia de dados aplicada à sua rotina.<br />
-                    Tenha clareza total sem perder tempo com misticismo.
+                <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-in-up delay-200">
+                    Astrologia de precisão suíça unida à inteligência artificial avançada.
+                    Descubra sua origem, entenda seu presente e navegue seu futuro.
                 </p>
 
-                {/* Mockup Placeholder */}
-                <div className="z-10 mt-8 relative group">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-[#D6582C] to-[#32ADE6] rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
-                    <div className="relative bg-[#0F0F12] border border-white/10 rounded-2xl p-4 w-full max-w-[320px] md:max-w-[400px] h-[500px] flex flex-col items-center justify-center shadow-2xl">
-                        <div className="w-40 h-40 rounded-full border-4 border-[#32ADE6]/20 flex items-center justify-center mb-4">
-                            <div className="w-32 h-32 rounded-full border-4 border-[#D6582C]/40 flex items-center justify-center">
-                                <span className="text-3xl font-mono font-bold">85%</span>
-                            </div>
-                        </div>
-                        <p className="text-sm text-gray-500 font-mono">SYSTEM: ONLINE</p>
-                        <p className="text-xs text-gray-600 mt-2">Triangulating NASA Data...</p>
-                    </div>
+                <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto animate-fade-in-up delay-300">
+                    <button
+                        onClick={handleStart}
+                        className="px-8 py-4 rounded-full bg-white text-black font-bold text-lg tracking-tight hover:scale-105 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.2)] flex items-center justify-center gap-2"
+                    >
+                        Fazer Mapa Astral Grátis
+                        <Icon name="arrow_forward" />
+                    </button>
+                    <button
+                        onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="px-8 py-4 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-colors font-medium text-lg flex items-center justify-center"
+                    >
+                        Saiba Mais
+                    </button>
                 </div>
-            </section>
 
-            {/* DOBRA 2: PROVA SOCIAL (FUNDO CLARO/CINZA) */}
-            <section className="py-20 px-6 bg-[#0F0F12] border-t border-white/5">
-                <div className="max-w-5xl mx-auto text-center">
-                    <h2 className="text-2xl md:text-3xl font-bold mb-12">Mais de 1.200 usuários retomaram o controle</h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {[
-                            "O alerta de 'Lua Fora de Curso' me salvou de um contrato ruim.",
-                            "Impressionante como o gráfico bate com meu cansaço.",
-                            "Finalmente um app que não parece feitiçaria. Dados puros.",
-                            "Uso todo dia antes do trabalho. Virou meu GPS."
-                        ].map((text, i) => (
-                            <div key={i} className="bg-[#18181B] p-6 rounded-xl border border-white/5 shadow-lg text-left">
-                                <div className="flex items-center gap-2 mb-3 text-[#25D366]">
-                                    <div className="w-2 h-2 rounded-full bg-current"></div>
-                                    <span className="text-xs font-bold text-gray-400">WhatsApp Verified</span>
-                                </div>
-                                <p className="text-sm text-gray-300 italic">"{text}"</p>
-                            </div>
-                        ))}
-                    </div>
+                {/* Floating Elements Illusion */}
+                <div className="absolute top-1/2 left-0 -translate-y-1/2 -z-10 opacity-20 hidden lg:block">
+                    {/* Abstract lines or SVG here */}
                 </div>
-            </section>
+            </header>
 
-            {/* DOBRA 3: PEDRA NO SAPATO (FUNDO ESCURO) */}
-            <section className="py-24 px-6 bg-[#050508]">
-                <div className="max-w-3xl mx-auto">
-                    <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-                        A cada dia que passa você sente que algo está <span className="text-[#D6582C]">"fora do lugar"</span>...
-                    </h2>
-
-                    <div className="space-y-4">
-                        {[
-                            "Por que me sinto exausto mesmo tendo dormido 8 horas?",
-                            "Tenho medo de tomar essa decisão e me arrepender.",
-                            "Sinto que estou remando contra a maré no trabalho.",
-                            "Por que estou tão irritado sem motivo aparente?",
-                            "Parece que todo mundo tem um manual, menos eu."
-                        ].map((voice, i) => (
-                            <div key={i} className="bg-[#0F0F12] p-5 rounded-lg border-l-4 border-[#D6582C]">
-                                <p className="text-lg italic text-gray-300">"{voice}"</p>
-                            </div>
-                        ))}
+            {/* Features Grid */}
+            <section id="features" className="relative z-10 py-24 bg-[#010409]/50">
+                <div className="container mx-auto px-6">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-bold mb-4">Tecnologia Ancestral & Futuro</h2>
+                        <p className="text-slate-400">Por que o Celest AI é diferente de tudo que você já viu.</p>
                     </div>
-                </div>
-            </section>
-
-            {/* DOBRA 4: DIAGNÓSTICO (FUNDO CLARO) */}
-            <section className="py-24 px-6 bg-[#0F0F12]">
-                <div className="max-w-4xl mx-auto text-center">
-                    <p className="text-[#D6582C] font-bold tracking-widest text-sm mb-4 uppercase">Entenda de uma vez por todas</p>
-                    <h2 className="text-3xl md:text-5xl font-bold mb-12">O problema não é você. <br />É a falta de <span className="text-white border-b-4 border-[#D6582C]">DADOS</span>.</h2>
-
-                    <div className="grid md:grid-cols-3 gap-8 text-left">
-                        {[
-                            { title: "Cegueira Temporal", desc: "Você marca reuniões importantes quando seu Intelecto está em baixa. Resultado: Erros." },
-                            { title: "Desperdício de Energia", desc: "Você treina pesado quando seu Corpo pede descanso. Resultado: Burnout." },
-                            { title: "Ruído Emocional", desc: "Você acha que é tristeza, mas é apenas um trânsito lunar passageiro." }
-                        ].map((item, i) => (
-                            <div key={i} className="bg-[#18181B] p-8 rounded-2xl border border-white/5 hover:border-[#D6582C]/30 transition">
-                                <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                                <p className="text-gray-400 leading-relaxed">{item.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="mt-12">
-                        <p className="text-xl font-semibold text-white">É por isso que você precisa do <span className="text-[#D6582C]">CELEST AI</span> agora.</p>
-                    </div>
-                </div>
-            </section>
-
-            {/* DOBRA 5: MODO DE PREPARO (FUNDO ESCURO) */}
-            <section className="py-24 px-6 bg-[#050508]">
-                <div className="max-w-6xl mx-auto">
-                    <h2 className="text-3xl font-bold text-center mb-16">3 Passos para hackear sua rotina</h2>
 
                     <div className="grid md:grid-cols-3 gap-8">
-                        {[
-                            { step: "01", title: "INPUT", desc: "Insira cidade e hora. O sistema busca coordenadas exatas." },
-                            { step: "02", title: "PROCESSAMENTO", desc: "O algoritmo cruza seus dados com efemérides da NASA." },
-                            { step: "03", title: "DASHBOARD", desc: "Receba seu Relatório de Comando: Foco, Energia e Humor." }
-                        ].map((item, i) => (
-                            <div key={i} className="relative bg-[#0F0F12] p-8 rounded-2xl border border-white/10">
-                                <span className="absolute -top-6 left-8 text-6xl font-black text-[#D6582C] opacity-20">{item.step}</span>
-                                <h3 className="text-2xl font-bold mb-4 mt-2">{item.title}</h3>
-                                <p className="text-gray-400">{item.desc}</p>
-                            </div>
-                        ))}
+                        <FeatureCard
+                            icon="stars"
+                            title="Efemérides Suíças"
+                            desc="Cálculos astronômicos com precisão de segundos, usados pela NASA e astrólogos profissionais."
+                        />
+                        <FeatureCard
+                            icon="psychology"
+                            title="Psicologia Junguiana"
+                            desc="Interpretações baseadas em arquétipos profundos, focadas em autoconhecimento e não apenas previsão."
+                        />
+                        <FeatureCard
+                            icon="auto_awesome"
+                            title="IA Generativa"
+                            desc="Um Oracle que conversa com você. Tire dúvidas, peça conselhos e receba guias personalizados em tempo real."
+                        />
                     </div>
                 </div>
             </section>
 
-            {/* DOBRA 6: ENTREGÁVEIS (FUNDO CLARO) */}
-            <section className="py-24 px-6 bg-[#0F0F12]">
-                <div className="max-w-3xl mx-auto">
-                    <h2 className="text-3xl font-bold text-center mb-12">TUDO O QUE VOCÊ VAI RECEBER</h2>
-                    <div className="space-y-4">
-                        {[
-                            "Dashboard 'Daily Sync' (Mente, Corpo, Alma)",
-                            "Radar 'Quantum Sync' de Compatibilidade",
-                            "Timeline de Previsões (Janelas de Oportunidade)",
-                            "Soul-Guide AI (Chatbot 24h)",
-                            "Acesso Vitalício (Sem mensalidades)"
-                        ].map((item, i) => (
-                            <div key={i} className="flex items-center gap-4 p-4 border-b border-white/10">
-                                <div className="bg-[#22c55e]/20 p-1 rounded-full"><Check className="w-5 h-5 text-[#22c55e]" /></div>
-                                <span className="text-lg text-gray-200">{item}</span>
-                            </div>
-                        ))}
-                    </div>
+            {/* Social Proof / Stats */}
+            <section className="relative z-10 py-20 border-y border-white/5 bg-gradient-to-r from-blue-900/10 to-transparent">
+                <div className="container mx-auto px-6 flex flex-col md:flex-row justify-around items-center gap-8 text-center">
+                    <StatItem number="12k+" label="Mapas Gerados" />
+                    <StatItem number="98%" label="Precisão Astronômica" />
+                    <StatItem number="4.9/5" label="Satisfação dos Usuários" />
                 </div>
             </section>
 
-            {/* DOBRA 7: PRA QUEM É (FUNDO ESCURO) */}
-            <section className="py-24 px-6 bg-[#050508]">
-                <div className="max-w-4xl mx-auto text-center">
-                    <h2 className="text-3xl font-bold mb-12">O Celest AI foi feito para o seu sistema se...</h2>
+            {/* Pricing / Offer */}
+            <section className="relative z-10 py-24 px-6 container mx-auto">
+                <div className="max-w-4xl mx-auto bg-gradient-to-b from-slate-900 to-black border border-white/10 rounded-3xl p-8 md:p-12 relative overflow-hidden">
+                    {/* Glow Effect */}
+                    <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-cyan-500/10 blur-[80px] rounded-full pointer-events-none"></div>
 
-                    <div className="grid md:grid-cols-2 gap-4 text-left">
-                        {[
-                            "Odeia textos vagos de horóscopo",
-                            "Gosta de dados, gráficos e precisão",
-                            "Sente ansiedade sobre o futuro",
-                            "Trabalha com alta performance",
-                            "Quer uma ferramenta discreta e elegante",
-                            "Busca autoconhecimento sem 'gratiluz'"
-                        ].map((item, i) => (
-                            <div key={i} className="bg-[#0F0F12] p-4 rounded-lg flex items-center gap-3">
-                                <div className="w-2 h-2 bg-[#D6582C] rounded-full"></div>
-                                <span className="text-gray-300">{item}</span>
+                    <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
+                        <div>
+                            <h2 className="text-3xl font-bold mb-4 text-white">Oferta de Fundação</h2>
+                            <p className="text-slate-400 mb-6">
+                                Tenha acesso vitalício ao Celest AI Vigor durante nossa fase de lançamento.
+                                Preço nunca mais será visto.
+                            </p>
+                            <ul className="space-y-4 mb-8">
+                                <CheckItem text="Mapa Astral Completo & Profundo" />
+                                <CheckItem text="Previsões Diárias Personalizadas" />
+                                <CheckItem text="Chat Ilimitado com Oracle AI" />
+                                <CheckItem text="Análise de Compatibilidade (Sinastria)" />
+                            </ul>
+                            <div className="flex items-center gap-4">
+                                <div className="text-3xl font-bold text-cyan-300">R$ 97,00</div>
+                                <div className="text-sm text-slate-500 line-through">R$ 297,00</div>
+                                <div className="text-xs font-bold bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded">VITALÍCIO</div>
                             </div>
-                        ))}
-                    </div>
+                        </div>
 
-                    <div className="mt-12 bg-[#D6582C]/10 border border-[#D6582C] p-6 rounded-xl">
-                        <p className="text-[#D6582C] font-semibold">Se você marcou 2 itens acima, esta ferramenta é essencial.</p>
-                    </div>
-                </div>
-            </section>
-
-            {/* DOBRA 8: ANCORAGEM (FUNDO CLARO) */}
-            <section className="py-20 px-6 bg-[#0F0F12]">
-                <div className="max-w-2xl mx-auto">
-                    <h2 className="text-2xl font-bold text-center mb-8 text-gray-400">Recapitulando o valor real:</h2>
-
-                    <div className="bg-[#18181B] rounded-xl overflow-hidden">
-                        {[
-                            { name: "Dashboard Daily Sync", price: "R$ 97,00" },
-                            { name: "Módulo de Compatibilidade", price: "R$ 67,00" },
-                            { name: "Timeline de Previsões", price: "R$ 97,00" },
-                            { name: "Acesso Vitalício", price: "R$ 47,00" },
-                        ].map((item, i) => (
-                            <div key={i} className="flex justify-between p-4 border-b border-white/5 text-gray-400">
-                                <span>{item.name}</span>
-                                <span className="line-through">{item.price}</span>
+                        <div className="flex flex-col items-center justify-center">
+                            <div className="w-full h-48 bg-white/5 rounded-xl mb-6 border border-white/5 flex items-center justify-center">
+                                {/* Placeholder for App Screenshot or abstract visualization */}
+                                <div className="text-center p-4">
+                                    <Icon name="diamond" className="text-4xl text-cyan-400 mb-2 opacity-80 mx-auto" />
+                                    <p className="text-sm text-slate-400 font-medium">Acesso Premium</p>
+                                </div>
                             </div>
-                        ))}
-                        <div className="flex justify-between p-6 bg-[#27272A] text-xl font-bold text-white">
-                            <span>TOTAL</span>
-                            <span className="line-through decoration-[#D6582C]">R$ 308,00</span>
+                            <button
+                                onClick={handleStart}
+                                className="w-full py-4 rounded-xl bg-cyan-400 text-black font-bold text-lg hover:bg-cyan-300 transition-colors shadow-[0_0_20px_rgba(0,240,255,0.3)]"
+                            >
+                                Garantir Acesso Agora
+                            </button>
+                            <p className="mt-4 text-xs text-slate-500 text-center">Garantia de 7 dias ou seu dinheiro de volta.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* DOBRA 9: PREÇO + BOTÃO (DESTAQUE) */}
-            <section className="py-24 px-6 bg-gradient-to-b from-[#050508] to-[#1a0f0a]">
-                <div className="max-w-xl mx-auto text-center relative">
-                    {/* Efeito de brilho atrás do card */}
-                    <div className="absolute inset-0 bg-[#D6582C] blur-[100px] opacity-20 rounded-full"></div>
-
-                    <div className="relative bg-[#0F0F12] border-2 border-[#D6582C] rounded-3xl p-8 md:p-12 shadow-2xl">
-                        <span className="bg-[#D6582C] text-white px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-6 inline-block">Oferta Vitalícia</span>
-
-                        <p className="text-gray-400 mb-2">De <span className="line-through">R$ 308,00</span> por apenas:</p>
-
-                        <div className="mb-8">
-                            <p className="text-5xl md:text-6xl font-bold text-white mb-2">9x R$ 12,16</p>
-                            <p className="text-gray-400">ou R$ 97,00 à vista</p>
-                        </div>
-
-                        <button
-                            onClick={() => navigate('/onboarding')}
-                            className="w-full bg-gradient-to-r from-[#D6582C] to-[#9B5D33] hover:brightness-110 text-white font-bold text-lg py-5 px-8 rounded-xl shadow-[0_0_30px_rgba(214,88,44,0.4)] transition-all transform hover:scale-[1.02] mb-6"
-                        >
-                            QUERO ACESSO VITALÍCIO AGORA
-                        </button>
-
-                        <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-500">
-                            <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Compra Segura</span>
-                            <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> Garantia 7 Dias</span>
-                            <span className="flex items-center gap-1"><Zap className="w-3 h-3" /> Acesso Imediato</span>
-                        </div>
+            {/* Footer */}
+            <footer className="relative z-10 py-12 border-t border-white/5 bg-[#010409]">
+                <div className="container mx-auto px-6 text-center md:text-left flex flex-col md:flex-row justify-between items-center opacity-60">
+                    <div className="mb-4 md:mb-0">
+                        <h3 className="font-bold text-lg mb-1">CELEST AI</h3>
+                        <p className="text-xs text-slate-500">© 2026 Celest Technologies. Todos os direitos reservados.</p>
                     </div>
-
-                    <div className="mt-8 text-sm text-gray-500">
-                        <p>Como funciona: 1. Compra segura via Stripe • 2. Login enviado por e-mail • 3. Acesso imediato ao sistema.</p>
+                    <div className="flex gap-6 text-sm text-slate-400">
+                        <a href="#" className="hover:text-white transition-colors">Termos</a>
+                        <a href="#" className="hover:text-white transition-colors">Privacidade</a>
+                        <a href="#" className="hover:text-white transition-colors">Contato</a>
                     </div>
                 </div>
-            </section>
-
-            {/* DOBRA 10: CONVERSA SÉRIA (FUNDO CLARO) */}
-            <section className="py-20 px-6 bg-[#0F0F12]">
-                <div className="max-w-2xl mx-auto text-center">
-                    <h2 className="text-2xl font-bold mb-6">Você tem duas opções hoje.</h2>
-                    <div className="space-y-4 text-left bg-[#18181B] p-8 rounded-xl border border-white/5">
-                        <p className="flex gap-3"><span className="text-gray-500 font-bold">1.</span> <span className="text-gray-400">Continuar no "modo aleatório", acordando cansado e decidindo na sorte.</span></p>
-                        <p className="flex gap-3"><span className="text-[#D6582C] font-bold">2.</span> <span className="text-white">Ativar o Celest AI pelo preço de uma pizza e ter um GPS vitalício.</span></p>
-                    </div>
-                    <p className="mt-8 text-gray-400 italic">O tempo (Saturno) não espera. A escolha é lógica.</p>
-                </div>
-            </section>
-
-            {/* DOBRA 11: AUTORIDADE (FUNDO ESCURO) */}
-            <section className="py-20 px-6 bg-[#050508]">
-                <div className="max-w-3xl mx-auto flex flex-col md:flex-row items-center gap-8">
-                    <div className="w-24 h-24 bg-gradient-to-br from-[#D6582C] to-[#38271F] rounded-full flex items-center justify-center shadow-lg shrink-0">
-                        <Star className="w-10 h-10 text-white" fill="currentColor" />
-                    </div>
-                    <div>
-                        <h3 className="text-xl font-bold mb-3">Quem criou o Celest AI?</h3>
-                        <p className="text-gray-400 leading-relaxed mb-4">
-                            Não somos gurus. Somos engenheiros e analistas de dados. O Celest AI nasceu da necessidade de tirar o misticismo da astrologia e focar na utilidade prática. Nossa missão é transformar sabedoria antiga em vantagem competitiva.
-                        </p>
-                        <p className="text-[#D6582C] font-semibold text-sm">Sem incensos. Apenas algoritmos.</p>
-                    </div>
-                </div>
-            </section>
-
-            {/* DOBRA 12: FAQ + RODAPÉ */}
-            <section className="py-20 px-6 bg-[#0F0F12] border-t border-white/5">
-                <div className="max-w-2xl mx-auto mb-20">
-                    <h2 className="text-2xl font-bold text-center mb-10">Perguntas Frequentes</h2>
-                    <div className="space-y-4">
-                        {[
-                            { q: "Preciso saber astrologia?", a: "Não. O app traduz tudo para métricas de performance." },
-                            { q: "Funciona no celular?", a: "Sim, é um Web App otimizado para qualquer dispositivo." },
-                            { q: "É mensalidade?", a: "Não. Pagamento único, acesso vitalício." }
-                        ].map((item, i) => (
-                            <div key={i} className="bg-[#18181B] p-5 rounded-lg">
-                                <h4 className="font-bold mb-2 flex items-center gap-2"><ChevronDown className="w-4 h-4 text-[#D6582C]" /> {item.q}</h4>
-                                <p className="text-gray-400 text-sm pl-6">{item.a}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <footer className="text-center text-xs text-gray-600 border-t border-white/5 pt-10">
-                    <p className="mb-2 font-bold text-gray-500">CRIADO POR CELEST AI SYSTEMS</p>
-                    <p className="mb-4">CNPJ 00.000.000/0001-00 • Blumenau, SC</p>
-                    <p>suporte@celestaiapp.com</p>
-                    <p className="mt-8">Todos os direitos reservados © 2026</p>
-                </footer>
-            </section>
-
+            </footer>
         </div>
     );
 };
+
+// Subcomponent: Feature Card
+const FeatureCard = ({ icon, title, desc }: { icon: string, title: string, desc: string }) => (
+    <div className="p-8 rounded-2xl bg-white/5 border border-white/5 hover:border-cyan-400/30 hover:bg-white/10 transition-all group">
+        <div className="w-12 h-12 rounded-lg bg-black/50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+            <Icon name={icon} className="text-cyan-400 text-2xl" />
+        </div>
+        <h3 className="text-xl font-bold mb-3 text-white group-hover:text-cyan-200 transition-colors">{title}</h3>
+        <p className="text-slate-400 leading-relaxed text-sm">{desc}</p>
+    </div>
+);
+
+// Subcomponent: Stat Item
+const StatItem = ({ number, label }: { number: string, label: string }) => (
+    <div className="flex flex-col items-center">
+        <div className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tighter">{number}</div>
+        <div className="text-sm font-medium text-cyan-400 tracking-widest uppercase">{label}</div>
+    </div>
+);
+
+// Subcomponent: Check Item
+const CheckItem = ({ text }: { text: string }) => (
+    <div className="flex items-center gap-3">
+        <div className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center">
+            <Icon name="check" className="text-xs text-cyan-400" />
+        </div>
+        <span className="text-slate-300 text-sm">{text}</span>
+    </div>
+);
 
 export default LandingPage;
