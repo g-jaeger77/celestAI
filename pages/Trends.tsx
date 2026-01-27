@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import BottomNav from '../components/BottomNav';
 import Icon from '../components/Icon';
+import RadarChart from '../components/connections/RadarChart'; // Import existing Radar Component
 import { calculateTrends } from '../utils/trendsLogic';
 
 const Trends: React.FC = () => {
@@ -36,129 +37,104 @@ const Trends: React.FC = () => {
 
     if (!trends) return <div className="min-h-screen bg-black" />;
 
-    // Generate Chart Path
-    const width = 375;
-    const height = 160;
-    const points = trends.weeklyData.map((val: number, i: number) => {
-        const x = (i / 6) * width;
-        const y = height - (val / 100) * height; // Invert Y
-        return `${x},${y}`;
-    });
-
-    // Cubic Bezier approximation for smoothness
-    const pathD = `M ${points[0]} ` + points.slice(1).map((p: string, i: number) => {
-        const [currX, currY] = p.split(',').map(Number);
-        const [prevX, prevY] = points[i].split(',').map(Number);
-        const cp1X = prevX + (currX - prevX) / 2;
-        const cp1Y = prevY;
-        const cp2X = prevX + (currX - prevX) / 2;
-        const cp2Y = currY;
-        return `C ${cp1X},${cp1Y} ${cp2X},${cp2Y} ${currX},${currY}`;
-    }).join(' ');
-
-    const fillPath = `${pathD} V ${height + 60} H 0 Z`;
-
-    // Generate Dates
-    const today = new Date();
-    const dates = [];
-    for (let i = 6; i >= 0; i--) {
-        const d = new Date(today);
-        d.setDate(today.getDate() - i);
-        dates.push(d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).split('.')[0]);
-    }
+    // --- TRANSFORM DATA FOR RADAR CHART (Projecting Current Moment) ---
+    // User requested "Personal, Professional, Social" alignment for "today"
+    // We will map the daily scores (Mental, Physical, Emotional) to these pillars for visualization
+    const radarData = [
+        { label: 'Pessoal', A: trends.weeklyData[6].emotional, B: 100, fullMark: 100 }, // Emotional -> Personal
+        { label: 'Profissional', A: trends.weeklyData[6].mental, B: 100, fullMark: 100 }, // Mental -> Professional
+        { label: 'Social', A: trends.weeklyData[6].physical, B: 100, fullMark: 100 },   // Physical -> Social (Action)
+    ];
 
     return (
         <div className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-24 bg-black">
             <Helmet>
                 <title>Tendências | Celest AI</title>
-                <meta name="description" content="Acompanhe suas tendências de alinhamento cósmico diário e semanal." />
+                <meta name="description" content="Acompanhe suas tendências de alinhamento cósmico diário." />
             </Helmet>
-            <header className="px-4 pt-8 pb-2">
-                <h1 className="text-[34px] font-bold leading-tight tracking-tight text-white">
+
+            <header className="px-5 pt-8 pb-2">
+                <h1 className="text-[34px] font-bold leading-tight tracking-tight text-white mb-1">
                     Tendências
                 </h1>
                 {partnerName && (
-                    <p className="text-xs text-slate-400 font-medium mt-1 animate-fade-in">
-                        Sinergia ativa com <span className="text-pink-400">{partnerName}</span>
+                    <p className="text-xs text-slate-400 font-medium animate-fade-in flex items-center gap-1.5">
+                        <Icon name="favorite" className="text-pink-500 text-[10px]" />
+                        Sinergia com <span className="text-white">{partnerName}</span>
                     </p>
                 )}
             </header>
 
-            <div className="px-4 py-4">
-                <div className="flex h-9 w-full items-center justify-center rounded-lg bg-[#1C1C1E] p-0.5">
-                    {['Semana', 'Mês', 'Ano'].map((t, i) => (
-                        <button
-                            key={t}
-                            className={`flex cursor-pointer h-full flex-1 items-center justify-center rounded-[7px] transition-all duration-200 text-xs font-semibold leading-normal ${i === 0 ? 'bg-[#2C2C2E] text-white shadow-sm' : 'text-slate-400'}`}
-                        >
-                            {t}
-                        </button>
-                    ))}
-                </div>
+            {/* Time filters removed as per user request for current moment focus */}
+            <div className="px-5 pt-1 pb-4">
+                <p className="text-xs text-slate-500 font-medium text-center uppercase tracking-widest">
+                    Análise em Tempo Real
+                </p>
             </div>
 
-            <section className="flex flex-col gap-1 px-4 pt-4 pb-8">
-                <div className="flex flex-col">
-                    <h2 className="text-base font-semibold text-slate-400">
-                        {partnerName ? 'Alinhamento Conjunto' : 'Alinhamento Cósmico'}
+            <section className="flex flex-col gap-2 px-5 pt-2 pb-6">
+                <div className="flex flex-col items-center mb-4">
+                    <h2 className="text-[13px] font-semibold text-slate-400 uppercase tracking-wide text-center">
+                        Alinhamento Atual
                     </h2>
-                    <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-[42px] font-bold tracking-tight text-white">{trends.alignmentScore}%</span>
-                        <span className={`text-sm font-medium flex items-center ${trends.isPositive ? 'text-green-500' : 'text-rose-500'}`}>
-                            <Icon name={trends.isPositive ? "trending_up" : "trending_down"} className="text-[16px] mr-0.5" />
-                            {trends.trendValue}
-                        </span>
+                    <div className="flex items-baseline gap-3 mt-1 justify-center">
+                        <span className="text-[56px] font-bold tracking-tight text-white leading-none">{trends.alignmentScore}%</span>
+                    </div>
+                    <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border ${trends.isPositive ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'}`}>
+                        <Icon name={trends.isPositive ? "trending_up" : "trending_down"} className="text-[14px]" />
+                        <span className="text-[12px] font-bold">{trends.trendValue}</span>
                     </div>
                 </div>
 
-                <div className="relative w-full h-[220px] mt-6">
-                    <div className="absolute inset-0 flex flex-col justify-between text-xs text-slate-600 font-medium pointer-events-none z-0">
-                        {[1, 2, 3, 4, 5].map((_, i) => (
-                            <div key={i} className="border-b border-dashed border-slate-800 w-full h-0"></div>
-                        ))}
+                {/* RADAR CHART VISUALIZATION */}
+                <div className="w-full h-[320px] flex items-center justify-center relative">
+                    {/* Background Glow */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] bg-cyan-500/10 blur-[50px] rounded-full pointer-events-none"></div>
+
+                    <RadarChart
+                        data={radarData}
+                        theme="work" // Cyan theme
+                        size={300}
+                        userLabel="Você"
+                        partnerLabel="" // Hide partner layer implicitly by data manipulation or if component supports single
+                        showLegend={false}
+                    />
+                </div>
+
+                {/* Labels/Legend Manually for Design */}
+                <div className="flex justify-center gap-6 mt-[-20px] relative z-20">
+                    <div className="flex flex-col items-center">
+                        <span className="text-[10px] uppercase font-bold text-slate-500 mb-0.5">Pessoal</span>
+                        <span className="text-lg font-bold text-[#AF52DE]">{Math.round(trends.weeklyData[6].emotional)}%</span>
                     </div>
-                    <svg className="absolute inset-0 z-10 w-full h-full overflow-visible" preserveAspectRatio="none" viewBox={`0 0 ${width} 220`}>
-                        <defs>
-                            <linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
-                                <stop offset="0%" stopColor="#0ddff2" stopOpacity="0.3"></stop>
-                                <stop offset="100%" stopColor="#0ddff2" stopOpacity="0"></stop>
-                            </linearGradient>
-                            <filter height="140%" id="glow" width="140%" x="-20%" y="-20%">
-                                <feGaussianBlur result="blur" stdDeviation="4"></feGaussianBlur>
-                                <feComposite in="SourceGraphic" in2="blur" operator="over"></feComposite>
-                            </filter>
-                        </defs>
-                        <path d={fillPath} fill="url(#chartGradient)"></path>
-                        <path d={pathD} fill="none" filter="url(#glow)" stroke="#0ddff2" strokeLinecap="round" strokeWidth="3"></path>
-                        {/* Dot on last point */}
-                        <circle cx={width} cy={height - (trends.weeklyData[6] / 100 * height)} fill="#000000" r="6" stroke="#0ddff2" strokeWidth="3"></circle>
-                    </svg>
+                    <div className="flex flex-col items-center">
+                        <span className="text-[10px] uppercase font-bold text-slate-500 mb-0.5">Profissional</span>
+                        <span className="text-lg font-bold text-[#22d3ee]">{Math.round(trends.weeklyData[6].mental)}%</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <span className="text-[10px] uppercase font-bold text-slate-500 mb-0.5">Social</span>
+                        <span className="text-lg font-bold text-[#f59e0b]">{Math.round(trends.weeklyData[6].physical)}%</span>
+                    </div>
                 </div>
-                <div className="flex justify-between px-2 pt-4">
-                    {dates.filter((_, i) => i % 2 === 0 || i === 6).map(d => (
-                        <p key={d} className="text-slate-500 text-[11px] font-bold uppercase tracking-wide">{d}</p>
-                    ))}
-                </div>
+
             </section>
 
-            <div className="mx-4 h-px bg-slate-800"></div>
+            <div className="mx-5 h-px bg-white/5"></div>
 
-            <section className="flex flex-col px-4 py-6 gap-4">
-                <h3 className="text-lg font-bold text-white">Destaques do Ciclo</h3>
+            <section className="flex flex-col px-5 py-6 gap-4">
+                <h3 className="text-[15px] font-bold text-white uppercase tracking-wide">Insights do Momento</h3>
 
-                {trends.insights.map((insight: any, i: number) => (
-                    <div key={i} className={`flex items-center gap-4 rounded-[24px] bg-[#1C1C1E] p-5 border border-white/5 animate-slide-up delay-${i * 100}`}>
-                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-${insight.color}-500/20 text-${insight.color}-400`}>
-                            <Icon name={insight.icon} />
+                {trends.insights.slice(0, 2).map((insight: any, i: number) => (
+                    <div key={i} className="group relative flex items-start gap-4 rounded-[20px] bg-[#1C1C1E] p-5 border border-white/5 active:scale-[0.98] transition-all hover:bg-white/5">
+                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-${insight.color}-500/10 text-${insight.color}-400 border border-${insight.color}-500/20`}>
+                            <Icon name={insight.icon} className="text-[20px]" />
                         </div>
+
                         <div className="flex flex-col flex-1 gap-1">
-                            <div className="flex justify-between items-center">
-                                <h4 className="text-[17px] font-semibold text-white leading-tight">{insight.title}</h4>
-                                <span className={`text-xs font-medium text-slate-500 bg-white/10 px-2 py-1 rounded-full`}>{insight.score}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <p className="text-[15px] text-slate-400">{insight.desc} • {insight.duration}</p>
-                            </div>
+                            <h4 className="text-[16px] font-bold text-white leading-tight">{insight.title}</h4>
+                            <p className="text-[13px] text-slate-400 leading-relaxed font-medium">
+                                {insight.desc}
+                            </p>
                         </div>
                     </div>
                 ))}

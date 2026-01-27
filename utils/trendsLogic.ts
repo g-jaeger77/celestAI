@@ -33,10 +33,27 @@ export const calculateTrends = (userName: string, userDate: string, partnerName?
     // 3. Weekly Chart Data (7 days)
     // Generate previous 6 days + today
     const weeklyData = [];
+
+    // Helper to generate consistent components based on a seed
+    const getComponentScore = (s: number, offset: number) => {
+        const x = Math.sin(s + offset) * 10000;
+        const rnd = x - Math.floor(x);
+        return Math.min(100, Math.max(40, 60 + Math.floor(rnd * 40 - 20)));
+    };
+
     for (let i = 0; i < 7; i++) {
         // Variation relative to baseScore
-        const dayScore = Math.min(100, Math.max(40, baseScore + Math.floor(seededRandom() * 40 - 20)));
-        weeklyData.push(dayScore);
+        // Generate daily distinct components
+        const daySeed = seed + i * 13;
+
+        // Push object with broken down scores
+        weeklyData.push({
+            day: i,
+            mental: getComponentScore(daySeed, 100),
+            physical: getComponentScore(daySeed, 200),
+            emotional: getComponentScore(daySeed, 300),
+            total: Math.min(100, Math.max(40, baseScore + Math.floor(seededRandom() * 40 - 20))) // Keep total/single metric too if needed
+        });
     }
 
     // 4. Insights (Focus, Sensitivity, Relationship)

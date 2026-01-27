@@ -1,5 +1,5 @@
 import React from 'react';
-import { ResponsiveContainer, RadarChart as RechartsRadar, PolarGrid, PolarAngleAxis, Radar, Legend } from 'recharts';
+import { ResponsiveContainer, RadarChart as RechartsRadar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend } from 'recharts';
 
 interface RadarChartProps {
     data: any[];
@@ -30,14 +30,29 @@ const RadarChart: React.FC<RadarChartProps> = ({
     // User Layer (Always Cyan/Teal for contrast per Image 2)
     const userColor = { stroke: '#22d3ee', fill: '#22d3ee' }; // Cyan-400
 
+    // Reference Mode: If no partner label, treat B as a background reference (Max Potential)
+    const isReferenceMode = !partnerLabel;
+    const refColor = { stroke: 'rgba(255,255,255,0.1)', fill: 'rgba(255,255,255,0.05)' };
+
     return (
         <div style={{ width: '100%', height: size }} className="relative">
             <ResponsiveContainer width="100%" height="100%">
-                <RechartsRadar cx="50%" cy="40%" outerRadius="70%" data={data}>
+                <RechartsRadar cx="50%" cy="50%" outerRadius="70%" data={data}>
                     <PolarGrid stroke="rgba(255,255,255,0.1)" />
                     <PolarAngleAxis
                         dataKey="label"
                         tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 10, fontWeight: 700 }}
+                    />
+                    <PolarRadiusAxis domain={[0, 100]} tick={false} axisLine={false} />
+
+                    {/* Partner / Reference Layer (Render first to be background) */}
+                    <Radar
+                        name={isReferenceMode ? "Potencial" : partnerLabel}
+                        dataKey="B" // Partner Value or 100
+                        stroke={isReferenceMode ? refColor.stroke : pColor.stroke}
+                        strokeWidth={isReferenceMode ? 1 : 2}
+                        fill={isReferenceMode ? refColor.fill : pColor.fill}
+                        fillOpacity={isReferenceMode ? 1 : 0.3}
                     />
 
                     {/* User Layer */}
@@ -47,17 +62,7 @@ const RadarChart: React.FC<RadarChartProps> = ({
                         stroke={userColor.stroke}
                         strokeWidth={2}
                         fill={userColor.fill}
-                        fillOpacity={0.3}
-                    />
-
-                    {/* Partner Layer */}
-                    <Radar
-                        name={partnerLabel}
-                        dataKey="B" // Partner Value
-                        stroke={pColor.stroke}
-                        strokeWidth={2}
-                        fill={pColor.fill}
-                        fillOpacity={0.3}
+                        fillOpacity={0.5}
                     />
 
                     {showLegend && (
