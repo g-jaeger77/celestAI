@@ -31,10 +31,6 @@ const Chat: React.FC = () => {
         }
     }, [transcript]);
 
-    // TTS for AI messages
-    // TTS removed as requested
-    // useEffect(() => { ... }, [messages, soundEnabled, speak]);
-
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSend = async () => {
@@ -280,5 +276,4 @@ const Chat: React.FC = () => {
     );
 };
 
-export default Chat;/ /   C o s m i c   U p d a t e  
- 
+export default Chat;
