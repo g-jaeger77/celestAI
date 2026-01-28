@@ -116,106 +116,164 @@ const Chat: React.FC = () => {
                 <title>Chat | Celest AI</title>
                 <meta name="description" content="Converse com seu oráculo astrológico pessoal." />
             </Helmet>
-            {/* Background Elements */}
-            <div className="fixed inset-0 pointer-events-none z-0">
-                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-900/10 blur-[100px] rounded-full"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-orange-900/10 blur-[100px] rounded-full"></div>
+
+            {/* Background Image */}
+            <div
+                className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center opacity-60 mix-blend-screen"
+                style={{ backgroundImage: "url('/assets/cosmic_bg.png')" }}
+            >
+                {/* Overlay Gradient for readability */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/80"></div>
             </div>
 
             {/* Header */}
-            <header className="relative z-20 flex items-center justify-between p-6 bg-transparent">
-                <div className="flex items-center gap-3">
-                    <img src="/assets/Icone.png?v=2" alt="Celest" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(255,165,0,0.5)] mix-blend-screen" style={{ mixBlendMode: 'screen' }} />
-                    <div>
-                        <h1 className="text-lg font-bold tracking-[0.2em] text-white uppercase">Celest AI</h1>
-                        <span className="text-[10px] text-green-400 tracking-wider flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> ONLINE
-                        </span>
+            <header className="relative z-20 pt-6 px-4 pb-2">
+                <div className="
+                    mx-auto max-w-3xl
+                    flex items-center justify-between p-4 
+                    bg-black/30 backdrop-blur-xl 
+                    border border-white/10 rounded-2xl
+                    shadow-[0_0_30px_rgba(0,0,0,0.5)]
+                ">
+                    <div className="flex items-center gap-4">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-cyan-500/20 blur-xl rounded-full"></div>
+                            <img
+                                src="/assets/Icone.png?v=2"
+                                alt="Celest"
+                                className="relative w-12 h-12 object-contain drop-shadow-[0_0_15px_rgba(0,255,255,0.5)]"
+                            />
+                            {/* Online Dot on Avatar */}
+                            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-black rounded-full shadow-[0_0_10px_rgba(74,222,128,0.8)]"></div>
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-cyan-400 uppercase drop-shadow-sm">
+                                Celest AI
+                            </h1>
+                            <span className="text-[10px] uppercase tracking-[0.2em] text-cyan-400/80 font-bold flex items-center gap-1.5 shadow-black">
+                                <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse shadow-[0_0_5px_rgba(74,222,128,0.8)]"></span>
+                                Online
+                            </span>
+                        </div>
                     </div>
-                </div>
 
-                <div className="flex items-center gap-4">
-
-
-                    <button onClick={() => navigate('/')} className="p-2 rounded-full hover:bg-white/10 transition-colors">
-                        <Icon name="close" className="text-slate-400" />
+                    <button
+                        onClick={() => navigate('/')}
+                        className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-slate-400 hover:text-white"
+                    >
+                        <Icon name="close" className="text-lg" />
                     </button>
                 </div>
             </header>
 
             {/* Messages Area */}
-            <main className="flex-1 overflow-y-auto p-6 space-y-6 relative z-10 scrollbar-hide">
-                {messages.map((msg) => (
-                    <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`
-              max-w-[80%] p-4 rounded-2xl relative overflow-hidden backdrop-blur-md border border-white/5 shadow-lg
-              ${msg.sender === 'user'
-                                ? 'bg-blue-600/20 text-white rounded-br-sm'
-                                : 'bg-white/10 text-slate-200 rounded-bl-sm'}
-            `}>
-                            <p className="text-sm leading-relaxed">{msg.text}</p>
-                            {/* Speaking Indicator */}
-                            {msg.sender === 'ai' && isSpeaking && msg.id === messages[messages.length - 1].id && (
-                                <div className="absolute bottom-2 right-2 flex gap-0.5">
-                                    <span className="w-1 h-3 bg-cyan-400 animate-pulse"></span>
-                                    <span className="w-1 h-3 bg-cyan-400 animate-pulse delay-75"></span>
-                                    <span className="w-1 h-3 bg-cyan-400 animate-pulse delay-150"></span>
+            <main className="flex-1 overflow-y-auto p-4 space-y-6 relative z-10 scrollbar-hide">
+                <div className="max-w-3xl mx-auto space-y-6 pb-4">
+                    {messages.map((msg) => (
+                        <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
+                            <div className={`
+                                max-w-[85%] md:max-w-[70%] p-5 relative overflow-hidden shadow-lg
+                                ${msg.sender === 'user'
+                                    ? 'bg-gradient-to-br from-blue-900/60 to-cyan-900/60 border border-cyan-500/30 text-white rounded-2xl rounded-br-sm shadow-[0_0_20px_rgba(0,255,255,0.05)]'
+                                    : 'bg-black/40 backdrop-blur-xl border border-white/10 text-slate-200 rounded-2xl rounded-bl-sm shadow-[0_0_20px_rgba(255,255,255,0.05)]'
+                                }
+                            `}>
+                                {/* Glow Effect for User */}
+                                {msg.sender === 'user' && (
+                                    <div className="absolute top-0 right-0 w-20 h-20 bg-cyan-400/10 blur-[40px] rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                                )}
+
+                                <p className="text-[15px] leading-relaxed relative z-10 tracking-wide font-light">
+                                    {msg.text}
+                                </p>
+
+                                {/* Speaking Indicator */}
+                                {msg.sender === 'ai' && isSpeaking && msg.id === messages[messages.length - 1].id && (
+                                    <div className="absolute bottom-3 right-3 flex gap-0.5">
+                                        <span className="w-0.5 h-2 bg-cyan-400 animate-music-bar-1"></span>
+                                        <span className="w-0.5 h-2 bg-cyan-400 animate-music-bar-2"></span>
+                                        <span className="w-0.5 h-2 bg-cyan-400 animate-music-bar-3"></span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+
+                    {isLoading && (
+                        <div className="flex justify-start">
+                            <div className="bg-black/40 backdrop-blur-xl text-cyan-400 p-4 rounded-2xl rounded-bl-sm border border-cyan-500/20 flex gap-2 items-center shadow-[0_0_15px_rgba(0,255,255,0.1)]">
+                                <span className="text-xs uppercase tracking-widest font-bold ml-1">Processando</span>
+                                <div className="flex gap-1 ml-2">
+                                    <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"></span>
+                                    <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce delay-75"></span>
+                                    <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce delay-150"></span>
                                 </div>
-                            )}
+                            </div>
                         </div>
-                    </div>
-                ))}
-                {isLoading && (
-                    <div className="flex justify-start">
-                        <div className="bg-white/5 text-cyan-400 p-4 rounded-2xl rounded-bl-sm border border-white/5 flex gap-1 items-center">
-                            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"></span>
-                            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce delay-75"></span>
-                            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce delay-150"></span>
-                        </div>
-                    </div>
-                )}
-                <div ref={messagesEndRef} />
+                    )}
+                    <div ref={messagesEndRef} />
+                </div>
             </main>
 
-            {/* Command Center (Input) */}
-            <footer className="relative z-20 p-6 pb-8">
-                <div className={`
-          relative flex items-center gap-2 p-2 pr-2 bg-[#0A0A0A]/80 backdrop-blur-xl 
-          border border-white/10 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.5)]
-          transition-all duration-300
-          ${isListening ? 'border-orange-500/50 shadow-[0_0_30px_rgba(255,140,0,0.2)]' : 'focus-within:border-blue-500/50'}
-        `}>
+            {/* Input Area */}
+            <footer className="relative z-20 p-4 pb-8">
+                <div className="max-w-3xl mx-auto">
+                    <div className={`
+                        relative flex items-center gap-3 p-2 pr-3 pl-4 
+                        bg-black/60 backdrop-blur-2xl 
+                        border transition-all duration-300 rounded-full
+                        ${isListening
+                            ? 'border-orange-500/50 shadow-[0_0_40px_rgba(255,140,0,0.3)]'
+                            : 'border-cyan-500/30 shadow-[0_0_30px_rgba(0,255,255,0.15)] focus-within:shadow-[0_0_50px_rgba(0,255,255,0.25)] focus-within:border-cyan-400/50'}
+                    `}>
 
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        placeholder={isListening ? "Ouvindo cosmo..." : "Digite sua mensagem..."}
-                        className="flex-1 min-w-0 bg-transparent border-0 text-white text-sm px-4 py-4 placeholder:text-slate-600 focus:ring-0 outline-none font-medium tracking-wide"
-                    />
+                        {/* Input Field */}
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder={isListening ? "Ouvindo frequências..." : "Envie uma mensagem ao cosmos..."}
+                            className="flex-1 min-w-0 bg-transparent border-0 text-white text-[15px] placeholder:text-slate-500 focus:ring-0 outline-none font-light tracking-wide py-3"
+                        />
 
-                    {/* Voice Button */}
-                    <button
-                        onClick={toggleListening}
-                        className={`
-              p-3 rounded-full transition-all duration-300 active:scale-95 shrink-0
-              ${isListening
-                                ? 'bg-orange-500 text-white animate-pulse-slow shadow-[0_0_20px_rgba(255,140,0,0.6)]'
-                                : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'}
-            `}
-                    >
-                        <Icon name={isListening ? "mic" : "mic_none"} className="text-xl" />
-                    </button>
+                        {/* Divider */}
+                        <div className="h-6 w-px bg-white/10"></div>
 
-                    {/* Send Button */}
-                    <button
-                        onClick={handleSend}
-                        disabled={!input.trim()}
-                        className="p-3 rounded-full bg-blue-600/80 text-white hover:bg-blue-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95 shrink-0"
-                    >
-                        <Icon name="send" className="text-xl" />
-                    </button>
+                        {/* Voice Button */}
+                        <button
+                            onClick={toggleListening}
+                            className={`
+                                w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300
+                                ${isListening
+                                    ? 'bg-orange-500 text-white shadow-[0_0_15px_rgba(255,140,0,0.8)]'
+                                    : 'text-slate-400 hover:text-cyan-400 hover:bg-white/5'}
+                            `}
+                        >
+                            <Icon name={isListening ? "mic" : "mic_none"} className="text-xl" />
+                        </button>
+
+                        {/* Send Button */}
+                        <button
+                            onClick={handleSend}
+                            disabled={!input.trim()}
+                            className={`
+                                w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300
+                                ${input.trim()
+                                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-[0_0_20px_rgba(0,255,255,0.4)] hover:scale-105 active:scale-95'
+                                    : 'bg-white/5 text-slate-600 cursor-not-allowed'}
+                            `}
+                        >
+                            <Icon name="send" className="text-lg translate-x-0.5 translate-y-0.5" />
+                        </button>
+                    </div>
+
+                    {/* Footer Text */}
+                    <div className="text-center mt-3">
+                        <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-900/40">
+                            Conexão Segura • Criptografia Estelar
+                        </p>
+                    </div>
                 </div>
             </footer>
         </div>

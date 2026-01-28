@@ -14,7 +14,9 @@ from datetime import datetime, timedelta
 import uuid
 import stripe
 from fastapi import BackgroundTasks, Request
+from fastapi import BackgroundTasks, Request
 from memory_store import MemoryStore
+from wheel_engine import WheelEngine
 
 # Load Environment
 load_dotenv('.env.local')
@@ -60,6 +62,13 @@ class ChatResponse(BaseModel):
     actions: List[Action] = []
     weather_report: Optional[Dict[str, Any]] = None
     metadata: Dict[str, Any] = {}
+
+class ChartDataRequest(BaseModel):
+    date: str
+    time: str
+    city: str
+    country: str
+
 
 import swisseph as swe
 
@@ -595,6 +604,34 @@ class DashboardResponse(BaseModel):
     score_mental: int
     score_physical: int
     score_emotional: int
+
+@app.post("/agent/wheel")
+async def wheel_endpoint(request: ChartDataRequest):
+    print(f"🎡 Calculating Wheel of Life for {request.city}")
+    try:
+        dt = datetime.strptime(request.date + " " + request.time, "%Y-%m-%d %H:%M")
+        
+        # Calculate Wheel
+        engine = WheelEngine(
+            "User",
+            dt.year, dt.month, dt.day,
+            dt.hour, dt.minute,
+            request.city, request.country
+        )
+        data = engine.generate_wheel()
+        
+        # Calculate Overall Harmony (Avg)
+        avg_score = sum([d['score'] for d in data]) / len(data)
+        
+        return {
+            "wheel_data": data,
+            "harmony_score": int(avg_score),
+            "trend_value": "+1.2%", # Placeholder for historical diff
+            "is_positive": True
+        }
+    except Exception as e:
+        print(f"❌ Wheel Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/agent/dashboard", response_model=DashboardResponse)
 async def dashboard_endpoint(user_id: str):
