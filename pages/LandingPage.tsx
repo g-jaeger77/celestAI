@@ -140,7 +140,7 @@ const LandingPage: React.FC = () => {
                         <div>
                             <h2 className="text-3xl font-bold mb-4 text-white">Oferta de Fundação</h2>
                             <p className="text-slate-400 mb-6">
-                                Tenha acesso vitalício ao Celest AI Vigor durante nossa fase de lançamento.
+                                Tenha acesso anual ao Celest AI Vigor durante nossa fase de lançamento.
                                 Preço nunca mais será visto.
                             </p>
                             <ul className="space-y-4 mb-8">
@@ -150,9 +150,9 @@ const LandingPage: React.FC = () => {
                                 <CheckItem text="Análise de Compatibilidade (Sinastria)" />
                             </ul>
                             <div className="flex items-center gap-4">
-                                <div className="text-3xl font-bold text-cyan-300">R$ 97,00</div>
+                                <div className="text-3xl font-bold text-cyan-300">R$ 97,00 / ano</div>
                                 <div className="text-sm text-slate-500 line-through">R$ 297,00</div>
-                                <div className="text-xs font-bold bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded">VITALÍCIO</div>
+                                <div className="text-xs font-bold bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded">ANUAL</div>
                             </div>
                         </div>
 

@@ -147,7 +147,7 @@ const Onboarding: React.FC = () => {
       // Simulate "Working"
       await new Promise(r => setTimeout(r, 800));
 
-      const confirmBuy = window.confirm("⚠ Acesso Restrito: O Vigor Vitalício custa R$67,00.\n\nSimular pagamento e desbloquear?");
+      const confirmBuy = window.confirm("⚠ Acesso Restrito: O Vigor Anual custa R$ 97,00 por ano.\n\nSimular pagamento e desbloquear?");
 
       if (confirmBuy) {
         sessionStorage.setItem('onboarding_form', JSON.stringify(formData));
