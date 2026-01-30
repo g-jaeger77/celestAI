@@ -141,7 +141,7 @@ const Chat: React.FC = () => {
                         </div>
                         <div>
                             <h1 className="text-xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-cyan-400 uppercase drop-shadow-sm">
-                                <span className="text-white">Celest</span> <span className="bg-gradient-to-br from-[#FFD6BC] via-[#D6582C] to-[#803015] bg-clip-text text-transparent">AI</span>
+                                <span className="bg-gradient-to-r from-white via-[#FFD6BC] to-[#D6582C] bg-clip-text text-transparent">Celest AI</span>
                             </h1>
                             <span className="text-[10px] uppercase tracking-[0.2em] text-cyan-400/80 font-bold flex items-center gap-1.5 shadow-black">
                                 <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse shadow-[0_0_5px_rgba(74,222,128,0.8)]"></span>
