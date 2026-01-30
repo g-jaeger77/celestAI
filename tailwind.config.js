@@ -10,6 +10,18 @@ export default {
         extend: {
             fontFamily: {
                 display: ['Outfit', 'sans-serif'],
+                inter: ['Inter', 'sans-serif'],
+            },
+            colors: {
+                copper: {
+                    light: '#FFCAA6',
+                    DEFAULT: '#D6582C',
+                    dark: '#803015',
+                },
+                dark: {
+                    DEFAULT: '#050510',
+                    card: '#0F1020',
+                }
             },
             animation: {
                 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
