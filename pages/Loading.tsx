@@ -135,7 +135,7 @@ const Loading: React.FC = () => {
           </div>
 
           {progress >= 99 ? (
-            <span className="text-[10px] text-green-400 font-bold font-mono tracking-[0.2em] uppercase mt-8 border border-green-500/30 px-4 py-2 rounded bg-green-500/10 shadow-[0_0_15px_rgba(74,222,128,0.2)] animate-pulse">
+            <span className="text-[10px] text-green-400 font-bold font-sans tracking-[0.2em] uppercase mt-8 border border-green-500/30 px-4 py-2 rounded bg-green-500/10 shadow-[0_0_15px_rgba(74,222,128,0.2)] animate-pulse">
               [ Sincronia Completa ]
             </span>
           ) : (
