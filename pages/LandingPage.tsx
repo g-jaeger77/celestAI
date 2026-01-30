@@ -32,17 +32,17 @@ const LandingPage = () => {
     };
 
     return (
-        <div className="overflow-x-hidden antialiased selection:bg-primary selection:text-white font-display bg-background-dark min-h-screen text-white">
+        <div className="overflow-x-hidden antialiased selection:bg-primary selection:text-white font-display bg-[#201613] min-h-screen text-white">
             <header className="fixed top-0 z-50 w-full bg-[#201613]/80 backdrop-blur-md border-b border-[#3a2822]">
                 <div className="flex items-center justify-between px-4 py-3 max-w-2xl mx-auto">
                     <div className="flex items-center gap-3">
                         <span className="material-symbols-outlined text-primary text-3xl">flare</span>
-                        <span className="text-xl font-bold tracking-tight text-gradient-copper">Celest AI</span>
+                        <span className="text-xl font-bold tracking-tight text-gradient-brand">Celest AI</span>
                     </div>
                 </div>
             </header>
 
-            <main className="relative flex flex-col w-full min-h-screen bg-background-dark group/design-root">
+            <main className="relative flex flex-col w-full min-h-screen bg-[#201613] group/design-root">
                 <section className="relative pt-24 pb-12 px-4 overflow-hidden">
                     <div className="absolute inset-0 bg-glow pointer-events-none"></div>
                     <div className="max-w-xl mx-auto flex flex-col items-center text-center gap-6 relative z-10">
@@ -100,7 +100,7 @@ const LandingPage = () => {
                     </div>
                 </section>
 
-                <section className="py-16 px-4 bg-background-dark">
+                <section className="py-16 px-4 bg-[#201613]">
                     <div className="max-w-2xl mx-auto flex flex-col gap-10">
                         <div className="text-center space-y-3">
                             <h2 className="text-2xl md:text-3xl font-bold text-white">Você se sente <span className="text-primary">perdido no espaço?</span></h2>
@@ -150,7 +150,7 @@ const LandingPage = () => {
                 <section className="py-16 px-4 bg-[#1a1210] relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                     <div className="max-w-2xl mx-auto">
-                        <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">Como o <span className="text-gradient-copper font-extrabold">Celest AI</span> funciona</h2>
+                        <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">Como o <span className="text-gradient-brand font-extrabold">Celest AI</span> funciona</h2>
                         <div className="relative pl-8 border-l border-[#3a2822] space-y-12">
                             <div className="relative">
                                 <span className="absolute -left-[41px] flex items-center justify-center w-8 h-8 rounded-full bg-[#2a1e1a] border border-primary text-primary font-bold text-sm ring-4 ring-[#1a1210]">01</span>
@@ -184,7 +184,7 @@ const LandingPage = () => {
                     </div>
                 </section>
 
-                <section className="py-16 px-4 bg-background-dark">
+                <section className="py-16 px-4 bg-[#201613]">
                     <div className="max-w-2xl mx-auto">
                         <h2 className="text-2xl font-bold text-center mb-8">O Celest AI é para você que...</h2>
                         <div className="grid gap-4 md:grid-cols-2">
@@ -244,7 +244,7 @@ const LandingPage = () => {
                     </div>
                 </section>
 
-                <section className="py-16 px-4 bg-background-dark relative" id="offer">
+                <section className="py-16 px-4 bg-[#201613] relative" id="offer">
                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none"></div>
                     <div className="max-w-xl mx-auto text-center">
                         <div className="mb-8 bg-[#2a1e1a]/40 rounded-lg p-4 inline-block backdrop-blur-sm border border-white/5">
@@ -347,7 +347,7 @@ const LandingPage = () => {
                     <div className="max-w-2xl mx-auto flex flex-col items-center gap-6">
                         <div className="flex items-center gap-2 text-white/80">
                             <span className="material-symbols-outlined text-primary">flare</span>
-                            <span className="font-bold text-lg text-gradient-copper">Celest AI</span>
+                            <span className="font-bold text-lg text-gradient-brand">Celest AI</span>
                         </div>
                         <div className="flex flex-wrap justify-center gap-6 text-sm text-text-muted">
                             <a className="hover:text-primary transition-colors" href="#">Termos de Uso</a>
