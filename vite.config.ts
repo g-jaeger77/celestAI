@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['assets/logo_v3.png'],
+        includeAssets: ['assets/celest_icon.png'],
         manifest: {
           name: 'Celest AI',
           short_name: 'Celest',
@@ -26,17 +26,17 @@ export default defineConfig(({ mode }) => {
           orientation: 'portrait',
           icons: [
             {
-              src: '/assets/logo_v3.png',
+              src: '/assets/celest_icon.png',
               sizes: '192x192',
               type: 'image/png'
             },
             {
-              src: '/assets/logo_v3.png',
+              src: '/assets/celest_icon.png',
               sizes: '512x512',
               type: 'image/png'
             },
             {
-              src: '/assets/logo_v3.png',
+              src: '/assets/celest_icon.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any maskable'
