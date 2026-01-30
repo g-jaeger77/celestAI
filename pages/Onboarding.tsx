@@ -13,7 +13,8 @@ const Onboarding: React.FC = () => {
     birthDate: '',
     birthTime: '',
     birthCity: '',
-    birthCountry: ''
+    birthCountry: '',
+    timeUnknown: false
   });
 
   const [loading, setLoading] = React.useState(false);
@@ -122,9 +123,12 @@ const Onboarding: React.FC = () => {
       }
     }
 
-    if (formData.birthTime.length !== 5) {
-      newErrors.birthTime = 'Hora incompleta (HH:MM).';
-      isValid = false;
+    // SKIP TIME VALIDATION IF UNKNOWN CHECKED
+    if (!formData.timeUnknown) {
+      if (formData.birthTime.length !== 5) {
+        newErrors.birthTime = 'Hora incompleta (HH:MM).';
+        isValid = false;
+      }
     }
 
     if (!formData.birthCity || formData.birthCity.length < 3) {
@@ -164,10 +168,11 @@ const Onboarding: React.FC = () => {
       const payload = {
         full_name: formData.full_name,
         birth_date: parseDate(formData.birthDate),
-        birth_time: formData.birthTime,
+        birth_time: formData.timeUnknown ? '12:00' : formData.birthTime,
         birth_city: formData.birthCity.split(',')[0],
         birth_country: "BR",
-        session_id: sessionId
+        session_id: sessionId,
+        time_unknown: formData.timeUnknown
       };
 
       // REAL BACKEND CALL
@@ -313,35 +318,41 @@ const Onboarding: React.FC = () => {
             <label htmlFor="birthTime" className="block text-xs font-bold tracking-[0.25em] text-slate-500 uppercase mb-2">
               Hora Exata
             </label>
-            <div className={`relative flex items-center border-b transition-all duration-300 ${getInputClass('birthTime', errors.birthTime)}`}>
+            <div className={`relative flex items-center border-b transition-all duration-300 ${getInputClass('birthTime', errors.birthTime)} ${formData.timeUnknown ? 'opacity-50' : ''}`}>
               <input
                 id="birthTime"
-                className="block w-full border-0 bg-transparent p-0 pb-3 pr-10 text-white placeholder:text-white/10 focus:ring-0 text-xl font-light outline-none"
+                className="block w-full border-0 bg-transparent p-0 pb-3 pr-10 text-white placeholder:text-white/10 focus:ring-0 text-xl font-light outline-none disabled:cursor-not-allowed"
                 placeholder="00:00"
                 maxLength={5}
-                value={formData.birthTime}
+                value={formData.timeUnknown ? '12:00' : formData.birthTime}
                 onChange={handleTimeChange}
                 type="text"
                 inputMode="numeric"
+                disabled={formData.timeUnknown}
               />
-              {isValid('birthTime') && !errors.birthTime ? (
+              {isValid('birthTime') && !errors.birthTime && !formData.timeUnknown ? (
                 <Icon name="check_circle" className="text-green-500 absolute right-8 bottom-4 animate-scale-in" />
               ) : (
                 <Icon name="schedule" className="absolute right-0 bottom-4 text-slate-600" />
               )}
             </div>
-            {errors.birthTime ? (
+            {errors.birthTime && !formData.timeUnknown ? (
               <p className="text-red-400 text-xs mt-1 animate-fade-in">{errors.birthTime}</p>
             ) : (
-              <p className="mt-3 text-xs text-slate-500 font-medium tracking-wide mb-4">Crucial para calcular seu ascendente.</p>
+              <p className="mt-3 text-xs text-slate-500 font-medium tracking-wide mb-4">
+                {formData.timeUnknown ? "Usaremos 12:00 (Meio-dia) para o cálculo solar." : "Crucial para calcular seu ascendente."}
+              </p>
             )}
 
             {/* Checkbox */}
-            <label className="flex items-center gap-3 cursor-pointer group/check w-fit">
-              <div className="relative w-5 h-5 border border-white/20 rounded-md flex items-center justify-center">
-                <input type="checkbox" className="peer sr-only" />
-                <div className="w-full h-full bg-cyan-400 hidden peer-checked:block absolute inset-0 rounded-sm"></div>
-                <Icon name="check" className="text-[14px] text-black z-10 hidden peer-checked:block" />
+            <label className="flex items-center gap-3 cursor-pointer group/check w-fit select-none"
+              onClick={() => {
+                const newState = !formData.timeUnknown;
+                updateFormData({ ...formData, timeUnknown: newState, birthTime: newState ? '12:00' : '' });
+              }}
+            >
+              <div className={`relative w-5 h-5 border border-white/20 rounded-md flex items-center justify-center transition-colors ${formData.timeUnknown ? 'bg-cyan-400 border-cyan-400' : ''}`}>
+                <Icon name="check" className={`text-[14px] text-black z-10 ${formData.timeUnknown ? 'block' : 'hidden'}`} />
               </div>
               <span className="text-xs text-slate-400 font-medium">Não tenho certeza do horário</span>
             </label>
