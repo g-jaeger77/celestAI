@@ -252,7 +252,7 @@ const Onboarding: React.FC = () => {
 
           {/* Name Input */}
           <div className="group relative">
-            <label htmlFor="full_name" className="block text-[10px] font-bold tracking-[0.25em] text-slate-500 uppercase mb-2">
+            <label htmlFor="full_name" className="block text-xs font-bold tracking-[0.25em] text-slate-500 uppercase mb-2">
               Nome Completo
             </label>
             <div className={`relative flex items-end border-b transition-all duration-300 ${getInputClass('full_name', errors.full_name)}`}>
@@ -272,7 +272,7 @@ const Onboarding: React.FC = () => {
           </div>
 
           <div className="group relative">
-            <label htmlFor="birthDate" className="block text-[10px] font-bold tracking-[0.25em] text-slate-500 uppercase mb-2">
+            <label htmlFor="birthDate" className="block text-xs font-bold tracking-[0.25em] text-slate-500 uppercase mb-2">
               Data de Nascimento
             </label>
             <div className={`relative flex items-end border-b transition-all duration-300 ${getInputClass('birthDate', errors.birthDate)}`}>
@@ -298,7 +298,7 @@ const Onboarding: React.FC = () => {
           </div>
 
           <div className="group relative">
-            <label htmlFor="birthTime" className="block text-[10px] font-bold tracking-[0.25em] text-slate-500 uppercase mb-2">
+            <label htmlFor="birthTime" className="block text-xs font-bold tracking-[0.25em] text-slate-500 uppercase mb-2">
               Hora Exata
             </label>
             <div className={`relative flex items-center border-b transition-all duration-300 ${getInputClass('birthTime', errors.birthTime)}`}>
@@ -336,7 +336,7 @@ const Onboarding: React.FC = () => {
           </div>
 
           <div className="group relative">
-            <label htmlFor="birthCity" className="block text-[10px] font-bold tracking-[0.25em] text-slate-500 uppercase mb-2">
+            <label htmlFor="birthCity" className="block text-xs font-bold tracking-[0.25em] text-slate-500 uppercase mb-2">
               Local de Nascimento
             </label>
             <div className={`relative flex items-center border-b transition-all duration-300 ${getInputClass('birthCity', errors.birthCity)}`}>
