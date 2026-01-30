@@ -13,17 +13,19 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-      /* VitePWA({
+      VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['assets/celest_icon.png'],
         manifest: {
           name: 'Celest AI',
           short_name: 'Celest',
           description: 'O GPS da sua Alma.',
-          theme_color: '#000000',
-          background_color: '#000000',
+          theme_color: '#201613',
+          background_color: '#201613',
           display: 'standalone',
           orientation: 'portrait',
+          id: '/',
+          start_url: '/',
           icons: [
             {
               src: '/assets/celest_icon.png',
@@ -43,7 +45,7 @@ export default defineConfig(({ mode }) => {
             }
           ]
         }
-      }) */
+      })
     ],
     define: {
       'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
