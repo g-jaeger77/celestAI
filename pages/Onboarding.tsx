@@ -231,7 +231,7 @@ const Onboarding: React.FC = () => {
               </div>
 
               <div className="flex flex-col justify-center leading-none select-none">
-                <span className="font-sans text-4xl font-bold tracking-tight relative top-[-1px]">
+                <span className="font-sans text-3xl sm:text-4xl font-bold tracking-tight relative top-[-1px] whitespace-nowrap">
                   <span className="font-extrabold bg-gradient-to-r from-white via-[#FFD6BC] to-[#D6582C] bg-clip-text text-transparent">Celest AI</span>
                 </span>
               </div>
