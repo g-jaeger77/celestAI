@@ -221,7 +221,7 @@ const Onboarding: React.FC = () => {
         <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-cyan-400/10 blur-[100px] rounded-full"></div>
       </div>
 
-      <div className="relative z-10 w-full flex-1 flex flex-col p-8">
+      <div className="relative z-10 w-full flex-1 flex flex-col p-4 sm:p-8">
         <header className="flex flex-col items-center pt-8 mb-8">
           {/* Branding */}
           <div className="flex flex-row items-center mb-12 justify-center select-none">
