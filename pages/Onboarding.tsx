@@ -224,10 +224,10 @@ const Onboarding: React.FC = () => {
       <div className="relative z-10 w-full flex-1 flex flex-col p-8">
         <header className="flex flex-col items-center pt-8 mb-8">
           {/* Branding */}
-          <div className="flex flex-row items-center gap-6 mb-12 justify-center select-none">
+          <div className="flex flex-row items-center gap-3 mb-12 justify-center select-none">
             <div className="group flex items-center gap-4 cursor-pointer no-underline text-white focus:outline-none">
               <div className="relative flex-shrink-0 transition-transform duration-700 hover:rotate-180">
-                <CelestIcon size={96} />
+                <CelestIcon size={76} />
               </div>
 
               <div className="flex flex-col justify-center leading-none select-none">
