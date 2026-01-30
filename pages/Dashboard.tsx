@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Icon from '../components/Icon';
 import ShopPromoCard from '../components/ShopPromoCard';
@@ -11,6 +11,8 @@ import { calculateBioMetrics } from '../utils/calculateScores';
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const preloadedData = location.state?.preloadedData;
 
   // Retrieve user name for seeding the metrics
   const getUserName = () => {
@@ -21,7 +23,29 @@ const Dashboard: React.FC = () => {
     return "User";
   };
 
-  const scores = calculateBioMetrics(getUserName());
+  const localScores = calculateBioMetrics(getUserName());
+
+  // Merge Local + Backend Data
+  const scores = {
+    ...localScores,
+    ...(preloadedData ? {
+      mindScore: preloadedData.score_mental ?? localScores.mindScore,
+      bodyScore: preloadedData.score_physical ?? localScores.bodyScore,
+      soulScore: preloadedData.score_emotional ?? localScores.soulScore,
+
+      // Override Texts with AI Insights
+      neuralState: preloadedData.next_window_focus ?? localScores.neuralState,
+      neuralDesc: preloadedData.next_window_desc ?? localScores.neuralDesc,
+
+      batteryState: preloadedData.transit_title ?? localScores.batteryState,
+      batteryDesc: preloadedData.transit_desc ?? localScores.batteryDesc,
+
+      moodState: preloadedData.astral_alert_title ?? localScores.moodState,
+      moodDesc: preloadedData.astral_alert_desc ?? localScores.moodDesc,
+
+      dailyInsight: preloadedData.daily_quote ?? localScores.dailyInsight
+    } : {})
+  };
 
   const today = new Date();
   const dateformatted = today.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }).toUpperCase().replace('.', '');
