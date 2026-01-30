@@ -128,7 +128,7 @@ const Dashboard: React.FC = () => {
           {/* 1. MENTAL: Mente */}
           <div
             onClick={() => navigate('/mind')}
-            className="bg-[#1C1C1E] rounded-[22px] p-5 border border-white/5 flex flex-col h-[160px] active:scale-[0.98] transition-transform relative cursor-pointer hover:bg-white/5"
+            className="bg-[#1C1C1E] rounded-[22px] p-5 border border-white/5 flex flex-col h-[160px] active:scale-[0.98] transition-all duration-300 relative cursor-pointer group hover:-translate-y-1 hover:border-[#D6582C]/50 hover:shadow-[0_4px_20px_rgba(214,88,44,0.2)]"
           >
             <div className="flex justify-between items-start mb-auto">
               <div className="flex items-center gap-2">
@@ -145,7 +145,7 @@ const Dashboard: React.FC = () => {
           {/* 2. PHYSICAL: Corpo */}
           <div
             onClick={() => navigate('/physical')}
-            className="bg-[#1C1C1E] rounded-[22px] p-5 border border-white/5 flex flex-col h-[160px] active:scale-[0.98] transition-transform relative cursor-pointer hover:bg-white/5"
+            className="bg-[#1C1C1E] rounded-[22px] p-5 border border-white/5 flex flex-col h-[160px] active:scale-[0.98] transition-all duration-300 relative cursor-pointer group hover:-translate-y-1 hover:border-[#D6582C]/50 hover:shadow-[0_4px_20px_rgba(214,88,44,0.2)]"
           >
             <div className="flex justify-between items-start mb-auto">
               <div className="flex items-center gap-2">
@@ -168,7 +168,7 @@ const Dashboard: React.FC = () => {
           {/* 3. EMOTIONAL: Emoções */}
           <div
             onClick={() => navigate('/emotional')}
-            className="bg-[#1C1C1E] rounded-[22px] p-5 border border-white/5 flex flex-col h-[160px] active:scale-[0.98] transition-transform relative cursor-pointer hover:bg-white/5"
+            className="bg-[#1C1C1E] rounded-[22px] p-5 border border-white/5 flex flex-col h-[160px] active:scale-[0.98] transition-all duration-300 relative cursor-pointer group hover:-translate-y-1 hover:border-[#D6582C]/50 hover:shadow-[0_4px_20px_rgba(214,88,44,0.2)]"
           >
             <div className="flex justify-between items-start mb-auto">
               <div className="flex items-center gap-2">
@@ -185,7 +185,7 @@ const Dashboard: React.FC = () => {
           {/* 4. TACTICAL: Melhor Horário */}
           <div
             onClick={() => navigate('/action')}
-            className="bg-[#1C1C1E] rounded-[22px] p-5 border border-white/5 flex flex-col h-[160px] active:scale-[0.98] transition-transform relative cursor-pointer hover:bg-white/5"
+            className="bg-[#1C1C1E] rounded-[22px] p-5 border border-white/5 flex flex-col h-[160px] active:scale-[0.98] transition-all duration-300 relative cursor-pointer group hover:-translate-y-1 hover:border-[#D6582C]/50 hover:shadow-[0_4px_20px_rgba(214,88,44,0.2)]"
           >
             <div className="flex justify-between items-start mb-auto">
               <div className="flex items-center gap-2">
