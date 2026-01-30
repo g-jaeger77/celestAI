@@ -9,10 +9,16 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                display: ['Outfit', 'sans-serif'],
+                display: ['Space Grotesk', 'sans-serif'],
+                body: ['Noto Sans', 'sans-serif'],
                 inter: ['Inter', 'sans-serif'],
             },
             colors: {
+                primary: '#d6582e', // New primary copper
+                'background-light': '#f8f6f6',
+                'background-dark': '#201613',
+                'surface-dark': '#2a1e1a',
+                'text-muted': '#c3a297',
                 copper: {
                     light: '#FFCAA6',
                     DEFAULT: '#D6582C',
@@ -22,6 +28,11 @@ export default {
                     DEFAULT: '#050510',
                     card: '#0F1020',
                 }
+            },
+            backgroundImage: {
+                'cosmic-gradient': 'linear-gradient(180deg, rgba(32,22,19,1) 0%, rgba(45,30,25,1) 50%, rgba(32,22,19,1) 100%)',
+                'glow': 'radial-gradient(circle at center, rgba(214, 88, 46, 0.15) 0%, rgba(32, 22, 19, 0) 70%)',
+                'text-gradient-copper': 'linear-gradient(90deg, #FFFFFF 0%, #E8A87C 50%, #D6582E 100%)',
             },
             animation: {
                 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

@@ -43,255 +43,277 @@ const LandingPage: React.FC = () => {
     };
 
     return (
-        <div className="bg-dark text-white font-inter overflow-x-hidden">
-            {/* HERO SECTION */}
-            <header className="relative pt-32 pb-20 px-6 text-center bg-[radial-gradient(circle_at_center,_#1a1525_0%,_#050510_100%)]">
-                <div className="container mx-auto max-w-5xl">
-                    <span className="block text-copper font-bold tracking-[2px] uppercase mb-5 text-xl">
-                        Celest AI
-                    </span>
-                    <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight bg-gradient-to-r from-white to-[#a0a0b0] bg-clip-text text-transparent">
-                        Encontre clareza absoluta e direção para sua vida em menos de 2 minutos.
-                    </h1>
-                    <p className="text-[#a0a0b0] text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed">
-                        Sem misticismo confuso. A primeira IA que transforma seus dados astrológicos em um plano de ação lógico.
-                    </p>
+        <div className="font-body bg-background-dark text-white overflow-x-hidden min-h-screen selection:bg-primary selection:text-white">
 
-                    {/* MOCKUP PLACEHOLDER */}
-                    <div className="relative mx-auto w-full max-w-[500px] h-[300px] flex items-center justify-center bg-white/5 border border-copper/30 rounded-2xl backdrop-blur-md shadow-[0_0_30px_rgba(214,88,44,0.1)]">
-                        <div className="text-center">
-                            <CelestIcon size={80} className="mx-auto mb-4 animate-pulse-slow" />
-                            <span className="text-copper text-sm font-semibold tracking-wider">MOCKUP VISUALIZATION</span>
-                        </div>
+            {/* HEADER */}
+            <header className="fixed top-0 z-50 w-full bg-[#201613]/80 backdrop-blur-md border-b border-[#3a2822]">
+                <div className="flex items-center justify-between px-4 py-3 max-w-2xl mx-auto">
+                    <div className="flex items-center gap-3">
+                        <span className="material-symbols-outlined text-primary text-3xl">flare</span>
+                        <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-primary bg-clip-text text-transparent">Celest AI</span>
                     </div>
                 </div>
             </header>
 
-            {/* SOCIAL PROOF */}
-            <section className="py-20 bg-dark-card/50">
-                <div className="container mx-auto px-6 max-w-5xl text-center">
-                    <h2 className="text-copper font-bold text-2xl mb-8">Mais de 1.500 usuários já encontraram sua direção</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                        {[
-                            "Impressionante como acertou meu momento de carreira.",
-                            "Finalmente algo sem aquela conversa de 'ascendente' que ninguém entende.",
-                            "A ferramenta de decisão me salvou essa semana.",
-                            "Bonito, rápido e direto ao ponto."
-                        ].map((proof, i) => (
-                            <div key={i} className="bg-dark-card p-5 rounded-xl border border-[#333] text-sm italic text-[#a0a0b0]">
-                                "{proof}"
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            <main className="relative flex flex-col w-full min-h-screen bg-background-dark group/design-root">
 
-            {/* PAIN POINTS */}
-            <section className="py-20">
-                <div className="container mx-auto px-6 max-w-4xl">
-                    <h2 className="text-3xl font-bold text-center mb-10">A cada dia que passa você sente que está navegando sem bússola...</h2>
-                    <div className="flex flex-col gap-4 max-w-2xl mx-auto">
-                        {[
-                            "Por que sinto que estou sempre andando em círculos?",
-                            "Tenho medo de tomar a decisão errada de novo.",
-                            "Horóscopos de jornal nunca acertam nada comigo.",
-                            "Preciso de respostas claras, não de charadas místicas."
-                        ].map((pain, i) => (
-                            <div key={i} className="bg-dark-card p-6 border-l-4 border-copper rounded-r-lg text-[#a0a0b0] italic">
-                                "{pain}"
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+                {/* HERO */}
+                <section className="relative pt-24 pb-12 px-4 overflow-hidden">
+                    <div className="absolute inset-0 bg-glow pointer-events-none"></div>
+                    <div className="max-w-xl mx-auto flex flex-col items-center text-center gap-6 relative z-10">
+                        <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight font-display">
+                            Encontre <span className="text-primary">clareza absoluta</span> em meio ao caos.
+                        </h1>
+                        <p className="text-text-muted text-lg leading-relaxed max-w-sm">
+                            A sua bússola diária alimentada por inteligência artificial para navegar a vida com propósito e eliminar a dúvida.
+                        </p>
 
-            {/* SOLUTION */}
-            <section className="py-20 bg-dark-card/30">
-                <div className="container mx-auto px-6 max-w-4xl text-center">
-                    <p className="text-copper font-bold tracking-widest mb-4">ENTENDA DE UMA VEZ POR TODAS</p>
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6">O problema não é você, é a falta de dados precisos</h2>
-                    <p className="text-[#a0a0b0] text-lg max-w-2xl mx-auto mb-8">
-                        A astrologia comum trata milhões de pessoas como iguais. Você é único. Misticismo sem dados é apenas adivinhação. O que você precisa é de <strong className="text-white">engenharia de dados aplicada à sua vida</strong>.
-                    </p>
-                    <h3 className="text-copper text-2xl font-bold">É por isso que você precisa do Celest AI.</h3>
-                </div>
-            </section>
-
-            {/* 4 STEPS */}
-            <section className="py-20">
-                <div className="container mx-auto px-6 max-w-5xl">
-                    <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">4 Passos para retomar o controle:</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {[
-                            { step: "01", title: "Input de Dados", desc: "Insira seus dados exatos de nascimento na nossa plataforma segura." },
-                            { step: "02", title: "Processamento", desc: "Nossa IA cruza milhões de pontos de dados celestes em segundos." },
-                            { step: "03", title: "Data Spark", desc: "Receba sua análise central (O Guia) com foco total em clareza." },
-                            { step: "04", title: "Ação", desc: "Visualize as melhores datas e caminhos para suas decisões." }
-                        ].map((item, i) => (
-                            <div key={i} className="bg-dark-card p-6 rounded-xl border-t-2 border-copper">
-                                <span className="block text-4xl text-copper font-bold mb-4">{item.step}</span>
-                                <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                                <p className="text-[#a0a0b0] text-sm">{item.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* DELIVERABLES */}
-            <section className="py-20 bg-dark-card/30">
-                <div className="container mx-auto px-6 max-w-3xl">
-                    <h2 className="text-3xl font-bold text-center mb-10">Tudo que você vai receber</h2>
-                    <ul className="flex flex-col gap-0 max-w-xl mx-auto border border-[#222] rounded-xl overflow-hidden bg-dark-card">
-                        {[
-                            "Acesso Anual ao App Celest AI",
-                            "O \"Nexus Zodiacal\" (Mapa Decodificado)",
-                            "Bússola de Decisões (12 Meses)",
-                            "Relatório de Talento Oculto",
-                            "Compatibilidade Sintética"
-                        ].map((item, i) => (
-                            <li key={i} className="p-5 border-b border-[#222] last:border-0 flex items-center gap-4 text-lg">
-                                <span className="text-green-500 font-bold text-xl">✓</span>
-                                {item}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </section>
-
-            {/* SEGMENTATION */}
-            <section className="py-20">
-                <div className="container mx-auto px-6 max-w-4xl text-center">
-                    <h2 className="text-3xl font-bold mb-10">O Celest AI é para você que...</h2>
-                    <div className="bg-dark-card p-8 rounded-xl text-left max-w-2xl mx-auto border border-white/5">
-                        <div className="flex flex-col gap-4 mb-6">
-                            <p className="flex gap-3 text-lg"><span className="text-copper">✓</span> Busca respostas lógicas, não crenças cegas.</p>
-                            <p className="flex gap-3 text-lg"><span className="text-copper">✓</span> Sente que tem potencial travado.</p>
-                            <p className="flex gap-3 text-lg"><span className="text-copper">✓</span> Gosta de tecnologia e ferramentas premium.</p>
-                            <p className="flex gap-3 text-lg"><span className="text-copper">✓</span> Precisa tomar uma decisão importante nos próximos dias.</p>
-                        </div>
-                        <div className="bg-copper/10 border border-copper rounded-lg p-4 text-center text-white text-sm">
-                            Se você marcou pelo menos 2, isso é para você.
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* PRICE ANCHOR */}
-            <section className="py-20 bg-dark-card/30">
-                <div className="container mx-auto px-6 max-w-3xl text-center">
-                    <h2 className="text-3xl font-bold mb-10">Recapitulando o valor:</h2>
-                    <div className="bg-dark-card rounded-xl overflow-hidden max-w-xl mx-auto border border-white/5">
-                        {[
-                            { label: "Nexus Zodiacal", price: "R$ 97,00" },
-                            { label: "Bússola de Decisões", price: "R$ 67,00" },
-                            { label: "Relatório Carreira", price: "R$ 47,00" },
-                            { label: "Compatibilidade", price: "R$ 47,00" }
-                        ].map((row, i) => (
-                            <div key={i} className="flex justify-between p-5 border-b border-[#222]">
-                                <span>{row.label}</span>
-                                <span className="text-copper font-bold">{row.price}</span>
-                            </div>
-                        ))}
-                        <div className="flex justify-between p-6 bg-[#151525] text-xl font-bold">
-                            <span>VALOR TOTAL</span>
-                            <span>R$ 258,00</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* OFFER CTA */}
-            <section id="offer" className="py-20">
-                <div className="container mx-auto px-6 max-w-4xl">
-                    <div className="bg-gradient-to-b from-[#151525] to-[#0a0a0a] border-2 border-copper rounded-2xl p-10 max-w-2xl mx-auto text-center shadow-[0_0_50px_rgba(214,88,44,0.15)] relative overflow-hidden">
-                        <h3 className="text-copper font-bold tracking-widest mb-4 uppercase">Oferta de Lançamento</h3>
-                        <p className="text-[#a0a0b0] mb-2">Você não vai pagar R$ 258,00.</p>
-                        <p className="text-white text-lg mb-6">Acesso completo (Plano Anual) hoje por apenas:</p>
-
-                        <div className="text-5xl md:text-6xl font-extrabold text-white leading-none mb-4">
-                            12x de R$ 9,74
-                        </div>
-                        <p className="text-[#a0a0b0] mb-8">ou R$ 97,00 à vista</p>
-
-                        <button
-                            onClick={handleStart}
-                            disabled={loading}
-                            className="w-full max-w-md mx-auto bg-gradient-to-r from-copper to-copper-light text-[#3e1405] font-extrabold text-lg py-5 px-8 rounded-lg shadow-[0_4px_20px_rgba(214,88,44,0.4)] hover:scale-105 hover:brightness-110 transition-all disabled:opacity-70 disabled:cursor-wait flex items-center justify-center gap-2"
-                        >
-                            {loading ? (
-                                <>
-                                    <Icon name="sync" className="animate-spin" />
-                                    PROCESSANDO...
-                                </>
-                            ) : (
-                                "QUERO MINHA CLAREZA AGORA"
-                            )}
-                        </button>
-
-                        <div className="flex flex-wrap justify-center gap-4 mt-8 text-xs text-[#666] uppercase tracking-wide">
-                            <span className="flex items-center gap-1">🔒 Compra Segura</span>
-                            <span className="flex items-center gap-1">🛡️ Garantia de 7 Dias</span>
-                            <span className="flex items-center gap-1">⚡ Acesso Imediato</span>
-                        </div>
-
-                        <div className="mt-8 pt-6 border-t border-[#333] text-left text-sm text-[#888]">
-                            <strong className="block text-white mb-2">Como funciona:</strong>
-                            <ol className="list-decimal list-inside space-y-1">
-                                <li>Você finaliza a compra segura.</li>
-                                <li>Recebe login e senha no seu e-mail.</li>
-                                <li>Acessa o dashboard e gera seu Data Spark na hora.</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* FOUNDER NOTE */}
-            <section className="py-20 bg-dark-card/30">
-                <div className="container mx-auto px-6 max-w-3xl text-center">
-                    <h2 className="text-2xl font-bold mb-6">Desenvolvido por GM Produtos Digitais</h2>
-                    <p className="text-[#a0a0b0] leading-relaxed italic max-w-2xl mx-auto mb-8">
-                        "Criamos o Celest AI porque cansamos da astrologia superficial. Unimos engenheiros de dados e estudiosos dos astros para criar a primeira ferramenta que trata seu destino com a seriedade de um cálculo matemático. Sem 'achismos', apenas padrões."
-                    </p>
-                    <button onClick={handleStart} className="text-copper underline hover:text-copper-light transition-colors">
-                        Quero aproveitar a oferta
-                    </button>
-                </div>
-            </section>
-
-            {/* FAQ */}
-            <section className="py-20">
-                <div className="container mx-auto px-6 max-w-2xl">
-                    <h2 className="text-3xl font-bold text-center mb-10">Perguntas Frequentes</h2>
-                    <div className="flex flex-col gap-4">
-                        {[
-                            { q: "Preciso saber minha hora de nascimento?", a: "Sim, para precisão matemática, a hora é ideal. Mas temos um modo aproximado se você não souber." },
-                            { q: "É um horóscopo automático?", a: "Não. É uma análise de dados profundos sobre sua personalidade e ciclos, muito mais complexo que um horóscopo de jornal." },
-                            { q: "Funciona no celular?", a: "Perfeitamente. O Celest AI é um Web App otimizado para qualquer tela." }
-                        ].map((item, i) => (
-                            <div key={i} className="bg-dark-card rounded-lg p-5 cursor-pointer hover:bg-white/5 transition-colors" onClick={() => toggleFaq(i)}>
-                                <div className="font-bold flex justify-between items-center mb-2">
-                                    <span>▼ {item.q}</span>
+                        <div className="relative w-full max-w-[280px] aspect-[9/19] mt-8 mx-auto rounded-[2.5rem] border-8 border-[#3a2822] bg-[#1a1210] overflow-hidden shadow-2xl shadow-primary/10">
+                            <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCEtmBkSoSnkbzB21hGtAmhQg78Hg2WrXpKfLdBlFDfQGueT4Sm6FWpk33WubstMk59P6uFhhn5k4WaI5VaqMA7xPFVWMzCdwpxNNfPOj6xluGfHAPDrfQlgGmXksueRFYN0RnVUkuwuLWh9TZd1iJudlC9ipbe5rmU-Pgnk1g9c0E8atuDFZRVcQApEErK2QDMKTvyEZ1piEWe2iDH5xnl8Z25YbrALOsEsvE04WYwhOi_fR2vT6-MA28kmaAFlhT_JnAffZPIPiU')" }}>
+                                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#201613]/50 to-[#201613]"></div>
+                                <div className="absolute bottom-8 left-4 right-4">
+                                    <div className="bg-[#2a1e1a]/90 backdrop-blur-sm p-4 rounded-xl border border-primary/20">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="material-symbols-outlined text-primary text-sm">auto_awesome</span>
+                                            <span className="text-xs font-bold text-white uppercase">Insight do Dia</span>
+                                        </div>
+                                        <p className="text-sm text-white/90 font-medium">"Sua intuição está alinhada. O momento de agir é agora, não espere a perfeição."</p>
+                                    </div>
                                 </div>
-                                {openFaq === i && (
-                                    <p className="text-[#a0a0b0] text-sm mt-2 animate-fade-in">
-                                        {item.a}
-                                    </p>
-                                )}
                             </div>
-                        ))}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            {/* FOOTER */}
-            <footer className="py-10 bg-black text-center text-xs text-[#666]">
-                <div className="container mx-auto px-6">
-                    <p className="mb-2">GM Produtos Digitais © Todos os direitos reservados.</p>
-                    <p>Termos de Uso | Política de Privacidade</p>
-                </div>
-            </footer>
+                {/* SOCIAL PROOF */}
+                <section className="bg-[#2a1e1a] py-8 border-y border-[#3a2822]">
+                    <div className="max-w-2xl mx-auto px-4">
+                        <div className="flex flex-col items-center text-center gap-4">
+                            <div className="flex items-center gap-1">
+                                <div className="flex text-primary">
+                                    {[1, 2, 3, 4, 5].map((_, i) => (
+                                        <span key={i} className="material-symbols-outlined fill-current text-xl">star</span>
+                                    ))}
+                                </div>
+                                <span className="text-white font-bold text-lg ml-2">4.9/5</span>
+                            </div>
+                            <p className="text-text-muted text-sm">Junte-se a <span className="text-white font-bold">milhares de exploradores</span> que já encontraram seu caminho.</p>
+                            <div className="flex -space-x-3 overflow-hidden p-1">
+                                <img alt="User avatar 1" className="inline-block h-8 w-8 rounded-full ring-2 ring-[#2a1e1a] object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfAX5N5VbbSdgvXYQWIcahCIx5OS7npWAPqvKK-pNCXKXWIuhbUA7W4y5EMgsavkkSv5uu9SSTaABt4EYnzCUdOfpWIDO78nueWrumMwtvw5bZ3Grzel_KcU_1PC1iLd4jYLUDhZkPtRBIr9eMgGaj9NTom6ZnzlMT0j8MtkUz42M-2GyCK72uHf5BTkWtO2vBkSZl3CX9V96hhbF9pUtGW3T39uk5NKzfl7Gzt75SUDouqCkcY2m7ufDAH_xE1x0NM65MCpS1i1g" />
+                                <img alt="User avatar 2" className="inline-block h-8 w-8 rounded-full ring-2 ring-[#2a1e1a] object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACr3jcCFgVe-2tscflPBajyMv4WnD5sXXnzS1VoEFEEl8wgxUEy6pgH8KhbI222-cURmwc0AIU_RYSJkqNdQHmqML2MzdQ4piRTVuPZsXkP5XoJvJW8k2H8O1ItHEK4KKKFZDYLLuGH3DMAMn_O5UFP49MgZUD3Ev_PdcLR8Y73Q5cjPDqyQcrlkepc0cv2DxwQu7QKPXw_MRkZWvVHW0Wqu6jUV36mcIq_Wwzl7Mzw7DuldsokLM-8Fe4FXcC_il_yPOdm1296r4" />
+                                <img alt="User avatar 3" className="inline-block h-8 w-8 rounded-full ring-2 ring-[#2a1e1a] object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPCNZyD5hhS2ErM6SceQg6i_B1yPw0YxEES10Vg4KEI8FBE2jfOHU7FbbbGBMZIDORCQMZZKacfux02foSEvIBQu11ijA3wBSjX2U19WzEQCxtejXtJD1E8XVPzixy_xQ7aGxvlIUDZkDyfaUgQ0jEaGlMqPQIh8guI_upFWhMkSiCW7X6pw3jpC6nmEBk8NYoUROHl95aBee8gDTueDWvBAH755i-tvj0547G5w55vZWq-p9Xz9S80dLPrxog5dBu_lir4pP15nk" />
+                                <img alt="User avatar 4" className="inline-block h-8 w-8 rounded-full ring-2 ring-[#2a1e1a] object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBbjcNgG6TMNBhHpHs52pZCvkKg6JQwmAacEApjTdzkT-A7CNQ50eWsNiCk6dgdr-8aofVbzYxzZYI04tH4NH3rcZVeL1Dryb4CVE31gW0ZE-jOd5vl_ccdUStRlZQFp_lUSDzPTTZSKMsH1TazK1TREEYyn3fhZdexFJuqTPcTOLSfsnttAfwSoZAetEexpoB4uDN0LIi_GsC6ssE8zxBkPBFwM5RJdC2N7UV0GW96cZk544bJTXf_um8ybYmEtvVKX8K9bu34M8" />
+                                <div className="flex items-center justify-center h-8 w-8 rounded-full ring-2 ring-[#2a1e1a] bg-primary text-white text-[10px] font-bold">
+                                    +10k
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* PAIN POINTS */}
+                <section className="py-16 px-4 bg-background-dark">
+                    <div className="max-w-2xl mx-auto flex flex-col gap-10">
+                        <div className="text-center space-y-3">
+                            <h2 className="text-2xl md:text-3xl font-bold text-white font-display">Você se sente <span className="text-primary">perdido no espaço?</span></h2>
+                            <p className="text-text-muted">Identifique os bloqueios gravitacionais que te impedem de evoluir.</p>
+                        </div>
+                        <div className="grid gap-4">
+                            {[
+                                { icon: "psychology_alt", title: "Ansiedade Constante", desc: "Sente que o futuro é uma ameaça incerta e não consegue desligar a mente." },
+                                { icon: "question_mark", title: "Dúvida Paralisante", desc: "Nunca sabe qual caminho escolher e acaba não escolhendo nada." },
+                                { icon: "traffic", title: "Estagnação Profissional", desc: "Sente que está andando em círculos enquanto todos avançam." },
+                                { icon: "noise_control_off", title: "Ruído Mental", desc: "Não consegue ouvir sua própria intuição no meio do barulho externo." }
+                            ].map((item, i) => (
+                                <div key={i} className="flex gap-4 rounded-lg bg-[#2a1e1a] p-5 border-l-4 border-primary shadow-lg">
+                                    <div className="mt-1">
+                                        <span className="material-symbols-outlined text-primary text-3xl">{item.icon}</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white text-lg font-bold">{item.title}</h3>
+                                        <p className="text-text-muted text-sm mt-1">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* HOW IT WORKS */}
+                <section className="py-16 px-4 bg-[#1a1210] relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                    <div className="max-w-2xl mx-auto">
+                        <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 font-display">Como o <span className="bg-gradient-to-r from-white to-primary bg-clip-text text-transparent font-extrabold">Celest AI</span> funciona</h2>
+                        <div className="relative pl-8 border-l border-[#3a2822] space-y-12">
+                            {[
+                                { step: "01", title: "Mapeamento Profundo", desc: "Nossa IA analisa seu perfil astral e comportamental para criar uma base sólida de entendimento." },
+                                { step: "02", title: "Análise de Bloqueios", desc: "Identificamos padrões ocultos que estão sabotando seu progresso silenciosamente." },
+                                { step: "03", title: "Revelação de Caminhos", desc: "Receba insights diários precisos sobre oportunidades e momentos de cautela." },
+                                { step: "04", title: "Ação Alinhada", desc: "Tome decisões com confiança absoluta, sabendo que está em sintonia com seu propósito." }
+                            ].map((item, i) => (
+                                <div key={i} className="relative">
+                                    <span className="absolute -left-[41px] flex items-center justify-center w-8 h-8 rounded-full bg-[#2a1e1a] border border-primary text-primary font-bold text-sm ring-4 ring-[#1a1210]">{item.step}</span>
+                                    <div className="bg-[#2a1e1a] p-6 rounded-xl border border-[#3a2822]">
+                                        <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+                                        <p className="text-text-muted text-sm">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* SEGMENTATION */}
+                <section className="py-16 px-4 bg-background-dark">
+                    <div className="max-w-2xl mx-auto">
+                        <h2 className="text-2xl font-bold text-center mb-8 font-display">O Celest AI é para você que...</h2>
+                        <div className="grid gap-4 md:grid-cols-2">
+                            {[
+                                "Busca autoconhecimento profundo sem misticismo vazio.",
+                                "Quer uma ferramenta prática para tomada de decisão.",
+                                "Sente que tem um potencial travado esperando para explodir.",
+                                "Valoriza a união entre tecnologia de ponta e sabedoria ancestral."
+                            ].map((text, i) => (
+                                <div key={i} className="flex items-start gap-3 p-4 bg-[#2a1e1a]/50 rounded-lg">
+                                    <span className="material-symbols-outlined text-primary shrink-0">check_circle</span>
+                                    <p className="text-sm text-gray-300">{text}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* DELIVERABLES */}
+                <section className="py-12 px-4 bg-gradient-to-b from-[#201613] to-[#1a1210]">
+                    <div className="max-w-2xl mx-auto bg-[#2a1e1a] rounded-2xl p-6 md:p-8 border border-[#3a2822] shadow-xl">
+                        <h3 className="text-xl font-bold text-white mb-6 text-center uppercase tracking-widest text-primary">O que você recebe</h3>
+                        <ul className="space-y-4">
+                            {[
+                                { icon: "smart_toy", text: "Celest AI Chat que te entende" },
+                                { icon: "explore", text: "Bússola Diária de Decisão" },
+                                { icon: "menu_book", text: "Roda da Vida Transformadora" },
+                                { icon: "join_inner", text: "Sinergia de Mapas com outras pessoas" }
+                            ].map((item, i) => (
+                                <li key={i} className="flex items-center justify-between border-b border-white/10 pb-3 last:border-0 last:pb-0">
+                                    <div className="flex items-center gap-3">
+                                        <span className="bg-primary/20 p-2 rounded-lg text-primary material-symbols-outlined">{item.icon}</span>
+                                        <span className="text-white font-medium">{item.text}</span>
+                                    </div>
+                                    <span className="material-symbols-outlined text-green-500">check</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </section>
+
+                {/* OFFER CTA */}
+                <section className="py-16 px-4 bg-background-dark relative" id="offer">
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none"></div>
+                    <div className="max-w-xl mx-auto text-center">
+                        <div className="mb-8 bg-[#2a1e1a]/40 rounded-lg p-4 inline-block backdrop-blur-sm border border-white/5">
+                            <div className="flex items-center gap-8 justify-center text-sm md:text-base">
+                                <div className="flex flex-col">
+                                    <span className="text-text-muted line-through decoration-primary decoration-2">R$ 258,00</span>
+                                    <span className="text-xs text-text-muted/60">Preço normal</span>
+                                </div>
+                                <div className="h-8 w-px bg-white/10"></div>
+                                <div className="flex flex-col">
+                                    <span className="text-white font-bold text-lg">Oferta Hoje</span>
+                                    <span className="text-xs text-primary font-bold">ECONOMIZE 55%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-[#2a1e1a] rounded-2xl border border-primary p-1 shadow-[0_0_40px_rgba(214,88,46,0.15)] overflow-hidden">
+                            <div className="bg-[#201613] rounded-xl p-6 md:p-10 relative overflow-hidden">
+                                <h3 className="text-2xl font-bold text-white mb-2 pt-2">Plano Vitalício</h3>
+                                <p className="text-text-muted mb-6">Acesso total e eterno ao Celest AI.</p>
+                                <div className="flex items-end justify-center gap-1 mb-8">
+                                    <span className="text-text-muted text-lg mb-1">12x de</span>
+                                    <span className="text-5xl font-bold text-white tracking-tighter">9,74</span>
+                                    <span className="text-text-muted text-sm mb-1">/mês</span>
+                                </div>
+                                <p className="text-sm text-text-muted -mt-6 mb-8">ou R$ 97,00 à vista</p>
+
+                                <button
+                                    onClick={handleStart}
+                                    disabled={loading}
+                                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] flex items-center justify-center gap-2 mb-4 disabled:opacity-70 disabled:cursor-wait"
+                                >
+                                    {loading ? (
+                                        <>
+                                            <span className="material-symbols-outlined animate-spin">sync</span>
+                                            PROCESSANDO...
+                                        </>
+                                    ) : (
+                                        <>
+                                            QUERO MINHA CLAREZA AGORA
+                                            <span className="material-symbols-outlined">arrow_forward</span>
+                                        </>
+                                    )}
+                                </button>
+
+                                <div className="flex items-center justify-center gap-4 text-xs text-text-muted/80">
+                                    <div className="flex items-center gap-1">
+                                        <span className="material-symbols-outlined text-sm">lock</span>
+                                        Pagamento Seguro
+                                    </div>
+                                </div>
+                                <div className="mt-4 text-xs text-text-muted/60 flex items-center justify-center gap-1.5 opacity-80 border-t border-white/5 pt-3">
+                                    <span className="material-symbols-outlined text-sm text-primary">verified_user</span>
+                                    <span className="italic">Sua evolução é nossa prioridade absoluta, com transparência total.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* FAQ */}
+                <section className="py-16 px-4 bg-[#1a1210]">
+                    <div className="max-w-2xl mx-auto">
+                        <h2 className="text-2xl font-bold text-center mb-10 font-display">Perguntas Frequentes</h2>
+                        <div className="space-y-4">
+                            {[
+                                { q: "Como a IA sabe sobre mim?", a: "Utilizamos dados do seu mapa astral combinados com suas respostas de comportamento para criar um perfil psicológico e energético único." },
+                                { q: "Funciona para céticos?", a: "Sim. O Celest AI é fundamentado em arquétipos junguianos e análise de dados. A linguagem é mística, mas a base é lógica." },
+                                { q: "Tenho atualização?", a: "Absolutamente. Se em 7 dias você não sentir mais clareza, devolvemos 100% do seu investimento." },
+                                { q: "O acesso é imediato?", a: "Sim! Assim que o pagamento for confirmado, você receberá um email com seu acesso exclusivo ao portal Celest." }
+                            ].map((item, i) => (
+                                <div key={i} className="group bg-[#2a1e1a] rounded-lg border border-[#3a2822] overflow-hidden">
+                                    <div
+                                        className="flex items-center justify-between p-4 cursor-pointer"
+                                        onClick={() => toggleFaq(i)}
+                                    >
+                                        <span className="font-medium text-white">{item.q}</span>
+                                        <span className={`material-symbols-outlined text-primary transition-transform ${openFaq === i ? 'rotate-180' : ''}`}>expand_more</span>
+                                    </div>
+                                    {openFaq === i && (
+                                        <div className="px-4 pb-4 text-text-muted text-sm animate-fade-in">
+                                            {item.a}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* FOOTER */}
+                <footer className="bg-[#0f0a09] py-12 px-4 border-t border-[#3a2822]">
+                    <div className="max-w-2xl mx-auto flex flex-col items-center gap-6">
+                        <div className="flex items-center gap-2 text-white/80">
+                            <span className="material-symbols-outlined text-primary">flare</span>
+                            <span className="font-bold text-lg bg-gradient-to-r from-white to-primary bg-clip-text text-transparent">Celest AI</span>
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-6 text-sm text-text-muted">
+                            <a className="hover:text-primary transition-colors" href="#">Termos de Uso</a>
+                            <a className="hover:text-primary transition-colors" href="#">Privacidade</a>
+                        </div>
+                        <div className="text-xs text-text-muted/60 text-center">
+                            <p>© 2026 GM Produtos Digitais. Todos os direitos reservados.</p>
+                        </div>
+                    </div>
+                </footer>
+            </main>
         </div>
     );
 };
