@@ -2,12 +2,38 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CelestIcon } from '../components/CelestIcon';
 import Icon from '../components/Icon';
+import { supabase } from '../lib/supabase';
 
 const LandingPage: React.FC = () => {
     const navigate = useNavigate();
 
-    const handleStart = () => {
-        navigate('/onboarding');
+    const [loading, setLoading] = useState(false);
+
+    const handleStart = async () => {
+        try {
+            setLoading(true);
+            const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+                body: {
+                    priceLookupKey: 'annual_plan', // Ensure this matches your Stripe Dashboard
+                    successUrl: `${window.location.origin}/onboarding`
+                }
+            });
+
+            if (error) throw error;
+            if (data?.url) {
+                window.location.href = data.url;
+            } else {
+                console.error('No checkout URL returned');
+                // Fallback for demo if function not deployed
+                navigate('/onboarding');
+            }
+        } catch (error) {
+            console.error('Error creating checkout session:', error);
+            // Fallback for demo
+            navigate('/onboarding');
+        } finally {
+            setLoading(false);
+        }
     };
 
     // FAQ State
@@ -190,9 +216,17 @@ const LandingPage: React.FC = () => {
 
                         <button
                             onClick={handleStart}
-                            className="w-full max-w-md mx-auto bg-gradient-to-r from-copper to-copper-light text-[#3e1405] font-extrabold text-lg py-5 px-8 rounded-lg shadow-[0_4px_20px_rgba(214,88,44,0.4)] hover:scale-105 hover:brightness-110 transition-all"
+                            disabled={loading}
+                            className="w-full max-w-md mx-auto bg-gradient-to-r from-copper to-copper-light text-[#3e1405] font-extrabold text-lg py-5 px-8 rounded-lg shadow-[0_4px_20px_rgba(214,88,44,0.4)] hover:scale-105 hover:brightness-110 transition-all disabled:opacity-70 disabled:cursor-wait flex items-center justify-center gap-2"
                         >
-                            QUERO MINHA CLAREZA AGORA
+                            {loading ? (
+                                <>
+                                    <Icon name="sync" className="animate-spin" />
+                                    PROCESSANDO...
+                                </>
+                            ) : (
+                                "QUERO MINHA CLAREZA AGORA"
+                            )}
                         </button>
 
                         <div className="flex flex-wrap justify-center gap-4 mt-8 text-xs text-[#666] uppercase tracking-wide">
