@@ -34,15 +34,21 @@ export default {
                 'glow': 'radial-gradient(circle at center, rgba(214, 88, 46, 0.15) 0%, rgba(32, 22, 19, 0) 70%)',
                 'text-gradient-brand': 'linear-gradient(90deg, #FFFFFF 0%, #E8A87C 50%, #D6582E 100%)',
                 'text-gradient-copper': 'linear-gradient(90deg, #FFFFFF 0%, #E8A87C 50%, #D6582E 100%)', // Legacy support
+                'stardust': "url('https://www.transparenttextures.com/patterns/stardust.png')",
             },
             animation: {
                 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'float': 'float 6s ease-in-out infinite',
                 'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
                 'music-bar-1': 'musicBar 1s ease-in-out infinite',
                 'music-bar-2': 'musicBar 1s ease-in-out infinite 0.2s',
                 'music-bar-3': 'musicBar 1s ease-in-out infinite 0.4s',
             },
             keyframes: {
+                float: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' },
+                },
                 fadeInUp: {
                     '0%': { opacity: '0', transform: 'translateY(10px)' },
                     '100%': { opacity: '1', transform: 'translateY(0)' },
