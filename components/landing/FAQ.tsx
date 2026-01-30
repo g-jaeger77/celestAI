@@ -24,7 +24,7 @@ const FAQ: React.FC = () => {
         },
         {
             question: "Tenho atualização?",
-            answer: "Absolutamente. Se em 7 dias você não sentir mais clareza, devolvemos 100% do seu investimento."
+            answer: "Sim. Caso haja atualizações na plataforma durante o seu período de acesso, elas serão incluídas automaticamente no seu plano."
         },
         {
             question: "O acesso é imediato?",
