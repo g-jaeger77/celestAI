@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CelestIcon } from '../components/CelestIcon';
-import Icon from '../components/Icon';
 import { supabase } from '../lib/supabase';
 
-const LandingPage: React.FC = () => {
+const LandingPage = () => {
     const navigate = useNavigate();
-
     const [loading, setLoading] = useState(false);
 
     const handleStart = async () => {
@@ -14,7 +11,7 @@ const LandingPage: React.FC = () => {
             setLoading(true);
             const { data, error } = await supabase.functions.invoke('create-checkout-session', {
                 body: {
-                    priceLookupKey: 'annual_plan', // Ensure this matches your Stripe Dashboard
+                    priceLookupKey: 'annual_plan',
                     successUrl: `${window.location.origin}/onboarding`
                 }
             });
@@ -24,44 +21,32 @@ const LandingPage: React.FC = () => {
                 window.location.href = data.url;
             } else {
                 console.error('No checkout URL returned');
-                // Fallback for demo if function not deployed
                 navigate('/onboarding');
             }
         } catch (error) {
             console.error('Error creating checkout session:', error);
-            // Fallback for demo
             navigate('/onboarding');
         } finally {
             setLoading(false);
         }
     };
 
-    // FAQ State
-    const [openFaq, setOpenFaq] = useState<number | null>(null);
-    const toggleFaq = (index: number) => {
-        setOpenFaq(openFaq === index ? null : index);
-    };
-
     return (
-        <div className="font-body bg-background-dark text-white overflow-x-hidden min-h-screen selection:bg-primary selection:text-white">
-
-            {/* HEADER */}
+        <div className="overflow-x-hidden antialiased selection:bg-primary selection:text-white font-display bg-background-dark min-h-screen text-white">
             <header className="fixed top-0 z-50 w-full bg-[#201613]/80 backdrop-blur-md border-b border-[#3a2822]">
                 <div className="flex items-center justify-between px-4 py-3 max-w-2xl mx-auto">
                     <div className="flex items-center gap-3">
                         <span className="material-symbols-outlined text-primary text-3xl">flare</span>
-                        <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-primary bg-clip-text text-transparent">Celest AI</span>
+                        <span className="text-xl font-bold tracking-tight text-gradient-copper">Celest AI</span>
                     </div>
                 </div>
             </header>
 
             <main className="relative flex flex-col w-full min-h-screen bg-background-dark group/design-root">
-
-                {/* HERO */}
                 <section className="relative pt-24 pb-12 px-4 overflow-hidden">
                     <div className="absolute inset-0 bg-glow pointer-events-none"></div>
                     <div className="max-w-xl mx-auto flex flex-col items-center text-center gap-6 relative z-10">
-                        <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight font-display">
+                        <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight">
                             Encontre <span className="text-primary">clareza absoluta</span> em meio ao caos.
                         </h1>
                         <p className="text-text-muted text-lg leading-relaxed max-w-sm">
@@ -69,7 +54,10 @@ const LandingPage: React.FC = () => {
                         </p>
 
                         <div className="relative w-full max-w-[280px] aspect-[9/19] mt-8 mx-auto rounded-[2.5rem] border-8 border-[#3a2822] bg-[#1a1210] overflow-hidden shadow-2xl shadow-primary/10">
-                            <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCEtmBkSoSnkbzB21hGtAmhQg78Hg2WrXpKfLdBlFDfQGueT4Sm6FWpk33WubstMk59P6uFhhn5k4WaI5VaqMA7xPFVWMzCdwpxNNfPOj6xluGfHAPDrfQlgGmXksueRFYN0RnVUkuwuLWh9TZd1iJudlC9ipbe5rmU-Pgnk1g9c0E8atuDFZRVcQApEErK2QDMKTvyEZ1piEWe2iDH5xnl8Z25YbrALOsEsvE04WYwhOi_fR2vT6-MA28kmaAFlhT_JnAffZPIPiU')" }}>
+                            <div
+                                className="absolute inset-0 bg-cover bg-center"
+                                style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCEtmBkSoSnkbzB21hGtAmhQg78Hg2WrXpKfLdBlFDfQGueT4Sm6FWpk33WubstMk59P6uFhhn5k4WaI5VaqMA7xPFVWMzCdwpxNNfPOj6xluGfHAPDrfQlgGmXksueRFYN0RnVUkuwuLWh9TZd1iJudlC9ipbe5rmU-Pgnk1g9c0E8atuDFZRVcQApEErK2QDMKTvyEZ1piEWe2iDH5xnl8Z25YbrALOsEsvE04WYwhOi_fR2vT6-MA28kmaAFlhT_JnAffZPIPiU')" }}
+                            >
                                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#201613]/50 to-[#201613]"></div>
                                 <div className="absolute bottom-8 left-4 right-4">
                                     <div className="bg-[#2a1e1a]/90 backdrop-blur-sm p-4 rounded-xl border border-primary/20">
@@ -85,15 +73,16 @@ const LandingPage: React.FC = () => {
                     </div>
                 </section>
 
-                {/* SOCIAL PROOF */}
                 <section className="bg-[#2a1e1a] py-8 border-y border-[#3a2822]">
                     <div className="max-w-2xl mx-auto px-4">
                         <div className="flex flex-col items-center text-center gap-4">
                             <div className="flex items-center gap-1">
                                 <div className="flex text-primary">
-                                    {[1, 2, 3, 4, 5].map((_, i) => (
-                                        <span key={i} className="material-symbols-outlined fill-current text-xl">star</span>
-                                    ))}
+                                    <span className="material-symbols-outlined fill-current text-xl">star</span>
+                                    <span className="material-symbols-outlined fill-current text-xl">star</span>
+                                    <span className="material-symbols-outlined fill-current text-xl">star</span>
+                                    <span className="material-symbols-outlined fill-current text-xl">star</span>
+                                    <span className="material-symbols-outlined fill-current text-xl">star</span>
                                 </div>
                                 <span className="text-white font-bold text-lg ml-2">4.9/5</span>
                             </div>
@@ -111,102 +100,150 @@ const LandingPage: React.FC = () => {
                     </div>
                 </section>
 
-                {/* PAIN POINTS */}
                 <section className="py-16 px-4 bg-background-dark">
                     <div className="max-w-2xl mx-auto flex flex-col gap-10">
                         <div className="text-center space-y-3">
-                            <h2 className="text-2xl md:text-3xl font-bold text-white font-display">Você se sente <span className="text-primary">perdido no espaço?</span></h2>
+                            <h2 className="text-2xl md:text-3xl font-bold text-white">Você se sente <span className="text-primary">perdido no espaço?</span></h2>
                             <p className="text-text-muted">Identifique os bloqueios gravitacionais que te impedem de evoluir.</p>
                         </div>
                         <div className="grid gap-4">
-                            {[
-                                { icon: "psychology_alt", title: "Ansiedade Constante", desc: "Sente que o futuro é uma ameaça incerta e não consegue desligar a mente." },
-                                { icon: "question_mark", title: "Dúvida Paralisante", desc: "Nunca sabe qual caminho escolher e acaba não escolhendo nada." },
-                                { icon: "traffic", title: "Estagnação Profissional", desc: "Sente que está andando em círculos enquanto todos avançam." },
-                                { icon: "noise_control_off", title: "Ruído Mental", desc: "Não consegue ouvir sua própria intuição no meio do barulho externo." }
-                            ].map((item, i) => (
-                                <div key={i} className="flex gap-4 rounded-lg bg-[#2a1e1a] p-5 border-l-4 border-primary shadow-lg">
-                                    <div className="mt-1">
-                                        <span className="material-symbols-outlined text-primary text-3xl">{item.icon}</span>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-white text-lg font-bold">{item.title}</h3>
-                                        <p className="text-text-muted text-sm mt-1">{item.desc}</p>
-                                    </div>
+                            <div className="flex gap-4 rounded-lg bg-[#2a1e1a] p-5 border-l-4 border-primary shadow-lg">
+                                <div className="mt-1">
+                                    <span className="material-symbols-outlined text-primary text-3xl">psychology_alt</span>
                                 </div>
-                            ))}
+                                <div>
+                                    <h3 className="text-white text-lg font-bold">Ansiedade Constante</h3>
+                                    <p className="text-text-muted text-sm mt-1">Sente que o futuro é uma ameaça incerta e não consegue desligar a mente.</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4 rounded-lg bg-[#2a1e1a] p-5 border-l-4 border-primary shadow-lg">
+                                <div className="mt-1">
+                                    <span className="material-symbols-outlined text-primary text-3xl">question_mark</span>
+                                </div>
+                                <div>
+                                    <h3 className="text-white text-lg font-bold">Dúvida Paralisante</h3>
+                                    <p className="text-text-muted text-sm mt-1">Nunca sabe qual caminho escolher e acaba não escolhendo nada.</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4 rounded-lg bg-[#2a1e1a] p-5 border-l-4 border-primary shadow-lg">
+                                <div className="mt-1">
+                                    <span className="material-symbols-outlined text-primary text-3xl">traffic</span>
+                                </div>
+                                <div>
+                                    <h3 className="text-white text-lg font-bold">Estagnação Profissional</h3>
+                                    <p className="text-text-muted text-sm mt-1">Sente que está andando em círculos enquanto todos avançam.</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4 rounded-lg bg-[#2a1e1a] p-5 border-l-4 border-primary shadow-lg">
+                                <div className="mt-1">
+                                    <span className="material-symbols-outlined text-primary text-3xl">noise_control_off</span>
+                                </div>
+                                <div>
+                                    <h3 className="text-white text-lg font-bold">Ruído Mental</h3>
+                                    <p className="text-text-muted text-sm mt-1">Não consegue ouvir sua própria intuição no meio do barulho externo.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* HOW IT WORKS */}
                 <section className="py-16 px-4 bg-[#1a1210] relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                     <div className="max-w-2xl mx-auto">
-                        <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 font-display">Como o <span className="bg-gradient-to-r from-white to-primary bg-clip-text text-transparent font-extrabold">Celest AI</span> funciona</h2>
+                        <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">Como o <span className="text-gradient-copper font-extrabold">Celest AI</span> funciona</h2>
                         <div className="relative pl-8 border-l border-[#3a2822] space-y-12">
-                            {[
-                                { step: "01", title: "Mapeamento Profundo", desc: "Nossa IA analisa seu perfil astral e comportamental para criar uma base sólida de entendimento." },
-                                { step: "02", title: "Análise de Bloqueios", desc: "Identificamos padrões ocultos que estão sabotando seu progresso silenciosamente." },
-                                { step: "03", title: "Revelação de Caminhos", desc: "Receba insights diários precisos sobre oportunidades e momentos de cautela." },
-                                { step: "04", title: "Ação Alinhada", desc: "Tome decisões com confiança absoluta, sabendo que está em sintonia com seu propósito." }
-                            ].map((item, i) => (
-                                <div key={i} className="relative">
-                                    <span className="absolute -left-[41px] flex items-center justify-center w-8 h-8 rounded-full bg-[#2a1e1a] border border-primary text-primary font-bold text-sm ring-4 ring-[#1a1210]">{item.step}</span>
-                                    <div className="bg-[#2a1e1a] p-6 rounded-xl border border-[#3a2822]">
-                                        <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                                        <p className="text-text-muted text-sm">{item.desc}</p>
-                                    </div>
+                            <div className="relative">
+                                <span className="absolute -left-[41px] flex items-center justify-center w-8 h-8 rounded-full bg-[#2a1e1a] border border-primary text-primary font-bold text-sm ring-4 ring-[#1a1210]">01</span>
+                                <div className="bg-[#2a1e1a] p-6 rounded-xl border border-[#3a2822]">
+                                    <h3 className="text-xl font-bold text-white mb-2">Mapeamento Profundo</h3>
+                                    <p className="text-text-muted text-sm">Nossa IA analisa seu perfil astral e comportamental para criar uma base sólida de entendimento.</p>
                                 </div>
-                            ))}
+                            </div>
+                            <div className="relative">
+                                <span className="absolute -left-[41px] flex items-center justify-center w-8 h-8 rounded-full bg-[#2a1e1a] border border-primary text-primary font-bold text-sm ring-4 ring-[#1a1210]">02</span>
+                                <div className="bg-[#2a1e1a] p-6 rounded-xl border border-[#3a2822]">
+                                    <h3 className="text-xl font-bold text-white mb-2">Análise de Bloqueios</h3>
+                                    <p className="text-text-muted text-sm">Identificamos padrões ocultos que estão sabotando seu progresso silenciosamente.</p>
+                                </div>
+                            </div>
+                            <div className="relative">
+                                <span className="absolute -left-[41px] flex items-center justify-center w-8 h-8 rounded-full bg-[#2a1e1a] border border-primary text-primary font-bold text-sm ring-4 ring-[#1a1210]">03</span>
+                                <div className="bg-[#2a1e1a] p-6 rounded-xl border border-[#3a2822]">
+                                    <h3 className="text-xl font-bold text-white mb-2">Revelação de Caminhos</h3>
+                                    <p className="text-text-muted text-sm">Receba insights diários precisos sobre oportunidades e momentos de cautela.</p>
+                                </div>
+                            </div>
+                            <div className="relative">
+                                <span className="absolute -left-[41px] flex items-center justify-center w-8 h-8 rounded-full bg-[#2a1e1a] border border-primary text-primary font-bold text-sm ring-4 ring-[#1a1210]">04</span>
+                                <div className="bg-[#2a1e1a] p-6 rounded-xl border border-[#3a2822]">
+                                    <h3 className="text-xl font-bold text-white mb-2">Ação Alinhada</h3>
+                                    <p className="text-text-muted text-sm">Tome decisões com confiança absoluta, sabendo que está em sintonia com seu propósito.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* SEGMENTATION */}
                 <section className="py-16 px-4 bg-background-dark">
                     <div className="max-w-2xl mx-auto">
-                        <h2 className="text-2xl font-bold text-center mb-8 font-display">O Celest AI é para você que...</h2>
+                        <h2 className="text-2xl font-bold text-center mb-8">O Celest AI é para você que...</h2>
                         <div className="grid gap-4 md:grid-cols-2">
-                            {[
-                                "Busca autoconhecimento profundo sem misticismo vazio.",
-                                "Quer uma ferramenta prática para tomada de decisão.",
-                                "Sente que tem um potencial travado esperando para explodir.",
-                                "Valoriza a união entre tecnologia de ponta e sabedoria ancestral."
-                            ].map((text, i) => (
-                                <div key={i} className="flex items-start gap-3 p-4 bg-[#2a1e1a]/50 rounded-lg">
-                                    <span className="material-symbols-outlined text-primary shrink-0">check_circle</span>
-                                    <p className="text-sm text-gray-300">{text}</p>
-                                </div>
-                            ))}
+                            <div className="flex items-start gap-3 p-4 bg-[#2a1e1a]/50 rounded-lg">
+                                <span className="material-symbols-outlined text-primary shrink-0">check_circle</span>
+                                <p className="text-sm text-gray-300">Busca autoconhecimento profundo sem misticismo vazio.</p>
+                            </div>
+                            <div className="flex items-start gap-3 p-4 bg-[#2a1e1a]/50 rounded-lg">
+                                <span className="material-symbols-outlined text-primary shrink-0">check_circle</span>
+                                <p className="text-sm text-gray-300">Quer uma ferramenta prática para tomada de decisão.</p>
+                            </div>
+                            <div className="flex items-start gap-3 p-4 bg-[#2a1e1a]/50 rounded-lg">
+                                <span className="material-symbols-outlined text-primary shrink-0">check_circle</span>
+                                <p className="text-sm text-gray-300">Sente que tem um potencial travado esperando para explodir.</p>
+                            </div>
+                            <div className="flex items-start gap-3 p-4 bg-[#2a1e1a]/50 rounded-lg">
+                                <span className="material-symbols-outlined text-primary shrink-0">check_circle</span>
+                                <p className="text-sm text-gray-300">Valoriza a união entre tecnologia de ponta e sabedoria ancestral.</p>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* DELIVERABLES */}
                 <section className="py-12 px-4 bg-gradient-to-b from-[#201613] to-[#1a1210]">
                     <div className="max-w-2xl mx-auto bg-[#2a1e1a] rounded-2xl p-6 md:p-8 border border-[#3a2822] shadow-xl">
                         <h3 className="text-xl font-bold text-white mb-6 text-center uppercase tracking-widest text-primary">O que você recebe</h3>
                         <ul className="space-y-4">
-                            {[
-                                { icon: "smart_toy", text: "Celest AI Chat que te entende" },
-                                { icon: "explore", text: "Bússola Diária de Decisão" },
-                                { icon: "menu_book", text: "Roda da Vida Transformadora" },
-                                { icon: "join_inner", text: "Sinergia de Mapas com outras pessoas" }
-                            ].map((item, i) => (
-                                <li key={i} className="flex items-center justify-between border-b border-white/10 pb-3 last:border-0 last:pb-0">
-                                    <div className="flex items-center gap-3">
-                                        <span className="bg-primary/20 p-2 rounded-lg text-primary material-symbols-outlined">{item.icon}</span>
-                                        <span className="text-white font-medium">{item.text}</span>
-                                    </div>
-                                    <span className="material-symbols-outlined text-green-500">check</span>
-                                </li>
-                            ))}
+                            <li className="flex items-center justify-between border-b border-white/10 pb-3">
+                                <div className="flex items-center gap-3">
+                                    <span className="bg-primary/20 p-2 rounded-lg text-primary material-symbols-outlined">smart_toy</span>
+                                    <span className="text-white font-medium">Celest AI Chat que te entende</span>
+                                </div>
+                                <span className="material-symbols-outlined text-green-500">check</span>
+                            </li>
+                            <li className="flex items-center justify-between border-b border-white/10 pb-3">
+                                <div className="flex items-center gap-3">
+                                    <span className="bg-primary/20 p-2 rounded-lg text-primary material-symbols-outlined">explore</span>
+                                    <span className="text-white font-medium">Bússola Diária de Decisão</span>
+                                </div>
+                                <span className="material-symbols-outlined text-green-500">check</span>
+                            </li>
+                            <li className="flex items-center justify-between border-b border-white/10 pb-3">
+                                <div className="flex items-center gap-3">
+                                    <span className="bg-primary/20 p-2 rounded-lg text-primary material-symbols-outlined">menu_book</span>
+                                    <span className="text-white font-medium">Roda da Vida Transformadora</span>
+                                </div>
+                                <span className="material-symbols-outlined text-green-500">check</span>
+                            </li>
+                            <li className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <span className="bg-primary/20 p-2 rounded-lg text-primary material-symbols-outlined">join_inner</span>
+                                    <span className="text-white font-medium">Sinergia de Mapas com outras pessoas</span>
+                                </div>
+                                <span className="material-symbols-outlined text-green-500">check</span>
+                            </li>
                         </ul>
                     </div>
                 </section>
 
-                {/* OFFER CTA */}
                 <section className="py-16 px-4 bg-background-dark relative" id="offer">
                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 pointer-events-none"></div>
                     <div className="max-w-xl mx-auto text-center">
@@ -233,17 +270,13 @@ const LandingPage: React.FC = () => {
                                     <span className="text-text-muted text-sm mb-1">/mês</span>
                                 </div>
                                 <p className="text-sm text-text-muted -mt-6 mb-8">ou R$ 97,00 à vista</p>
-
                                 <button
                                     onClick={handleStart}
                                     disabled={loading}
-                                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] flex items-center justify-center gap-2 mb-4 disabled:opacity-70 disabled:cursor-wait"
+                                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] flex items-center justify-center gap-2 mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {loading ? (
-                                        <>
-                                            <span className="material-symbols-outlined animate-spin">sync</span>
-                                            PROCESSANDO...
-                                        </>
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                                     ) : (
                                         <>
                                             QUERO MINHA CLAREZA AGORA
@@ -251,7 +284,6 @@ const LandingPage: React.FC = () => {
                                         </>
                                     )}
                                 </button>
-
                                 <div className="flex items-center justify-center gap-4 text-xs text-text-muted/80">
                                     <div className="flex items-center gap-1">
                                         <span className="material-symbols-outlined text-sm">lock</span>
@@ -267,42 +299,55 @@ const LandingPage: React.FC = () => {
                     </div>
                 </section>
 
-                {/* FAQ */}
                 <section className="py-16 px-4 bg-[#1a1210]">
                     <div className="max-w-2xl mx-auto">
-                        <h2 className="text-2xl font-bold text-center mb-10 font-display">Perguntas Frequentes</h2>
+                        <h2 className="text-2xl font-bold text-center mb-10">Perguntas Frequentes</h2>
                         <div className="space-y-4">
-                            {[
-                                { q: "Como a IA sabe sobre mim?", a: "Utilizamos dados do seu mapa astral combinados com suas respostas de comportamento para criar um perfil psicológico e energético único." },
-                                { q: "Funciona para céticos?", a: "Sim. O Celest AI é fundamentado em arquétipos junguianos e análise de dados. A linguagem é mística, mas a base é lógica." },
-                                { q: "Tenho atualização?", a: "Absolutamente. Se em 7 dias você não sentir mais clareza, devolvemos 100% do seu investimento." },
-                                { q: "O acesso é imediato?", a: "Sim! Assim que o pagamento for confirmado, você receberá um email com seu acesso exclusivo ao portal Celest." }
-                            ].map((item, i) => (
-                                <div key={i} className="group bg-[#2a1e1a] rounded-lg border border-[#3a2822] overflow-hidden">
-                                    <div
-                                        className="flex items-center justify-between p-4 cursor-pointer"
-                                        onClick={() => toggleFaq(i)}
-                                    >
-                                        <span className="font-medium text-white">{item.q}</span>
-                                        <span className={`material-symbols-outlined text-primary transition-transform ${openFaq === i ? 'rotate-180' : ''}`}>expand_more</span>
-                                    </div>
-                                    {openFaq === i && (
-                                        <div className="px-4 pb-4 text-text-muted text-sm animate-fade-in">
-                                            {item.a}
-                                        </div>
-                                    )}
+                            <details className="group bg-[#2a1e1a] rounded-lg border border-[#3a2822] overflow-hidden">
+                                <summary className="flex items-center justify-between p-4 cursor-pointer list-none">
+                                    <span className="font-medium text-white">Como a IA sabe sobre mim?</span>
+                                    <span className="material-symbols-outlined text-primary transition-transform group-open:rotate-180">expand_more</span>
+                                </summary>
+                                <div className="px-4 pb-4 text-text-muted text-sm">
+                                    Utilizamos dados do seu mapa astral combinados com suas respostas de comportamento para criar um perfil psicológico e energético único.
                                 </div>
-                            ))}
+                            </details>
+                            <details className="group bg-[#2a1e1a] rounded-lg border border-[#3a2822] overflow-hidden">
+                                <summary className="flex items-center justify-between p-4 cursor-pointer list-none">
+                                    <span className="font-medium text-white">Funciona para céticos?</span>
+                                    <span className="material-symbols-outlined text-primary transition-transform group-open:rotate-180">expand_more</span>
+                                </summary>
+                                <div className="px-4 pb-4 text-text-muted text-sm">
+                                    Sim. O Celest AI é fundamentado em arquétipos junguianos e análise de dados. A linguagem é mística, mas a base é lógica.
+                                </div>
+                            </details>
+                            <details className="group bg-[#2a1e1a] rounded-lg border border-[#3a2822] overflow-hidden">
+                                <summary className="flex items-center justify-between p-4 cursor-pointer list-none">
+                                    <span className="font-medium text-white">Tenho atualização?</span>
+                                    <span className="material-symbols-outlined text-primary transition-transform group-open:rotate-180">expand_more</span>
+                                </summary>
+                                <div className="px-4 pb-4 text-text-muted text-sm">
+                                    Absolutamente. Se em 7 dias você não sentir mais clareza, devolvemos 100% do seu investimento.
+                                </div>
+                            </details>
+                            <details className="group bg-[#2a1e1a] rounded-lg border border-[#3a2822] overflow-hidden">
+                                <summary className="flex items-center justify-between p-4 cursor-pointer list-none">
+                                    <span className="font-medium text-white">O acesso é imediato?</span>
+                                    <span className="material-symbols-outlined text-primary transition-transform group-open:rotate-180">expand_more</span>
+                                </summary>
+                                <div className="px-4 pb-4 text-text-muted text-sm">
+                                    Sim! Assim que o pagamento for confirmado, você receberá um email com seu acesso exclusivo ao portal Celest.
+                                </div>
+                            </details>
                         </div>
                     </div>
                 </section>
 
-                {/* FOOTER */}
                 <footer className="bg-[#0f0a09] py-12 px-4 border-t border-[#3a2822]">
                     <div className="max-w-2xl mx-auto flex flex-col items-center gap-6">
                         <div className="flex items-center gap-2 text-white/80">
                             <span className="material-symbols-outlined text-primary">flare</span>
-                            <span className="font-bold text-lg bg-gradient-to-r from-white to-primary bg-clip-text text-transparent">Celest AI</span>
+                            <span className="font-bold text-lg text-gradient-copper">Celest AI</span>
                         </div>
                         <div className="flex flex-wrap justify-center gap-6 text-sm text-text-muted">
                             <a className="hover:text-primary transition-colors" href="#">Termos de Uso</a>
