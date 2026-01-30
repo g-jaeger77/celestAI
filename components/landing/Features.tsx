@@ -12,7 +12,7 @@ const FeatureItem: React.FC<{ icon: string; text: string; isLast?: boolean }> = 
 
 const Features: React.FC = () => {
     return (
-        <section className="py-12 px-4 bg-gradient-to-b from-[#201613] to-[#1a1210]">
+        <section className="py-12 px-4 bg-gradient-to-b from-background-dark to-[#1a1210]">
             <div className="max-w-2xl mx-auto bg-[#2a1e1a] rounded-2xl p-6 md:p-8 border border-[#3a2822] shadow-xl">
                 <h3 className="text-xl font-bold text-white mb-6 text-center uppercase tracking-widest text-primary">O que você recebe</h3>
                 <ul className="space-y-4">

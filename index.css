@@ -10,7 +10,7 @@
   -moz-osx-font-smoothing: grayscale;
   color-scheme: dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #000000;
+  background-color: #201613;
 }
 
 body {
@@ -18,7 +18,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   overflow-x: hidden;
-  background-color: #000000;
+  background-color: #201613;
 }
 
 /* Custom Scrollbar */
@@ -96,21 +96,47 @@ body {
 
 /* Gyroscope Animations */
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.animate-spin-3s { animation: spin 3s linear infinite; }
-.animate-spin-4s { animation: spin 4s linear infinite; }
-.animate-spin-5s { animation: spin 5s linear infinite; }
-.animate-spin-15s { animation: spin 15s linear infinite; }
+.animate-spin-3s {
+  animation: spin 3s linear infinite;
+}
 
-.animate-spin-reverse-4s { animation: spin 4s linear infinite reverse; }
+.animate-spin-4s {
+  animation: spin 4s linear infinite;
+}
+
+.animate-spin-5s {
+  animation: spin 5s linear infinite;
+}
+
+.animate-spin-15s {
+  animation: spin 15s linear infinite;
+}
+
+.animate-spin-reverse-4s {
+  animation: spin 4s linear infinite reverse;
+}
 
 /* Precession (Orbit Rotation) */
-.animate-precession-12s { animation: spin 12s linear infinite; }
-.animate-precession-15s-rev { animation: spin 15s linear infinite reverse; }
-.animate-precession-18s { animation: spin 18s linear infinite; }
-.animate-precession-20s { animation: spin 20s linear infinite; }
+.animate-precession-12s {
+  animation: spin 12s linear infinite;
+}
+
+.animate-precession-15s-rev {
+  animation: spin 15s linear infinite reverse;
+}
+
+.animate-precession-18s {
+  animation: spin 18s linear infinite;
+}
+
+.animate-precession-20s {
+  animation: spin 20s linear infinite;
+}
 
 @keyframes pulse-gold {
 
@@ -141,4 +167,11 @@ body {
   background: linear-gradient(135deg, #fff 0%, #999 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-brand {
+  background: linear-gradient(90deg, #ffffff 0%, #d6582e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

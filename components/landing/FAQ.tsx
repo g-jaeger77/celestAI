@@ -1,7 +1,7 @@
 import React from 'react';
 
 const FAQItem: React.FC<{ question: string; answer: string }> = ({ question, answer }) => (
-    <details className="group bg-[#2a1e1a] rounded-lg border border-[#3a2822] overflow-hidden">
+    <details className="group bg-surface-dark rounded-lg border border-[#3a2822] overflow-hidden">
         <summary className="flex items-center justify-between p-4 cursor-pointer list-none select-none">
             <span className="font-medium text-white text-left pr-4">{question}</span>
             <span className="material-symbols-outlined text-primary transition-transform duration-300 group-open:rotate-180">expand_more</span>

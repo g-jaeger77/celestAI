@@ -16,7 +16,7 @@ export default {
             colors: {
                 primary: '#d6582e', // Stitch Copper
                 'background-light': '#f8f6f6',
-                'background-dark': '#201613', // Stitch Dark Brown
+                'background-dark': '#201613', // Stitch Dark Brown (Fixed)
                 'surface-dark': '#2a1e1a', // Stitch Surface
                 'text-muted': '#c3a297',
                 copper: {
@@ -25,14 +25,14 @@ export default {
                     dark: '#803015',
                 },
                 dark: {
-                    DEFAULT: '#050510',
-                    card: '#0F1020',
+                    DEFAULT: '#201613', // Updated to match background-dark
+                    card: '#2a1e1a', // Updated to match surface-dark
                 }
             },
             backgroundImage: {
                 'cosmic-gradient': 'linear-gradient(180deg, rgba(32,22,19,1) 0%, rgba(45,30,25,1) 50%, rgba(32,22,19,1) 100%)',
                 'glow': 'radial-gradient(circle at center, rgba(214, 88, 46, 0.15) 0%, rgba(32, 22, 19, 0) 70%)',
-                'text-gradient-brand': 'linear-gradient(90deg, #FFFFFF 0%, #E8A87C 50%, #D6582E 100%)',
+                'text-gradient-brand': 'linear-gradient(90deg, #FFFFFF 0%, #D6582E 100%)', // Fixed: White to Copper
                 'text-gradient-copper': 'linear-gradient(90deg, #FFFFFF 0%, #E8A87C 50%, #D6582E 100%)', // Legacy support
                 'stardust': "url('https://www.transparenttextures.com/patterns/stardust.png')",
             },

@@ -3,7 +3,7 @@ import { IMAGES } from './constants';
 
 const SocialProof: React.FC = () => {
     return (
-        <section className="bg-[#2a1e1a] py-8 border-y border-[#3a2822]">
+        <section className="bg-surface-dark py-8 border-y border-[#3a2822]">
             <div className="max-w-2xl mx-auto px-4">
                 <div className="flex flex-col items-center text-center gap-4">
 
