@@ -40,7 +40,7 @@ const Sidebar: React.FC = () => {
             {/* Logo Area */}
             <div className="p-8 flex items-center gap-3">
                 <CelestIcon size={40} className="w-10 h-10 opacity-90 drop-shadow-[0_0_12px_rgba(214,88,44,0.4)]" />
-                <h1 className="font-display font-bold text-xl text-white tracking-wider uppercase">Celest AI</h1>
+                <h1 className="font-display font-bold text-xl text-white tracking-wider uppercase">Celest <span className="bg-gradient-to-br from-[#FFD6BC] via-[#D6582C] to-[#803015] bg-clip-text text-transparent">AI</span></h1>
             </div>
 
             {/* Navigation */}
