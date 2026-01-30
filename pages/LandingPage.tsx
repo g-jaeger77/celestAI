@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon';
+import { CelestIcon } from '../components/CelestIcon';
 import { SEOHead } from '../components/SEOHead';
 
 const LandingPage: React.FC = () => {
@@ -39,26 +40,7 @@ const LandingPage: React.FC = () => {
             <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-[#010409]/80 backdrop-blur-md py-4 border-b border-white/5' : 'bg-transparent py-6'}`}>
                 <div className="container mx-auto px-6 flex justify-between items-center">
                     <div className="group flex items-center gap-3 cursor-pointer no-underline text-white focus:outline-none" onClick={handleStart}>
-                        <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
-                            <div className="absolute inset-0 rounded-full bg-[#D6582C] blur-[15px] opacity-30 group-hover:opacity-50 transition-opacity duration-500 ease-in-out"></div>
-                            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10 w-full h-full drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)]">
-                                <defs>
-                                    <linearGradient id="celest-copper-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="10%" stopColor="#FFCAA6" />
-                                        <stop offset="50%" stopColor="#D6582C" />
-                                        <stop offset="90%" stopColor="#803015" />
-                                    </linearGradient>
-                                </defs>
-                                <path
-                                    d="M 88 25 L 50 3 L 12 25 V 75 L 50 97 L 88 75"
-                                    stroke="url(#celest-copper-gradient)"
-                                    strokeWidth="10"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                />
-                                <path d="M 88 25 L 50 25 L 50 75 L 88 75" stroke="url(#celest-copper-gradient)" strokeWidth="4" opacity="0.4" />
-                            </svg>
-                        </div>
+                        <CelestIcon className="relative md:w-16 md:h-16 w-12 h-12 flex-shrink-0 transition-transform duration-500 group-hover:rotate-180" size={64} />
 
                         <div className="flex flex-col justify-center leading-none select-none">
                             <span className="font-sans text-2xl md:text-3xl font-bold tracking-tight relative top-[-1px]">

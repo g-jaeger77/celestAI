@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Icon from '../components/Icon';
+import { CelestIcon } from '../components/CelestIcon';
 import { useSpeechRecognition } from '../components/hooks/useSpeechRecognition';
 import { useTextToSpeech } from '../components/hooks/useTextToSpeech';
 
@@ -133,12 +134,8 @@ const Chat: React.FC = () => {
                 ">
                     <div className="flex items-center gap-4">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-cyan-500/20 blur-xl rounded-full"></div>
-                            <img
-                                src="/assets/Icone.png?v=2"
-                                alt="Celest"
-                                className="relative w-12 h-12 object-contain drop-shadow-[0_0_15px_rgba(0,255,255,0.5)]"
-                            />
+                            <div className="absolute inset-0 bg-[#D6582C]/20 blur-xl rounded-full"></div>
+                            <CelestIcon size={48} className="relative drop-shadow-[0_0_15px_rgba(0,255,255,0.2)]" />
                             {/* Online Dot on Avatar */}
                             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-black rounded-full shadow-[0_0_10px_rgba(74,222,128,0.8)]"></div>
                         </div>

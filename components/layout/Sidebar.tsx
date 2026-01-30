@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Icon from '../Icon';
+import { CelestIcon } from '../CelestIcon';
 
 const Sidebar: React.FC = () => {
     const navigate = useNavigate();
@@ -38,12 +39,7 @@ const Sidebar: React.FC = () => {
         <aside className="hidden md:flex flex-col w-64 h-screen bg-black/90 border-r border-white/10 fixed left-0 top-0 z-50 backdrop-blur-xl">
             {/* Logo Area */}
             <div className="p-8 flex items-center gap-3">
-                <img
-                    src="/assets/Icone.png?v=2"
-                    alt="Celest AI Logo"
-                    className="w-10 h-10 object-contain mix-blend-screen"
-                    style={{ mixBlendMode: 'screen' }}
-                />
+                <CelestIcon size={40} className="w-10 h-10 opacity-90 drop-shadow-[0_0_12px_rgba(214,88,44,0.4)]" />
                 <h1 className="font-display font-bold text-xl text-white tracking-wider uppercase">Celest AI</h1>
             </div>
 

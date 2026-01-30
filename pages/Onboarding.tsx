@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Icon from '../components/Icon';
+import { CelestIcon } from '../components/CelestIcon';
 
 const Onboarding: React.FC = () => {
   const navigate = useNavigate();
@@ -225,25 +226,8 @@ const Onboarding: React.FC = () => {
           {/* Branding */}
           <div className="flex flex-row items-center gap-6 mb-12 justify-center select-none">
             <div className="group flex items-center gap-4 cursor-pointer no-underline text-white focus:outline-none">
-              <div className="relative w-24 h-24 flex-shrink-0 transition-transform duration-500 hover:scale-105">
-                <div className="absolute inset-0 rounded-full bg-[#D6582C] blur-[25px] opacity-30 group-hover:opacity-50 transition-opacity duration-500 ease-in-out"></div>
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative z-10 w-full h-full drop-shadow-[0_4px_6px_rgba(0,0,0,0.3)]">
-                  <defs>
-                    <linearGradient id="celest-copper-gradient-onboarding" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="10%" stopColor="#FFCAA6" />
-                      <stop offset="50%" stopColor="#D6582C" />
-                      <stop offset="90%" stopColor="#803015" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 88 25 L 50 3 L 12 25 V 75 L 50 97 L 88 75"
-                    stroke="url(#celest-copper-gradient-onboarding)"
-                    strokeWidth="10"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path d="M 88 25 L 50 25 L 50 75 L 88 75" stroke="url(#celest-copper-gradient-onboarding)" strokeWidth="4" opacity="0.4" />
-                </svg>
+              <div className="relative flex-shrink-0 transition-transform duration-700 hover:rotate-180">
+                <CelestIcon size={96} />
               </div>
 
               <div className="flex flex-col justify-center leading-none select-none">
