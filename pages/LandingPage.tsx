@@ -38,12 +38,31 @@ const LandingPage: React.FC = () => {
             {/* Navigation */}
             <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-[#010409]/80 backdrop-blur-md py-4 border-b border-white/5' : 'bg-transparent py-6'}`}>
                 <div className="container mx-auto px-6 flex justify-between items-center">
-                    <div className="flex items-center gap-2 group cursor-pointer" onClick={handleStart}>
-                        <div className="relative w-8 h-8">
-                            <div className="absolute inset-0 bg-cyan-400 blur-sm rounded-full opacity-50 group-hover:opacity-80 transition-opacity"></div>
-                            <img src="/assets/logo_v3.png" alt="Celest AI" className="relative z-10 w-full h-full object-contain mix-blend-screen" />
+                    <div className="group flex items-center gap-3 cursor-pointer no-underline" onClick={handleStart}>
+                        <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
+                            <div className="absolute inset-0 bg-[#D6582C] blur-[20px] opacity-40 group-hover:opacity-60 transition duration-500 rounded-full"></div>
+                            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative w-full h-full drop-shadow-2xl">
+                                <defs>
+                                    <linearGradient id="copper_gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stopColor="#FFCAA6" />
+                                        <stop offset="40%" stopColor="#D6582C" />
+                                        <stop offset="100%" stopColor="#803015" />
+                                    </linearGradient>
+                                </defs>
+                                <path
+                                    d="M 85 25 L 50 5 L 10 28 V 72 L 50 95 L 85 75 V 58 L 68 68 L 50 78 L 28 65 V 35 L 50 22 L 68 32 V 25 L 85 25 Z"
+                                    fill="url(#copper_gradient)"
+                                    stroke="rgba(255,255,255,0.1)"
+                                    strokeWidth="1"
+                                />
+                            </svg>
                         </div>
-                        <span className="font-bold text-xl tracking-wider text-white group-hover:text-cyan-400 transition-colors">CELEST AI</span>
+
+                        <div className="flex flex-col justify-center">
+                            <span className="font-sans text-2xl md:text-3xl font-bold tracking-tight text-white leading-none">
+                                Celest<span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-[#D6582C] to-[#FFCAA6]">AI</span>
+                            </span>
+                        </div>
                     </div>
                     <button
                         onClick={handleStart}

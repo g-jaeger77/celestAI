@@ -225,16 +225,24 @@ const Onboarding: React.FC = () => {
           {/* Branding */}
           <div className="flex flex-row items-center gap-4 mb-12">
             <div className="relative group cursor-pointer flex items-center justify-center">
-              <div className="absolute w-[180%] h-[180%] rounded-full animate-pulse-gold -z-10"></div>
-              <img
-                src="/assets/logo_v3.png"
-                alt="Celest AI Logo"
-                className="w-24 h-24 object-contain relative z-10 drop-shadow-[0_0_25px_rgba(255,165,0,0.6)] transition-transform duration-500 hover:scale-110 mix-blend-screen"
-                style={{
-                  maskImage: 'radial-gradient(circle at center, black 40%, transparent 70%)',
-                  WebkitMaskImage: 'radial-gradient(circle at center, black 40%, transparent 70%)'
-                }}
-              />
+              <div className="absolute inset-0 bg-[#D6582C] blur-[25px] opacity-20 group-hover:opacity-40 transition duration-500 rounded-full"></div>
+              <div className="w-24 h-24 relative z-10 drop-shadow-2xl transition-transform duration-500 hover:scale-105">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                  <defs>
+                    <linearGradient id="copper_gradient_onboarding" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FFCAA6" />
+                      <stop offset="40%" stopColor="#D6582C" />
+                      <stop offset="100%" stopColor="#803015" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M 85 25 L 50 5 L 10 28 V 72 L 50 95 L 85 75 V 58 L 68 68 L 50 78 L 28 65 V 35 L 50 22 L 68 32 V 25 L 85 25 Z"
+                    fill="url(#copper_gradient_onboarding)"
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="1"
+                  />
+                </svg>
+              </div>
             </div>
             <div className="flex flex-col items-center">
               <h2 className="text-3xl font-bold tracking-[0.2em] text-white/90 uppercase whitespace-nowrap" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>
