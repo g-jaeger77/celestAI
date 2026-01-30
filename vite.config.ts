@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
-      VitePWA({
+      /* VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['assets/celest_icon.png'],
         manifest: {
@@ -43,7 +43,7 @@ export default defineConfig(({ mode }) => {
             }
           ]
         }
-      })
+      }) */
     ],
     define: {
       'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
