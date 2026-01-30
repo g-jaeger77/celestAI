@@ -223,13 +223,13 @@ const Onboarding: React.FC = () => {
       <div className="relative z-10 w-full flex-1 flex flex-col p-8">
         <header className="flex flex-col items-center pt-8 mb-8">
           {/* Branding */}
-          <div className="flex flex-row items-center gap-5 mb-12 justify-center select-none">
+          <div className="flex flex-row items-center gap-6 mb-12 justify-center select-none">
             <div className="group flex items-center gap-4 cursor-pointer no-underline">
-              <div className="relative w-20 h-20 flex-shrink-0 transition-transform duration-500 hover:scale-105">
-                <div className="absolute inset-0 bg-[#D6582C] blur-[30px] opacity-30 group-hover:opacity-50 transition duration-500 rounded-full"></div>
+              <div className="relative w-24 h-24 flex-shrink-0 transition-transform duration-500 hover:scale-105">
+                <div className="absolute inset-0 bg-[#D6582C] blur-[40px] opacity-30 group-hover:opacity-60 transition duration-500 rounded-full"></div>
                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative w-full h-full drop-shadow-2xl">
                   <defs>
-                    <linearGradient id="copper_gradient_onboarding_final" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <linearGradient id="copper_gradient_onboarding_v3" x1="0%" y1="0%" x2="100%" y2="100%">
                       <stop offset="0%" stopColor="#FFCAA6" />
                       <stop offset="40%" stopColor="#D6582C" />
                       <stop offset="100%" stopColor="#803015" />
@@ -237,7 +237,7 @@ const Onboarding: React.FC = () => {
                   </defs>
                   <path
                     d="M 85 25 L 50 5 L 10 28 V 72 L 50 95 L 85 75 V 58 L 68 68 L 50 78 L 28 65 V 35 L 50 22 L 68 32 V 25 L 85 25 Z"
-                    fill="url(#copper_gradient_onboarding_final)"
+                    fill="url(#copper_gradient_onboarding_v3)"
                     stroke="rgba(255,255,255,0.1)"
                     strokeWidth="1"
                   />
@@ -245,7 +245,7 @@ const Onboarding: React.FC = () => {
               </div>
 
               <div className="flex flex-col justify-center">
-                <span className="font-sans text-4xl font-bold tracking-tight text-white leading-none">
+                <span className="font-sans text-5xl font-bold tracking-tight text-white leading-none">
                   Celest<span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-[#D6582C] to-[#FFCAA6]">AI</span>
                 </span>
               </div>

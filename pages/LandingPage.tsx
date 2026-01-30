@@ -199,7 +199,7 @@ const LandingPage: React.FC = () => {
             <footer className="relative z-10 py-12 border-t border-white/5 bg-[#010409]">
                 <div className="container mx-auto px-6 text-center md:text-left flex flex-col md:flex-row justify-between items-center opacity-60">
                     <div className="mb-4 md:mb-0">
-                        <h3 className="font-bold text-lg mb-1">CELEST AI</h3>
+                        <h3 className="font-bold text-lg mb-1">CelestAI</h3>
                         <p className="text-xs text-slate-500">© 2026 Celest Technologies. Todos os direitos reservados.</p>
                     </div>
                     <div className="flex gap-6 text-sm text-slate-400">
