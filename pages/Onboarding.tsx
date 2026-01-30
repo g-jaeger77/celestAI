@@ -241,6 +241,12 @@ const Onboarding: React.FC = () => {
                     stroke="rgba(255,255,255,0.1)"
                     strokeWidth="1"
                   />
+                  <path
+                    d="M 50 35 L 63 42.5 L 63 57.5 L 50 65 L 37 57.5 L 37 42.5 Z"
+                    fill="url(#copper_gradient_onboarding_v3)"
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="1"
+                  />
                 </svg>
               </div>
 
