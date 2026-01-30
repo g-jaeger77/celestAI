@@ -170,24 +170,36 @@ const Onboarding: React.FC = () => {
         session_id: sessionId
       };
 
-      // Simulate processing delay for UX
-      await new Promise(r => setTimeout(r, 1500));
+      // REAL BACKEND CALL
+      const res = await fetch('http://localhost:8000/agent/onboarding', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
 
-      // OFFLINE MODE: Store locally and proceed without backend
-      // Backend API is not available on Vercel static hosting
-      const offlineUserId = `demo_${Date.now()}`;
+      if (!res.ok) {
+        throw new Error("Falha no cadastro (API)");
+      }
 
-      console.log("Offline Mode: User Created:", offlineUserId);
-      localStorage.setItem('celest_user_id', offlineUserId);
+      const data = await res.json();
+      const userId = data.user_id;
+
+      console.log("User Created:", userId);
+
+      // Save for session
+      localStorage.setItem('celest_user_id', userId);
       localStorage.setItem('user_birth_data', JSON.stringify(payload));
       sessionStorage.removeItem('onboarding_form');
 
-      // Navigate to loading then dashboard
-      navigate(`/loading?user_id=${offlineUserId}`);
+      // Navigate to loading
+      navigate(`/loading?user_id=${userId}`);
 
     } catch (e) {
       console.error(e);
-      alert("Falha ao processar. Tente novamente.");
+      // Fallback for demo or offline
+      alert("Erro ao conectar com o oráculo. Verifique sua conexão.");
     } finally {
       setLoading(false);
     }
