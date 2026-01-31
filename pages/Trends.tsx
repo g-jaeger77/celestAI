@@ -23,14 +23,8 @@ const Trends: React.FC = () => {
                 if (savedUser) {
                     user = JSON.parse(savedUser);
                 } else {
-                    // Demo Fallback (for testing without onboarding)
-                    console.warn("⚠️ No user data found. Using Demo Profile.");
-                    user = {
-                        birth_date: "1990-01-01",
-                        birth_time: "12:00",
-                        birth_city: "São Paulo",
-                        country: "BR"
-                    };
+                    // SECURITY: Removed Demo Fallback. Fail safely.
+                    throw new Error("Dados do usuário não encontrados. Realize o Onboarding.");
                 }
 
                 // Payload
