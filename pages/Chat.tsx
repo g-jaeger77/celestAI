@@ -98,12 +98,19 @@ const Chat: React.FC = () => {
         try {
             const userId = localStorage.getItem('celest_user_id') || 'demo';
 
+            // Sliding Window: Send last 6 messages as context
+            const recentHistory = messages.slice(-6).map(m => ({
+                role: m.sender === 'user' ? 'user' : 'assistant',
+                content: m.text
+            }));
+
             const response = await fetch('http://localhost:8000/agent/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     user_id: userId,
                     message: userText,
+                    history: recentHistory, // NEW: Context Window
                     context: {
                         location: locationState // { lat: ..., lon: ... } or null
                     }

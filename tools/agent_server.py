@@ -51,6 +51,7 @@ app.add_middleware(
 class ChatRequest(BaseModel):
     user_id: str
     message: str
+    history: Optional[List[Dict[str, str]]] = []
     context: Optional[Dict[str, Any]] = {}
 
 class Action(BaseModel):
@@ -579,12 +580,22 @@ async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks)
             memory_block = "\n".join([f"- {m}" for m in recalled_context])
             system_prompt += f"\n\nPAST CONVERSATION MEMORIES (USE THESE TO PERSONALIZE):\n{memory_block}\n"
 
+        # Construct Message History (Sliding Window: Max 6)
+        messages_payload = [{"role": "system", "content": system_prompt}]
+        
+        if request.history:
+            # Take only last 6 messages to prevent token explosion
+            recent_history = request.history[-6:] 
+            for msg in recent_history:
+                # Sanitize roles just in case
+                role = "user" if msg.get("sender") == "user" or msg.get("role") == "user" else "assistant"
+                messages_payload.append({"role": role, "content": msg.get("text", "") or msg.get("content", "")})
+
+        messages_payload.append({"role": "user", "content": request.message})
+
         completion = openai_client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": request.message}
-            ],
+            messages=messages_payload,
             temperature=0.7,
             max_tokens=400,
             response_format={"type": "json_object"}
