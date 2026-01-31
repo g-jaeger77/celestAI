@@ -1,30 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Icon from '../components/Icon';
 import { motion } from 'framer-motion';
+import ErrorState from '../components/ErrorState';
+import { agentApi, DetailResponse } from '../api/agent';
 
-import { calculateBioMetrics } from '../utils/calculateScores';
-
-// Calculate Mind Content based on Score
-const getMindContent = () => {
-    // 1. Get Score from Central Utility
-    // Retrieve user name same as Dashboard
-    let userName = "User";
-    try {
-        const saved = localStorage.getItem('user_birth_data');
-        if (saved) userName = JSON.parse(saved).full_name || "User";
-    } catch (e) { }
-
-    const scores = calculateBioMetrics(userName);
-    const score = scores.mindScore;
-
-    // 2. Derive dynamic content based on score ranges (to simulate astrological context)
-    // This logic enhances the raw number with specific "Mind" attributes
+// Map score to context (Fallback/Visual Logic)
+const getVisualContext = (score: number) => {
     let context = "Trânsito Neutro";
     let speed = "70%";
     let filter = "Médio";
     let memory = "75%";
-    let summary = scores.neuralDesc;
 
     if (score > 80) {
         context = "Mercúrio em Conjunção";
@@ -47,65 +33,78 @@ const getMindContent = () => {
         filter = "Ruído";
         memory = "40%";
     }
-
-    // 3. Extended Analysis Generation (5-7 lines)
-    let extendedSummary = "";
-    if (score > 80) {
-        extendedSummary = "Seu intelecto está operando em uma frequência vibracional elevadíssima, impulsionado por uma conjunção favorável de Mercúrio. A clareza mental é absoluta, permitindo a conexão de ideias complexas que normalmente estariam fragmentadas. É um momento de 'download cósmico', onde insights profundos surgem sem esforço consciente. Aproveite este estado de hiperfoco para resolver problemas estruturais ou aprender novos sistemas. Sua capacidade de comunicação está magnética, mas cuidado para não atropelar o tempo de compreensão dos outros. A mente está rápida, precisa e letalmente eficiente.";
-    } else if (score > 60) {
-        extendedSummary = "O fluxo mental segue um ritmo constante e produtivo, favorecido pelo movimento direto de Mercúrio. Você possui clareza suficiente para tomar decisões lógicas sem se perder em ruídos emocionais. A capacidade de articular pensamentos está acima da média, tornando este um excelente momento para negociações e planejamento de médio prazo. Embora não esteja em um pico de genialidade súbita, sua consistência intelectual é sua maior arma hoje. Organize, planeje e execute com a segurança de quem vê o caminho completo.";
-    } else if (score > 40) {
-        extendedSummary = "Sua mente navega por águas mais profundas e subjetivas hoje. A lógica pura pode parecer nebulosa, dando lugar a uma intuição mais abstrata e criativa. Pode haver dificuldade em focar em planilhas ou dados frios, pois seu processador interno está priorizando padrões emocionais. Não force a produtividade linear; em vez disso, permita-se divagar e explorar ideias sem compromisso. É um período de incubação, onde o silêncio vale mais que a fala e a observação supera a ação direta.";
-    } else {
-        extendedSummary = "Estamos atravessando uma zona de turbulência cognitiva. Mercúrio retrógrado ou aspectos tensos criam um ambiente propenso a mal-entendidos e falhas de comunicação. O processamento de novas informações está lento e exige o dobro de energia. Evite assinar contratos importantes ou iniciar projetos complexos agora. É um convite do cosmos para a revisão, a pausa e a reflexão interna. Não lute contra a névoa; use-a para descansar o intelecto e focar em atividades mecânicas ou artísticas que não exijam lógica binária.";
-    }
-
-    return {
-        score: score,
-        status: scores.neuralState,
-        context: context,
-        metrics: [
-            {
-                id: 'speed',
-                label: 'Velocidade',
-                value: speed,
-                desc: score > 60 ? 'Processamento Rápido. Facilidade para conectar ideias.' : 'Fluxo mais lento. Exige revisão.',
-                icon: 'speed',
-                color: 'text-cyan-400'
-            },
-            {
-                id: 'filter',
-                label: 'Filtro',
-                value: filter,
-                desc: score > 60 ? 'Alta Precisão. Foco no essencial.' : 'Distrações altas. Cuidado com ruídos.',
-                icon: 'filter_alt',
-                color: 'text-blue-400'
-            },
-            {
-                id: 'memory',
-                label: 'Memória',
-                value: memory,
-                desc: score > 60 ? 'Retenção Alta. Ótimo para estudos.' : 'Evite sobrecarga de informações hoje.',
-                icon: 'psychology',
-                color: 'text-indigo-400'
-            }
-        ],
-        summary: extendedSummary
-    };
+    return { context, speed, filter, memory };
 };
 
 export const MindDetail: React.FC = () => {
     const navigate = useNavigate();
-    const [data, setData] = useState<ReturnType<typeof getMindContent> | null>(null);
+    const location = useLocation();
+
+    // Allow pre-passing score from Dashboard for instant load (optimistic)
+    const initialScore = location.state?.score;
+
+    const [loading, setLoading] = useState(true);
+    const [data, setData] = useState<DetailResponse | null>(null);
+    const [error, setError] = useState(false);
+
+    const fetchDetail = async () => {
+        setLoading(true);
+        setError(false);
+        try {
+            // Determine User ID
+            let userId = "demo";
+            try {
+                const saved = localStorage.getItem('user_birth_data');
+                if (saved) userId = JSON.parse(saved).user_id || "demo";
+            } catch (e) { }
+
+            const response = await agentApi.getDetail('mental', userId);
+            setData(response);
+        } catch (error) {
+            console.error("Mind detail fetch error", error);
+            setError(true);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        // No fake delay, instant sync
-        setData(getMindContent());
+        fetchDetail();
     }, []);
+
+    // Combine Data
+    const displayScore = data?.score ?? initialScore ?? 0;
+    const visuals = getVisualContext(displayScore);
+
+    if (loading && !data && initialScore === undefined) {
+        return (
+            <div className="min-h-screen bg-black flex flex-col items-center justify-center space-y-4">
+                <div className="w-12 h-12 border-4 border-[#32ADE6]/30 border-t-[#32ADE6] rounded-full animate-spin"></div>
+                <p className="text-[#32ADE6] text-sm font-medium tracking-widest uppercase animate-pulse">Analisando Mercúrio...</p>
+            </div>
+        );
+    }
+
+    if (error && !data && initialScore === undefined) {
+        return (
+            <div className="min-h-screen bg-black flex flex-col pt-12">
+                <div className="px-6 pb-4 flex justify-between items-center">
+                    <button
+                        onClick={() => navigate('/dashboard')}
+                        className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center active:scale-95 transition-transform"
+                    >
+                        <Icon name="arrow_back" className="text-white/70" />
+                    </button>
+                    <h1 className="text-[21px] font-semibold tracking-tight text-cyan-400 text-center">Mente</h1>
+                    <div className="w-10"></div>
+                </div>
+                <ErrorState onRetry={fetchDetail} />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-[#000000] text-white font-sans selection:bg-cyan-500/30">
-            {/* Header */}
             {/* Header */}
             <div className="fixed top-0 left-0 right-0 z-50 bg-[#000000]/80 backdrop-blur-md border-b border-white/5 pt-12 pb-2 px-6">
                 <div className="flex items-center justify-between max-w-md mx-auto">
@@ -156,7 +155,7 @@ export const MindDetail: React.FC = () => {
                                 strokeWidth="20"
                                 fill="transparent"
                                 strokeDasharray={2 * Math.PI * 100}
-                                strokeDashoffset={2 * Math.PI * 100 * (1 - (data?.score || 0) / 100)}
+                                strokeDashoffset={2 * Math.PI * 100 * (1 - (displayScore || 0) / 100)}
                                 className="text-cyan-400 drop-shadow-[0_0_4px_rgba(34,211,238,0.5)] transition-all duration-1000 ease-out"
                                 strokeLinecap="round"
                             />
@@ -165,10 +164,10 @@ export const MindDetail: React.FC = () => {
                         {/* In-Ring Content */}
                         <div className="absolute flex flex-col items-center">
                             <span className="text-cyan-400 text-sm font-medium tracking-wider uppercase mb-1 drop-shadow-sm">
-                                {data?.status || 'Calculando...'}
+                                {displayScore > 70 ? 'Hiperfoco' : (displayScore > 40 ? 'Ideias Leves' : 'Descanso')}
                             </span>
                             <span className="text-7xl font-light tracking-tighter text-white font-display">
-                                {data?.score || '--'}
+                                {displayScore || '--'}
                             </span>
                             <span className="text-white/40 text-xs mt-2 uppercase tracking-widest">
                                 Potencial
@@ -179,31 +178,93 @@ export const MindDetail: React.FC = () => {
 
                 {/* Detailed Metrics Grid */}
                 <div className="grid grid-cols-1 gap-4">
-                    {data?.metrics.map((metric, i) => (
-                        <motion.div
-                            key={metric.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 + (i * 0.1) }}
-                            className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
-                        >
-                            <div className="flex justify-between items-start mb-2">
-                                <div className="flex items-center gap-3">
-                                    <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center ${metric.color}`}>
-                                        <Icon name={metric.icon} className="text-lg" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-white/90 text-[15px] font-bold tracking-tight">{metric.label}</h3>
-                                        <p className={`text-[11px] font-bold uppercase tracking-wider ${metric.color}`}>{metric.value}</p>
-                                    </div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
+                    >
+                        <div className="flex justify-between items-start mb-2">
+                            <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-cyan-400`}>
+                                    <Icon name="speed" className="text-lg" />
+                                </div>
+                                <div>
+                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Velocidade</h3>
+                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-cyan-400`}>{visuals.speed}</p>
                                 </div>
                             </div>
-                            <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                                {metric.desc}
-                            </p>
-                        </motion.div>
-                    ))}
+                        </div>
+                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
+                            {displayScore > 60 ? 'Processamento Rápido. Facilidade para conectar ideias.' : 'Fluxo mais lento. Exige revisão.'}
+                        </p>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
+                    >
+                        <div className="flex justify-between items-start mb-2">
+                            <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-blue-400`}>
+                                    <Icon name="filter_alt" className="text-lg" />
+                                </div>
+                                <div>
+                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Filtro</h3>
+                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-blue-400`}>{visuals.filter}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
+                            {displayScore > 60 ? 'Alta Precisão. Foco no essencial.' : 'Distrações altas. Cuidado com ruídos.'}
+                        </p>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
+                    >
+                        <div className="flex justify-between items-start mb-2">
+                            <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-indigo-400`}>
+                                    <Icon name="psychology" className="text-lg" />
+                                </div>
+                                <div>
+                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Memória</h3>
+                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-indigo-400`}>{visuals.memory}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
+                            {displayScore > 60 ? 'Retenção Alta. Ótimo para estudos.' : 'Evite sobrecarga de informações hoje.'}
+                        </p>
+                    </motion.div>
                 </div>
+
+                {/* Trend Chart (Visualizing Backend Trend) */}
+                {data?.trend_data && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="bg-[#1C1C1E] rounded-2xl p-6 border border-white/5"
+                    >
+                        <h3 className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-4 border-b border-white/5 pb-2">
+                            Tendência (5 Dias)
+                        </h3>
+                        <div className="flex items-end justify-between h-[60px] gap-2">
+                            {data.trend_data.map((t, i) => (
+                                <div key={i} className="flex flex-col items-center gap-1 w-full">
+                                    <div
+                                        className={`w-full rounded-t-sm transition-all duration-1000 ${t.day === 'Hoje' ? 'bg-cyan-500 opacity-100' : 'bg-cyan-900 opacity-40'}`}
+                                        style={{ height: `${t.value * 0.5}px` }}
+                                    ></div>
+                                    <span className="text-[9px] text-white/40 uppercase">{t.day}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
 
                 {/* Analysis Card */}
                 <motion.div
@@ -222,7 +283,7 @@ export const MindDetail: React.FC = () => {
                     </h3>
 
                     <p className="text-white/80 leading-relaxed text-[15px]">
-                        {data?.summary || 'Carregando análise detalhada...'}
+                        {data?.analysis || 'Decodificando padrões estelares...'}
                     </p>
 
                     <div className="mt-4 pt-4 border-t border-white/5 flex items-center gap-3">
@@ -230,12 +291,12 @@ export const MindDetail: React.FC = () => {
                             Mercúrio Retrógrado: Não
                         </div>
                         <div className="px-2 py-1 rounded bg-white/5 text-[10px] text-white/50 border border-white/5">
-                            Biorritmo: 92%
+                            Biorritmo: {displayScore}%
                         </div>
                     </div>
                 </motion.div>
 
-                {/* Logic / Context Card */}
+                {/* Recommendation */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -243,15 +304,11 @@ export const MindDetail: React.FC = () => {
                     className="bg-[#1C1C1E]/50 rounded-2xl p-6 border border-white/5"
                 >
                     <h3 className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-3 border-b border-white/5 pb-2">
-                        Lógica do Cálculo
+                        Recomendação Prática
                     </h3>
                     <p className="text-white/60 text-xs leading-relaxed">
-                        Esta métrica combina a posição atual de <strong>Mercúrio</strong> (Intelecto) com seu <strong>Ciclo Biorrítmico Intelectual</strong> e a variação da <strong>Lua</strong> (Foco emocional).
+                        {data?.recommendation || "Aguardando transmissão..."}
                     </p>
-                    <div className="mt-3 flex gap-2">
-                        <span className="px-2 py-1 rounded bg-cyan-500/10 text-cyan-400 text-[10px] font-medium border border-cyan-500/20">Mercúrio Direto</span>
-                        <span className="px-2 py-1 rounded bg-blue-500/10 text-blue-400 text-[10px] font-medium border border-blue-500/20">Biorritmo Alto</span>
-                    </div>
                 </motion.div>
 
             </div>
