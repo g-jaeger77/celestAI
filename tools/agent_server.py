@@ -129,27 +129,63 @@ class AstrologyEngine:
             }
 
     @staticmethod
-    def calculate_synastry(chart_a: Dict, chart_b: Dict) -> Dict:
+    def calculate_synastry(chart_a: Dict, chart_b: Dict, context: str = 'love') -> Dict:
         """
-        Calculates geometric aspects between two charts.
+        Calculates geometric aspects between two charts with Context-Aware Weighting.
+        context: 'love', 'work', 'social'
         """
         aspects = []
-        # Base alignment score calculation
         score = 0
-        total_weight = 0
         
-        # Aspect Definitions (Sacred Geometry)
+        # --- WEIGHT MATRIX (The Intelligence) ---
+        # Defines how each aspect is weighted based on the "Lens"
+        
+        # Base Weights (Fallback)
+        base_weights = {
+            "Conjunction": 10, "Opposition": -5, "Trine": 15, "Square": -10, "Sextile": 5
+        }
+        
+        # Context Modifiers
+        # If (Planet A or B is X) AND (Aspect is Y) -> New Weight
+        modifiers = {
+            'love': {
+                'Square': -15, # Tension is fatal in romance
+                'Opposition': -10,
+                'Trine': 20, # Flow is critical
+                ('saturn', 'moon', 'Square'): -25, # The "Cold Heart" aspect
+                ('venus', 'mars', 'Conjunction'): 30, # The "Passion" aspect
+                ('sun', 'moon', 'Conjunction'): 30 # Soulmate
+            },
+            'work': {
+                'Square': 5, # Tension = Drive/Ambition (Good for business!)
+                'Opposition': 0, # Complementary views
+                'Trine': 10, # Good but lazy?
+                ('saturn', 'sun', 'Conjunction'): 25, # Structure + Authority (Great for work)
+                ('mercury', 'mercury', 'Trine'): 25, # Brainstorming flow
+                ('mars', 'saturn', 'Square'): 15 # "Unstoppable Force" (High energy)
+            },
+            'social': {
+                'Square': -5, # Annoying but manageable
+                'Trine': 20, # Party vibes
+                ('jupiter', 'sun', 'Conjunction'): 30, # The "Best Friends" aspect
+                ('moon', 'moon', 'Trine'): 25 # Emotional safety
+            }
+        }
+        
+        current_mod = modifiers.get(context, modifiers['love'])
+        
+        # Sacred Geometry Defs
         defs = [
-            {"name": "Conjunction", "angle": 0, "orb": 8, "weight": 10},  # Intensity
-            {"name": "Opposition", "angle": 180, "orb": 8, "weight": -5}, # Tension/Polarity
-            {"name": "Trine", "angle": 120, "orb": 8, "weight": 15},      # Flow (Highest)
-            {"name": "Square", "angle": 90, "orb": 8, "weight": -10},     # Conflict
-            {"name": "Sextile", "angle": 60, "orb": 6, "weight": 5}       # Opportunity
+            {"name": "Conjunction", "angle": 0, "orb": 8},
+            {"name": "Opposition", "angle": 180, "orb": 8},
+            {"name": "Trine", "angle": 120, "orb": 8},
+            {"name": "Square", "angle": 90, "orb": 8},
+            {"name": "Sextile", "angle": 60, "orb": 6}
         ]
         
         planets = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]
         
-        # Calculate Aspects
+        # Calculation
         for p1 in planets:
             for p2 in planets:
                 if p1 not in chart_a or p2 not in chart_b: continue
@@ -157,33 +193,41 @@ class AstrologyEngine:
                 pos1 = chart_a[p1].get("longitude", 0)
                 pos2 = chart_b[p2].get("longitude", 0)
                 
-                # Aspect Calculation logic
                 diff = abs(pos1 - pos2)
                 if diff > 180: diff = 360 - diff
                 
                 for aspect in defs:
                     orb = abs(diff - aspect["angle"])
                     if orb <= aspect["orb"]:
-                        weight = aspect["weight"]
+                        name = aspect["name"]
                         
-                        # Special Case: Sun/Moon Conjunction (Soulmate)
-                        if aspect["name"] == "Conjunction" and (p1 in ["sun","moon"] and p2 in ["sun","moon"]):
-                            weight = 20
+                        # 1. Determine Weight
+                        weight = base_weights.get(name, 0)
+                        
+                        # 2. Apply General Context Modifier
+                        if name in current_mod:
+                            weight = current_mod[name]
                             
+                        # 3. Apply Specific Planet Modifier (Tuple Lookup)
+                        # We check p1,p2 and p2,p1 order
+                        specific_key_1 = (p1, p2, name)
+                        specific_key_2 = (p2, p1, name)
+                        
+                        if specific_key_1 in current_mod: weight = current_mod[specific_key_1]
+                        elif specific_key_2 in current_mod: weight = current_mod[specific_key_2]
+
                         aspects.append({
                             "planet_a": p1,
                             "planet_b": p2,
-                            "aspect": aspect["name"],
+                            "aspect": name,
                             "orb_tightness": round(orb, 2),
                             "weight": weight,
-                            "description": f"{p1.capitalize()} {aspect['name']} {p2.capitalize()}"
+                            "description": f"{p1.capitalize()} {name} {p2.capitalize()}"
                         })
                         score += weight
                         break 
         
-        # Normalize Score (Heuristic Sigmoid)
-        # Assuming average 5-10 aspects. Max optimistic ~150 points. Min negative ~ -50.
-        # Map range -50..150 to 0..100
+        # Normalize Score
         normalized_score = 50 + (score * 0.5)
         normalized_score = min(100, max(0, normalized_score))
 
@@ -191,7 +235,8 @@ class AstrologyEngine:
             "score": round(normalized_score),
             "raw_score": score,
             "aspects": aspects,
-            "count": len(aspects)
+            "count": len(aspects),
+            "context": context
         }
 
 # --- Soul-Guide Agent Logic --- 
@@ -489,6 +534,7 @@ class PersonProfile(BaseModel):
 class SynastryRequest(BaseModel):
     user: PersonProfile
     partner: PersonProfile
+    context: str = "love" # Default
 
 @app.post("/agent/synastry")
 async def calculate_synastry_endpoint(request: SynastryRequest):
@@ -511,9 +557,10 @@ async def calculate_synastry_endpoint(request: SynastryRequest):
             request.partner.city, request.partner.country
         )
 
-        # Calculate Aspects
-        synastry_data = AstrologyEngine.calculate_synastry(user_chart, partner_chart)
+        # Calculate Aspects with CONTEXT
+        synastry_data = AstrologyEngine.calculate_synastry(user_chart, partner_chart, context=request.context)
         
+        print(f"🪐 Real Synastry ({request.context}) for {request.user.name} & {request.partner.name}: Score {synastry_data['score']}")
         return synastry_data
 
     except Exception as e:
