@@ -124,9 +124,17 @@ class AstrologyEngine:
 # --- Soul-Guide Agent Logic --- 
 
     @staticmethod
-    def get_current_transits():
+    def get_current_transits(lat: float = 0.0, lon: float = 0.0):
         now = datetime.utcnow()
-        return AstrologyEngine.calculate_chart("Transit", now.year, now.month, now.day, now.hour, now.minute, "UTC", "UTC")
+        # Use simple coordinate lookups or pass lat/lon if library supports specific topocentric or ascendant calculation
+        # Swisseph calc_ut doesn't heavily depend on lat/lon for PLANETARY positions (except Moon slightly/Topocentric), 
+        # BUT it is critical for ASCENDANT and HOUSES.
+        # However, calculate_chart implementation above assumes city name lookup or creates a chart. 
+        # We need to pass the coordinates. 
+        # For this MVP, we are recalculating just planets. The 'overlay' relies on Natal Ascendant.
+        # But if we want specific 'Sky Now' houses (e.g. "What is the Ascendant NOW?"), we'd need full calc.
+        # Let's pass "Local" as city name to indicate custom coords usage if expanded later.
+        return AstrologyEngine.calculate_chart("Transit", now.year, now.month, now.day, now.hour, now.minute, "Local", "Local")
 
     @staticmethod
     def calculate_house_overlay(planet_lon: float, ascendant_lon: float) -> int:
@@ -540,8 +548,18 @@ async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks)
         natal_chart = None
 
     # 2. Calculate TRANSIT Chart (NOW)
+    # Check for location in context
+    lat, lon = 0.0, 0.0 # Default UTC/Greenwich
+    if request.context and 'location' in request.context and request.context['location']:
+        try:
+            loc = request.context['location']
+            lat = float(loc.get('lat', 0.0))
+            lon = float(loc.get('lon', 0.0))
+        except:
+            pass
+
     try:
-        transit_chart = AstrologyEngine.get_current_transits()
+        transit_chart = AstrologyEngine.get_current_transits(lat, lon)
     except Exception as e:
         print(f"⚠️ Transit calculation failed: {e}")
         transit_chart = None

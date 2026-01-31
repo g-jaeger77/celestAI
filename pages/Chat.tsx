@@ -32,6 +32,26 @@ const Chat: React.FC = () => {
         }
     }, [transcript]);
 
+    // Geolocation
+    const [locationState, setLocationState] = useState<{ lat: number, lon: number } | null>(null);
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setLocationState({
+                        lat: position.coords.latitude,
+                        lon: position.coords.longitude
+                    });
+                    console.log("📍 Location acquired:", position.coords.latitude, position.coords.longitude);
+                },
+                (error) => {
+                    console.warn("📍 Location denied/error:", error.message);
+                }
+            );
+        }
+    }, []);
+
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSend = async () => {
@@ -55,7 +75,10 @@ const Chat: React.FC = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     user_id: userId,
-                    message: userText
+                    message: userText,
+                    context: {
+                        location: locationState // { lat: ..., lon: ... } or null
+                    }
                 })
             });
 
