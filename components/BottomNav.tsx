@@ -21,7 +21,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ active = 'home', transparent = fa
   const activeColors = {
     home: 'text-[#22d3ee]', // Cyan-400 (Mental)
     report: 'text-[#f59e0b]', // Amber-500 (Social/Fire)
-    chat: 'text-[#c084fc]', // Purple-400 (Spirit)
+    chat: 'text-teal-400', // Teal-400 (Spirit)
     synastry: 'text-[#ec4899]', // Pink-500 (Love)
     profile: 'text-white' // White (Neutral/Admin)
   };

@@ -277,42 +277,38 @@ const Synastry: React.FC = () => {
                 description="Descubra a compatibilidade astral entre você e suas conexões. Análise de sinastria completa."
                 path="/synastry"
             />
-            {/* Background Matrix Effect */}
-
-            <div className="absolute inset-0 z-0 opacity-20 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #1a1a1a 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
-            </div>
-
-            {/* Header (Only on List) */}
+            {/* Header (Apple Health Style) */}
             {step === 1 && (
-                <div className="pt-16 px-6 relative z-10">
-                    <div className="flex justify-between items-end mb-8">
+                <div className="pt-20 px-6 relative z-10 max-w-2xl mx-auto">
+                    <div className="flex justify-between items-center mb-8">
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight mb-2">Suas Conexões</h1>
-                            <p className="text-gray-500 text-sm font-medium">Sincronia Astral</p>
+                            <h1 className="text-4xl font-bold tracking-tight text-white mb-1">Conexões</h1>
+                            <p className="text-gray-400 text-lg font-medium">Sincronia Astral</p>
                         </div>
                         <button
                             onClick={() => setIsSheetOpen(true)}
-                            className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-lg shadow-white/10"
+                            className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/20"
                         >
-                            <Icon name="add" className="text-2xl" />
+                            <Icon name="add" className="text-xl" />
                         </button>
                     </div>
 
-                    {/* Zero State or List */}
+                    {/* Zero State (Apple Style) */}
                     {connections.length === 0 ? (
-                        <div className="mt-8 animate-in fade-in duration-700">
-                            <div className="p-8 rounded-3xl bg-[#1C1C1E]/50 border border-white/5 text-center">
-                                <Icon name="groups" className="text-4xl text-gray-600 mb-4 mx-auto" />
-                                <h3 className="text-lg font-bold text-gray-300 mb-2">Sem Conexões</h3>
-                                <p className="text-gray-500 text-sm mb-6">Adicione alguém para descobrir a sinergia dos mapas.</p>
-                                <button
-                                    onClick={() => setIsSheetOpen(true)}
-                                    className="px-6 py-2 rounded-full bg-white text-black text-sm font-bold"
-                                >
-                                    Fazer Simulação
-                                </button>
+                        <div className="mt-12 flex flex-col items-center justify-center text-center animate-in fade-in duration-700">
+                            <div className="w-20 h-20 bg-[#1C1C1E] rounded-full flex items-center justify-center mb-6 shadow-2xl shadow-black/50">
+                                <Icon name="groups" className="text-3xl text-gray-400" />
                             </div>
+                            <h3 className="text-xl font-bold text-white mb-2">Nenhuma Conexão</h3>
+                            <p className="text-gray-400 text-base max-w-[280px] mb-8 leading-relaxed">
+                                Adicione parceiros, amigos ou colegas para descobrir a sinergia dos mapas.
+                            </p>
+                            <button
+                                onClick={() => setIsSheetOpen(true)}
+                                className="px-8 py-3 rounded-full bg-white text-black font-bold text-sm hover:scale-105 active:scale-95 transition-all"
+                            >
+                                Adicionar
+                            </button>
                         </div>
                     ) : (
                         <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500 relative z-10">
@@ -329,10 +325,7 @@ const Synastry: React.FC = () => {
                         </div>
                     )}
 
-                    {/* Upsell / Expansions (Always Visible in List) */}
-                    <div className="mt-8 mb-24 animate-in slide-in-from-bottom-8 duration-700 delay-200">
-                        <ShopPromoCard />
-                    </div>
+
                 </div>
             )}
 
