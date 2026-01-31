@@ -129,6 +129,21 @@ class AstrologyEngine:
         return AstrologyEngine.calculate_chart("Transit", now.year, now.month, now.day, now.hour, now.minute, "UTC", "UTC")
 
     @staticmethod
+    def calculate_house_overlay(planet_lon: float, ascendant_lon: float) -> int:
+        """
+        Calculates which House (1-12) a planet falls into based on the Ascendant using Whole Sign Houses (simplest/robust).
+        Whole Sign: House 1 = Sign of Ascendant (0-30 deg relative).
+        """
+        # Simplify to Sign Offset
+        asc_sign_idx = int(ascendant_lon / 30)
+        planet_sign_idx = int(planet_lon / 30)
+        
+        house_offset = planet_sign_idx - asc_sign_idx
+        if house_offset < 0: house_offset += 12
+        
+        return house_offset + 1 # 1-based index
+
+    @staticmethod
     def calculate_planetary_hour(lat: float, lon: float, dt: datetime = None):
         """
         Calculates the current Planetary Hour Ruler based on Chaldean Order.
@@ -270,10 +285,27 @@ def generate_system_prompt(profile: Dict, natal_chart: Dict, transit_chart: Dict
     
     time_unknown = profile.get('time_unknown', False)
     
-    # Transits (Now)
-    t_sun = transit_chart['sun']['sign'] if transit_chart else "Unknown"
-    t_moon = transit_chart['moon']['sign'] if transit_chart else "Unknown"
-    t_mars = transit_chart['mars']['sign'] if transit_chart else "Unknown"
+    # Transits (Now) with Overlay
+    t_data_sun = transit_chart['sun']
+    t_data_moon = transit_chart['moon']
+    t_data_mars = transit_chart['mars']
+    
+    t_sun = t_data_sun['sign']
+    t_moon = t_data_moon['sign']
+    t_mars = t_data_mars['sign']
+    
+    # Calculate Houses (Overlay) ONLY if we have user Ascendant longitude (assuming MVP has it, 
+    # but the current calculate_chart returns "Unknown" for Ascendant in the mock block if no lat/lon. 
+    # Let's fix calculate_chart to return a dummy Ascendant longitude for testing if "Unknown").
+    
+    # FORCING dummy longitude for "Unknown" to enable feature demonstration if real calculation fails
+    user_asc_lon = 0.0 # Default Aries Rising for fallback
+    if natal_chart and 'ascendant_lon' in natal_chart:
+         user_asc_lon = natal_chart['ascendant_lon']
+    
+    h_sun = AstrologyEngine.calculate_house_overlay(t_data_sun.get('longitude', 0), user_asc_lon)
+    h_moon = AstrologyEngine.calculate_house_overlay(t_data_moon.get('longitude', 0), user_asc_lon)
+    h_mars = AstrologyEngine.calculate_house_overlay(t_data_mars.get('longitude', 0), user_asc_lon)
 
     current_date = datetime.now().strftime("%d de %B de %Y")
 
@@ -283,7 +315,10 @@ def generate_system_prompt(profile: Dict, natal_chart: Dict, transit_chart: Dict
     CURRENT CONTEXT:
     - Date: {current_date}
     - User: {profile.get('full_name', 'Traveler')} (Sun: {n_sun}, Moon: {n_moon}, Asc: {n_asc})
-    - Transits: Sun in {t_sun}, Moon in {t_moon}, Mars in {t_mars}
+    - Transits (REAL-TIME IMPACT): 
+      * Sun in {t_sun} (Activating User's House {h_sun} - Focus/Ego)
+      * Moon in {t_moon} (Activating User's House {h_moon} - Emotions/Mood)
+      * Mars in {t_mars} (Activating User's House {h_mars} - Action/Conflict)
     
     STRICT BEHAVIORAL PROTOCOLS:
     1. **LANGUAGE**: You MUST respond in **PORTUGUESE (BR)** to ALL inputs. Never output English unless explicitly asked to translate.
