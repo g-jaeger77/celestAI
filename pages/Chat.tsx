@@ -282,11 +282,9 @@ const Chat: React.FC = () => {
                         </div>
                     )}
                 </div>
-        </div>
-    )
-}
-<div ref={messagesEndRef} />
-                </div >
+
+                <div ref={messagesEndRef} />
+        </div >
             </main >
 
     {/* Input Area */ }
