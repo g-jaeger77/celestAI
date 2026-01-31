@@ -85,52 +85,52 @@ const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ onSave, embedded 
                 </button>
             </div>
 
-            {/* 2. Inputs Grouped (Apple Health Style) */}
-            <div className="space-y-6 mb-8">
-                <div className="space-y-1">
-                    <label className="text-[13px] text-gray-400 font-medium ml-4 uppercase">Informações Básicas</label>
-                    <div className="bg-[#2C2C2E] rounded-xl overflow-hidden divide-y divide-[#3A3A3C]">
+            {/* 2. Inputs */}
+            <div className="space-y-4 mb-8">
+                <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-1 block">Nome</label>
+                    <input
+                        value={name} onChange={e => setName(e.target.value)}
+                        className="w-full bg-[#2C2C2E] text-white p-4 rounded-xl outline-none border border-transparent focus:border-white/20 transition-all font-medium placeholder:text-gray-500"
+                        placeholder="Ex: Ana Silva"
+                    />
+                </div>
+
+                <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-1 block">Papel / Função (Opcional)</label>
+                    <input
+                        value={role} onChange={e => setRole(e.target.value)}
+                        className="w-full bg-[#2C2C2E] text-white p-4 rounded-xl outline-none border border-transparent focus:border-white/20 transition-all font-medium placeholder:text-gray-500"
+                        placeholder={type === 'love' ? "Ex: Esposa" : type === 'work' ? "Ex: Sócio" : "Ex: Amigo"}
+                    />
+                </div>
+
+                <div className="flex gap-3">
+                    <div className="flex-[3]">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-1 block">Nascimento</label>
                         <input
-                            value={name} onChange={e => setName(e.target.value)}
-                            className="w-full bg-transparent text-white p-4 outline-none placeholder:text-gray-500 font-medium text-[17px]"
-                            placeholder="Nome Completo"
+                            type="date"
+                            value={date} onChange={e => setDate(e.target.value)}
+                            className="w-full bg-[#2C2C2E] text-white p-4 rounded-xl outline-none border border-transparent focus:border-white/20 transition-all font-medium appearance-none"
                         />
+                    </div>
+                    <div className="flex-[2]">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-1 block">Hora (Opcional)</label>
                         <input
-                            value={role} onChange={e => setRole(e.target.value)}
-                            className="w-full bg-transparent text-white p-4 outline-none placeholder:text-gray-500 font-medium text-[17px]"
-                            placeholder={type === 'love' ? "Papel (Ex: Esposa)" : type === 'work' ? "Papel (Ex: Sócio)" : "Papel (Ex: Amigo)"}
+                            type="time"
+                            value={time} onChange={e => setTime(e.target.value)}
+                            className="w-full bg-[#2C2C2E] text-white p-4 rounded-xl outline-none border border-transparent focus:border-white/20 transition-all font-medium appearance-none text-center"
                         />
                     </div>
                 </div>
 
-                <div className="space-y-1">
-                    <label className="text-[13px] text-gray-400 font-medium ml-4 uppercase">Dados Astrais</label>
-                    <div className="bg-[#2C2C2E] rounded-xl overflow-hidden divide-y divide-[#3A3A3C]">
-                        <div className="flex items-center">
-                            <span className="text-white text-[17px] pl-4 w-28">Nascimento</span>
-                            <input
-                                type="date"
-                                value={date} onChange={e => setDate(e.target.value)}
-                                className="w-full bg-transparent text-gray-300 p-4 outline-none font-medium text-[17px] text-right appearance-none"
-                            />
-                        </div>
-                        <div className="flex items-center">
-                            <span className="text-white text-[17px] pl-4 w-28">Horário</span>
-                            <input
-                                type="time"
-                                value={time} onChange={e => setTime(e.target.value)}
-                                className="w-full bg-transparent text-gray-300 p-4 outline-none font-medium text-[17px] text-right appearance-none"
-                            />
-                        </div>
-                        <div className="flex items-center">
-                            <span className="text-white text-[17px] pl-4 w-28">Cidade</span>
-                            <input
-                                value={city} onChange={e => setCity(e.target.value)}
-                                className="w-full bg-transparent text-white p-4 outline-none placeholder:text-gray-500 font-medium text-[17px] text-right"
-                                placeholder="Opcional"
-                            />
-                        </div>
-                    </div>
+                <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 mb-1 block">Cidade (Opcional)</label>
+                    <input
+                        value={city} onChange={e => setCity(e.target.value)}
+                        className="w-full bg-[#2C2C2E] text-white p-4 rounded-xl outline-none border border-transparent focus:border-white/20 transition-all font-medium placeholder:text-gray-500"
+                        placeholder="Cidade de nascimento"
+                    />
                 </div>
             </div>
 
