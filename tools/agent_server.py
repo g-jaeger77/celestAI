@@ -39,6 +39,10 @@ insight_processor = InsightProcessor(openai_client, memory_store)
 
 app = FastAPI(title="Celest AI Soul-Guide Agent")
 
+# Include Payment Routes
+from payment_routes import router as payment_router
+app.include_router(payment_router)
+
 # CORS
 app.add_middleware(
     CORSMiddleware,
