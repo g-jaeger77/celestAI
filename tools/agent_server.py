@@ -83,56 +83,51 @@ ZODIAC_SIGNS = [
     "Sagittarius", "Capricorn", "Aquarius", "Pisces"
 ]
 
-# --- Astrology Engine (Swisseph Direct) ---
+# --- Dynamic Geocoding (Any City Worldwide) ---
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut, GeocoderServiceError
+import functools
 
-# City Geocoding Lookup (Major Cities - MVP)
-CITY_COORDS = {
-    # Brazil
-    "são paulo": (-23.5505, -46.6333),
-    "sao paulo": (-23.5505, -46.6333),
-    "sp": (-23.5505, -46.6333),
-    "rio de janeiro": (-22.9068, -43.1729),
-    "brasilia": (-15.7975, -47.8919),
-    "salvador": (-12.9714, -38.5014),
-    "belo horizonte": (-19.9167, -43.9345),
-    "curitiba": (-25.4284, -49.2733),
-    "porto alegre": (-30.0346, -51.2177),
-    "recife": (-8.0476, -34.8770),
-    "fortaleza": (-3.7172, -38.5433),
-    "blumenau": (-26.9194, -49.0661),
-    # USA
-    "new york": (40.7128, -74.0060),
-    "los angeles": (34.0522, -118.2437),
-    "chicago": (41.8781, -87.6298),
-    "houston": (29.7604, -95.3698),
-    "miami": (25.7617, -80.1918),
-    # Europe
-    "london": (51.5074, -0.1278),
-    "paris": (48.8566, 2.3522),
-    "berlin": (52.5200, 13.4050),
-    "madrid": (40.4168, -3.7038),
-    "rome": (41.9028, 12.4964),
-    "lisbon": (38.7223, -9.1393),
-    # Asia
-    "tokyo": (35.6762, 139.6503),
-    "beijing": (39.9042, 116.4074),
-    "mumbai": (19.0760, 72.8777),
-    "dubai": (25.2048, 55.2708),
-    # Default (Greenwich)
-    "unknown": (51.4772, 0.0),
-}
+# Initialize Geocoder (OpenStreetMap - Free, No API Key)
+_geolocator = Nominatim(user_agent="celest_ai_astrology", timeout=5)
 
-def get_city_coords(city: str) -> tuple:
-    """Lookup city coordinates. Returns (lat, lon) tuple."""
-    city_lower = city.lower().strip()
-    if city_lower in CITY_COORDS:
-        return CITY_COORDS[city_lower]
-    # Try partial match
-    for key in CITY_COORDS:
-        if key in city_lower or city_lower in key:
-            return CITY_COORDS[key]
-    # Default to Greenwich
-    return CITY_COORDS["unknown"]
+# In-Memory Cache for Performance (avoids repeated API calls)
+_geocache = {}
+
+def geocode_city(city: str, country: str = "") -> tuple:
+    """
+    Geocode any city worldwide using OpenStreetMap Nominatim.
+    Returns (latitude, longitude) tuple.
+    Results are cached in memory.
+    """
+    cache_key = f"{city.lower().strip()}_{country.lower().strip()}"
+    
+    # Check cache first
+    if cache_key in _geocache:
+        return _geocache[cache_key]
+    
+    try:
+        # Build query (city + country for better accuracy)
+        query = f"{city}, {country}" if country else city
+        location = _geolocator.geocode(query)
+        
+        if location:
+            result = (location.latitude, location.longitude)
+            _geocache[cache_key] = result
+            print(f"📍 Geocoded: {query} → ({result[0]:.4f}, {result[1]:.4f})")
+            return result
+        else:
+            print(f"⚠️ Geocoding failed for: {query}, using default")
+            
+    except (GeocoderTimedOut, GeocoderServiceError) as e:
+        print(f"⚠️ Geocoder error: {e}, using default")
+    except Exception as e:
+        print(f"⚠️ Unexpected geocoding error: {e}")
+    
+    # Default fallback: Greenwich (0,0 area)
+    default = (51.4772, 0.0)
+    _geocache[cache_key] = default
+    return default
 
 class AstrologyEngine:
     @staticmethod
@@ -147,9 +142,9 @@ class AstrologyEngine:
             t_hour = hour + (minute / 60.0)
             jd = swe.julday(year, month, day, t_hour)
             
-            # 2. Get Geographic Coordinates
+            # 2. Get Geographic Coordinates (Dynamic Geocoding - Any City!)
             if lat is None or lon is None:
-                lat, lon = get_city_coords(city)
+                lat, lon = geocode_city(city, country)
             
             # 3. Calculate Houses (Placidus System) - Returns Ascendant!
             # swe.houses(jd, lat, lon, house_system)
