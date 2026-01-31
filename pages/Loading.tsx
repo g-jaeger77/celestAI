@@ -7,12 +7,10 @@ const Loading: React.FC = () => {
   const [fetchedData, setFetchedData] = useState<any>(null);
 
   // Derived Status Text based on progress (User Requested Split: ~35% / ~65%)
+  // Derived Status Text (Fixed to Single Phase)
   let statusText = "Calculando Efemérides...";
-  if (progress >= 35 && progress < 100) {
-    statusText = "Triangulando Posição Natal...";
-  } else if (progress >= 100) {
-    statusText = "Sincronia Completa...";
-  }
+  // User requested to remove "Sincronizando..." phase logic.
+  // It will stay as "Calculando..." until navigation.
 
   // 1. Animation Timer (Visual Progress)
   useEffect(() => {
@@ -54,8 +52,8 @@ const Loading: React.FC = () => {
 
     async function loadData() {
       try {
-        // Extended delay for better perception of "calculation"
-        await new Promise(r => setTimeout(r, 2600));
+        // Extended delay for "Vitality" perception (Requested: 2x)
+        await new Promise(r => setTimeout(r, 8000));
 
         // Start fetch
         const res = await fetch(`http://localhost:8000/agent/dashboard?user_id=${userId}`);
