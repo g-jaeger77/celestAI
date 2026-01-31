@@ -336,10 +336,7 @@ const Synastry: React.FC = () => {
                 </div>
             )}
 
-            {/* Upsell / Expansions (Always Visible) */}
-            <div className="mt-8 mb-24 animate-in slide-in-from-bottom-8 duration-700 delay-200">
-                <ShopPromoCard />
-            </div>
+
 
 
             {/* Loading Overlay */}
