@@ -17,23 +17,11 @@ const Hero: React.FC = () => {
 
                 <div className="relative w-full max-w-[280px] aspect-[9/19] mt-8 mx-auto rounded-[2.5rem] border-8 border-[#3a2822] bg-[#1a1210] overflow-hidden shadow-2xl shadow-primary/10 animate-float">
                     <div
-                        className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: `url('${IMAGES.heroPhone}')` }}
+                        className="absolute inset-0 bg-cover bg-top"
+                        style={{ backgroundImage: "url('/assets/dashboard_preview.png')" }}
                         aria-label="Celest AI app interface showing cosmic dashboard"
                     >
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#201613]/50 to-[#201613]"></div>
-
-                        <div className="absolute bottom-8 left-4 right-4">
-                            <div className="bg-[#2a1e1a]/90 backdrop-blur-sm p-4 rounded-xl border border-primary/20 shadow-lg">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className="material-symbols-outlined text-primary text-sm animate-pulse">auto_awesome</span>
-                                    <span className="text-xs font-bold text-white uppercase tracking-wider">Insight do Dia</span>
-                                </div>
-                                <p className="text-sm text-white/90 font-medium">
-                                    "Sua intuição está alinhada. O momento de agir é agora, não espere a perfeição."
-                                </p>
-                            </div>
-                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#201613]/20"></div>
                     </div>
                 </div>
             </div>
