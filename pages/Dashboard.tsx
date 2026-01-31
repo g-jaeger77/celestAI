@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Icon from '../components/Icon';
 import ShopPromoCard from '../components/ShopPromoCard';
@@ -24,7 +24,20 @@ const Dashboard: React.FC = () => {
 
   const user = getUserProfile();
 
+  // Retrieve Preloaded Data from Loading Screen
+  const location = useLocation();
+  const preloadedData = location.state?.preloadedData as DashboardResponse | undefined;
+
   const fetchData = async () => {
+    // If we have fresh preloaded data, use it!
+    if (preloadedData && !data) {
+      setData(preloadedData);
+      setLoading(false);
+      // Clear state to avoid stale data on refresh? 
+      // Actually navigate replace might be better but this works for now.
+      return;
+    }
+
     setLoading(true);
     setError(false);
     try {
@@ -40,7 +53,12 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    if (preloadedData) {
+      setData(preloadedData);
+      setLoading(false);
+    } else {
+      fetchData();
+    }
   }, []);
 
   const today = new Date();
