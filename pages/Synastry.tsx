@@ -237,19 +237,19 @@ const Synastry: React.FC = () => {
     // ------------------------------------------------------------------
     if (isSheetOpen) {
         return (
-            <div className="bg-black min-h-screen text-white pt-16 px-6 relative animate-in slide-in-from-bottom duration-500 font-sans selection:bg-pink-500/30">
+            <div className="bg-[#1C1C1E] min-h-screen text-white pt-10 px-6 relative animate-in slide-in-from-bottom duration-500 font-sans selection:bg-pink-500/30">
                 {/* Close Button (Top right) */}
                 <div className="absolute top-6 right-6">
                     <button
                         onClick={() => setIsSheetOpen(false)}
-                        className="w-10 h-10 rounded-full bg-[#1C1C1E] flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+                        className="w-9 h-9 rounded-full bg-[#2C2C2E] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[#3A3A3C] transition-colors"
                     >
-                        <Icon name="close" />
+                        <Icon name="close" className="text-xl" />
                     </button>
                 </div>
 
                 {/* Page Title */}
-                <h1 className="text-3xl font-bold tracking-tight mb-8">Nova Conexão</h1>
+                <h1 className="text-2xl font-bold tracking-tight mb-8 text-center text-white">Nova Conexão</h1>
 
                 {/* Form Wrapper */}
                 <div className="max-w-md mx-auto">
@@ -277,23 +277,17 @@ const Synastry: React.FC = () => {
                 description="Descubra a compatibilidade astral entre você e suas conexões. Análise de sinastria completa."
                 path="/synastry"
             />
-            {/* Background Matrix Effect */}
-
-            <div className="absolute inset-0 z-0 opacity-20 pointer-events-none"
-                style={{ backgroundImage: 'radial-gradient(circle at 50% 50%, #1a1a1a 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
-            </div>
-
             {/* Header (Only on List) */}
             {step === 1 && (
-                <div className="pt-16 px-6 relative z-10">
-                    <div className="flex justify-between items-end mb-8">
+                <div className="pt-16 px-6 relative z-10 max-w-2xl mx-auto">
+                    <div className="flex justify-between items-center mb-8">
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight mb-2">Suas Conexões</h1>
-                            <p className="text-gray-500 text-sm font-medium">Sincronia Astral</p>
+                            <h1 className="text-[34px] font-bold tracking-tight text-white leading-tight">Suas Conexões</h1>
+                            {/* Subtitle removed for cleaner look, or kept minimal */}
                         </div>
                         <button
                             onClick={() => setIsSheetOpen(true)}
-                            className="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-lg shadow-white/10"
+                            className="w-9 h-9 rounded-full bg-[#1C1C1E] text-blue-500 flex items-center justify-center hover:bg-[#2C2C2E] transition-colors"
                         >
                             <Icon name="add" className="text-2xl" />
                         </button>
@@ -301,18 +295,20 @@ const Synastry: React.FC = () => {
 
                     {/* Zero State or List */}
                     {connections.length === 0 ? (
-                        <div className="mt-8 animate-in fade-in duration-700">
-                            <div className="p-8 rounded-3xl bg-[#1C1C1E]/50 border border-white/5 text-center">
-                                <Icon name="groups" className="text-4xl text-gray-600 mb-4 mx-auto" />
-                                <h3 className="text-lg font-bold text-gray-300 mb-2">Sem Conexões</h3>
-                                <p className="text-gray-500 text-sm mb-6">Adicione alguém para descobrir a sinergia dos mapas.</p>
-                                <button
-                                    onClick={() => setIsSheetOpen(true)}
-                                    className="px-6 py-2 rounded-full bg-white text-black text-sm font-bold"
-                                >
-                                    Fazer Simulação
-                                </button>
+                        <div className="mt-12 animate-in fade-in duration-700 flex flex-col items-center text-center">
+                            <div className="w-20 h-20 rounded-full bg-[#1C1C1E] flex items-center justify-center mb-6">
+                                <Icon name="favorite" className="text-3xl text-pink-500" />
                             </div>
+                            <h3 className="text-xl font-bold text-white mb-2">Nenhuma Conexão</h3>
+                            <p className="text-[#8e8e93] text-base max-w-xs mb-8">
+                                Adicione pessoas importantes para descobrir a compatibilidade astral.
+                            </p>
+                            <button
+                                onClick={() => setIsSheetOpen(true)}
+                                className="px-8 py-3 rounded-full bg-[#007AFF] text-white text-[15px] font-semibold hover:bg-[#0062CC] transition-colors"
+                            >
+                                Adicionar Conexão
+                            </button>
                         </div>
                     ) : (
                         <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500 relative z-10">
@@ -333,10 +329,9 @@ const Synastry: React.FC = () => {
 
             {/* Loading Overlay */}
             {loading && step === 1 && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md">
                     <div className="flex flex-col items-center">
-                        <div className="w-16 h-16 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin"></div>
-                        <span className="mt-4 text-purple-200 font-bold tracking-widest text-xs uppercase animate-pulse">Sincronizando Campos...</span>
+                        <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
                     </div>
                 </div>
             )}
