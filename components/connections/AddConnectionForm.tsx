@@ -46,20 +46,20 @@ const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ onSave, embedded 
         const base = "relative overflow-hidden h-24 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all duration-300 group";
         const sheen = "before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none";
 
-        // Amor: Pink (Alma) - Solid Gradient
+        // Amor: Pink (Alma) - Solid Gradient (Standard Tailwind Colors)
         if (t === 'love') return isActive
-            ? `${base} bg-gradient-to-br from-[#ec4899] to-[#be185d] border-[#ec4899] text-white shadow-[0_10px_30px_-5px_rgba(236,72,153,0.6)] scale-[1.05] z-10 ${sheen}`
-            : `${base} bg-[#1C1C1E]/60 border-white/10 text-pink-400/80 hover:bg-[#ec4899]/10 hover:border-[#ec4899]/40 hover:text-white`;
+            ? `${base} bg-gradient-to-br from-pink-500 to-pink-600 border-pink-500 text-white shadow-[0_10px_30px_-5px_rgba(236,72,153,0.6)] scale-[1.05] z-10 ${sheen}`
+            : `${base} bg-[#1C1C1E]/60 border-white/10 text-pink-400/80 hover:bg-pink-500/10 hover:border-pink-500/40 hover:text-white`;
 
-        // Cyan (Work/Mente) - Solid Gradient
+        // Trabalho: Cyan (Mente) - Solid Gradient
         if (t === 'work') return isActive
-            ? `${base} bg-gradient-to-br from-[#22d3ee] to-[#0891b2] border-[#22d3ee] text-white shadow-[0_10px_30px_-5px_rgba(34,211,238,0.6)] scale-[1.05] z-10 ${sheen}`
-            : `${base} bg-[#1C1C1E]/60 border-white/10 text-[#22d3ee]/80 hover:bg-[#22d3ee]/10 hover:border-[#22d3ee]/40 hover:text-white`;
+            ? `${base} bg-gradient-to-br from-cyan-400 to-cyan-600 border-cyan-400 text-white shadow-[0_10px_30px_-5px_rgba(34,211,238,0.6)] scale-[1.05] z-10 ${sheen}`
+            : `${base} bg-[#1C1C1E]/60 border-white/10 text-cyan-400/80 hover:bg-cyan-400/10 hover:border-cyan-400/40 hover:text-white`;
 
-        // Lime (Social/Corpo) - Solid Gradient
+        // Social: Lime (Corpo) - Solid Gradient
         return isActive
-            ? `${base} bg-gradient-to-br from-[#a3e635] to-[#4d7c0f] border-[#a3e635] text-white shadow-[0_10px_30px_-5px_rgba(163,230,53,0.6)] scale-[1.05] z-10 ${sheen}`
-            : `${base} bg-[#1C1C1E]/60 border-white/10 text-[#a3e635]/80 hover:bg-[#a3e635]/10 hover:border-[#a3e635]/40 hover:text-white`;
+            ? `${base} bg-gradient-to-br from-lime-400 to-lime-600 border-lime-400 text-white shadow-[0_10px_30px_-5px_rgba(163,230,53,0.6)] scale-[1.05] z-10 ${sheen}`
+            : `${base} bg-[#1C1C1E]/60 border-white/10 text-lime-400/80 hover:bg-lime-400/10 hover:border-lime-400/40 hover:text-white`;
     };
 
     return (
