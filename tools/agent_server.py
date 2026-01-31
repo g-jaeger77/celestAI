@@ -111,8 +111,12 @@ class AstrologyEngine:
             return {
                 "sun": get_data(swe.SUN),
                 "moon": get_data(swe.MOON),
+                "mercury": get_data(swe.MERCURY),
+                "venus": get_data(swe.VENUS),
                 "mars": get_data(swe.MARS),
-                "ascendant": "Unknown" if time_unknown else "Unknown" # Requires Lat/Lon coordinates which we don't have yet in this MVP version fully wired
+                "jupiter": get_data(swe.JUPITER),
+                "saturn": get_data(swe.SATURN),
+                "ascendant": "Unknown" if time_unknown else "Unknown"
             }
 
         except Exception as e:
@@ -121,9 +125,74 @@ class AstrologyEngine:
                 "sun": {"sign": "Aries", "house": "1"},
                 "moon": {"sign": "Taurus", "house": "2"},
                 "mars": {"sign": "Gemini", "house": "3"},
-                "ascendant": "Leo",
-                "houses": {1: {"sign": "Leo"}, 10: {"sign": "Taurus"}} # Minimal fallback
+                "ascendant": "Leo"
             }
+
+    @staticmethod
+    def calculate_synastry(chart_a: Dict, chart_b: Dict) -> Dict:
+        """
+        Calculates geometric aspects between two charts.
+        """
+        aspects = []
+        # Base alignment score calculation
+        score = 0
+        total_weight = 0
+        
+        # Aspect Definitions (Sacred Geometry)
+        defs = [
+            {"name": "Conjunction", "angle": 0, "orb": 8, "weight": 10},  # Intensity
+            {"name": "Opposition", "angle": 180, "orb": 8, "weight": -5}, # Tension/Polarity
+            {"name": "Trine", "angle": 120, "orb": 8, "weight": 15},      # Flow (Highest)
+            {"name": "Square", "angle": 90, "orb": 8, "weight": -10},     # Conflict
+            {"name": "Sextile", "angle": 60, "orb": 6, "weight": 5}       # Opportunity
+        ]
+        
+        planets = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn"]
+        
+        # Calculate Aspects
+        for p1 in planets:
+            for p2 in planets:
+                if p1 not in chart_a or p2 not in chart_b: continue
+                
+                pos1 = chart_a[p1].get("longitude", 0)
+                pos2 = chart_b[p2].get("longitude", 0)
+                
+                # Aspect Calculation logic
+                diff = abs(pos1 - pos2)
+                if diff > 180: diff = 360 - diff
+                
+                for aspect in defs:
+                    orb = abs(diff - aspect["angle"])
+                    if orb <= aspect["orb"]:
+                        weight = aspect["weight"]
+                        
+                        # Special Case: Sun/Moon Conjunction (Soulmate)
+                        if aspect["name"] == "Conjunction" and (p1 in ["sun","moon"] and p2 in ["sun","moon"]):
+                            weight = 20
+                            
+                        aspects.append({
+                            "planet_a": p1,
+                            "planet_b": p2,
+                            "aspect": aspect["name"],
+                            "orb_tightness": round(orb, 2),
+                            "weight": weight,
+                            "description": f"{p1.capitalize()} {aspect['name']} {p2.capitalize()}"
+                        })
+                        score += weight
+                        break 
+        
+        # Normalize Score (Heuristic Sigmoid)
+        # Assuming average 5-10 aspects. Max optimistic ~150 points. Min negative ~ -50.
+        # Map range -50..150 to 0..100
+        normalized_score = 50 + (score * 0.5)
+        normalized_score = min(100, max(0, normalized_score))
+
+        return {
+            "score": round(normalized_score),
+            "raw_score": score,
+            "aspects": aspects,
+            "count": len(aspects)
+        }
 
 # --- Soul-Guide Agent Logic --- 
 
@@ -408,6 +477,47 @@ async def calculate_chart_data_endpoint(request: ChartDataRequest):
         return chart
     except Exception as e:
         print(f"❌ Chart Data Error: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+class PersonProfile(BaseModel):
+    name: str = "Unknown"
+    date: str
+    time: str
+    city: str
+    country: str = "BR"
+
+class SynastryRequest(BaseModel):
+    user: PersonProfile
+    partner: PersonProfile
+
+@app.post("/agent/synastry")
+async def calculate_synastry_endpoint(request: SynastryRequest):
+    try:
+        # Calculate User Chart
+        u_dt = datetime.strptime(request.user.date + " " + request.user.time, "%Y-%m-%d %H:%M")
+        user_chart = AstrologyEngine.calculate_chart(
+            request.user.name,
+            u_dt.year, u_dt.month, u_dt.day,
+            u_dt.hour, u_dt.minute,
+            request.user.city, request.user.country
+        )
+
+        # Calculate Partner Chart
+        p_dt = datetime.strptime(request.partner.date + " " + request.partner.time, "%Y-%m-%d %H:%M")
+        partner_chart = AstrologyEngine.calculate_chart(
+            request.partner.name,
+            p_dt.year, p_dt.month, p_dt.day,
+            p_dt.hour, p_dt.minute,
+            request.partner.city, request.partner.country
+        )
+
+        # Calculate Aspects
+        synastry_data = AstrologyEngine.calculate_synastry(user_chart, partner_chart)
+        
+        return synastry_data
+
+    except Exception as e:
+        print(f"❌ Synastry Calc Error: {e}")
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/agent/onboarding")

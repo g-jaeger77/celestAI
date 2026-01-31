@@ -98,7 +98,26 @@ const Synastry: React.FC = () => {
         setActiveConnection(connection);
 
         try {
-            const userChart = await fetchChartData("User", "1995-05-15", "14:30", "Sao Paulo");
+            // FIX: Narcissus Error - Use Real User Data instead of Hardcoded 1995
+            const savedUser = localStorage.getItem('user_birth_data');
+            let userName = "Minha Energia";
+            let userDate = "1995-05-15"; // Fallback
+            let userTime = "12:00";
+            let userCity = "São Paulo";
+
+            if (savedUser) {
+                try {
+                    const parsed = JSON.parse(savedUser);
+                    if (parsed.full_name) userName = parsed.full_name;
+                    if (parsed.birth_date) userDate = parsed.birth_date;
+                    if (parsed.birth_time) userTime = parsed.birth_time;
+                    if (parsed.birth_city) userCity = parsed.birth_city;
+                } catch (e) {
+                    console.error("Failed to parse user context", e);
+                }
+            }
+
+            const userChart = await fetchChartData(userName, userDate, userTime, userCity);
 
             const partnerChart = await fetchChartData(
                 connection.name,
