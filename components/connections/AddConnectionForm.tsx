@@ -9,7 +9,7 @@ interface AddConnectionFormProps {
 }
 
 const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ onSave, embedded = false }) => {
-    const [type, setType] = useState<ConnectionType | null>(null);
+    const [type, setType] = useState<ConnectionType | null>('love');
     const [name, setName] = useState('');
     const [role, setRole] = useState('');
     const [date, setDate] = useState('');
@@ -77,6 +77,7 @@ const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ onSave, embedded 
             {/* 1. Context Switcher */}
             <div className="grid grid-cols-3 gap-3 mb-6">
                 <button
+                    type="button"
                     onClick={() => setType('love')}
                     {...getSelectionStyle('love', type === 'love')}
                 >
@@ -85,6 +86,7 @@ const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ onSave, embedded 
                 </button>
 
                 <button
+                    type="button"
                     onClick={() => setType('work')}
                     {...getSelectionStyle('work', type === 'work')}
                 >
@@ -93,6 +95,7 @@ const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ onSave, embedded 
                 </button>
 
                 <button
+                    type="button"
                     onClick={() => setType('social')}
                     {...getSelectionStyle('social', type === 'social')}
                 >
