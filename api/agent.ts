@@ -37,6 +37,19 @@ export interface DetailResponse {
 
 const API_BASE = "http://localhost:8000";
 
+const handleResponse = async (response: Response) => {
+    if (response.status === 401) {
+        // Session Expired -> Auto Logout
+        localStorage.removeItem('user_birth_data');
+        window.location.href = '/onboarding'; // Redirect to start
+        throw new Error("Sessão Expirada");
+    }
+    if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+    }
+    return response.json();
+};
+
 export const agentApi = {
     getDashboard: async (userId: string, lat?: number, lon?: number, timezone?: string): Promise<DashboardResponse> => {
         const params = new URLSearchParams({ user_id: userId });
@@ -45,13 +58,11 @@ export const agentApi = {
         if (timezone) params.append('timezone', timezone);
 
         const response = await fetch(`${API_BASE}/agent/dashboard?${params.toString()}`);
-        if (!response.ok) throw new Error("Falha ao carregar dashboard");
-        return response.json();
+        return handleResponse(response);
     },
 
     getDetail: async (dimension: 'mental' | 'physical' | 'emotional', userId: string): Promise<DetailResponse> => {
         const response = await fetch(`${API_BASE}/agent/detail/${dimension}?user_id=${userId}`);
-        if (!response.ok) throw new Error(`Falha ao carregar detalhe ${dimension}`);
-        return response.json();
+        return handleResponse(response);
     }
 };

@@ -739,27 +739,6 @@ async def history_endpoint(user_id: str):
         print(f"❌ History Error: {e}")
         return []
 
-@app.get("/agent/dashboard", response_model=DashboardResponse)
-async def dashboard_endpoint(user_id: str, lat: Optional[float] = None, lon: Optional[float] = None, timezone: Optional[str] = None):
-    print(f"📊 Generating Dashboard for {user_id}")
-    
-    # ... (Logic remains same up to P_Hour calc) ...
-    # 0. Real-Time Calc (Always Fresh)
-    calc_lat, calc_lon = 51.5, -0.1
-    if lat and lon: calc_lat, calc_lon = lat, lon
-    elif timezone:
-         if "Sao_Paulo" in timezone: calc_lat, calc_lon = -23.5, -46.6
-         elif "New_York" in timezone: calc_lat, calc_lon = 40.7, -74.0
-         elif "Tokyo" in timezone: calc_lat, calc_lon = 35.6, 139.6
-    
-    p_hour = AstrologyEngine.calculate_planetary_hour(calc_lat, calc_lon)
-    is_void = False 
-    
-    # 1. Check Cache ...
-    
-    # [LOGIC update for Cache Hit to include Real-Time vars]
-    # ...
-
 class DashboardResponse(BaseModel):
     next_window_focus: str
     next_window_desc: str
@@ -775,6 +754,34 @@ class DashboardResponse(BaseModel):
     planetary_hour: Optional[str] = "N/A"
     is_void: Optional[bool] = False
 
+@app.get("/agent/dashboard", response_model=DashboardResponse)
+async def dashboard_endpoint(user_id: str, lat: Optional[float] = None, lon: Optional[float] = None, timezone: Optional[str] = None):
+    print(f"📊 Generating Dashboard for {user_id}")
+    
+    # 0. Real-Time Calc (Always Fresh)
+    calc_lat, calc_lon = 51.5, -0.1
+    if lat and lon: calc_lat, calc_lon = lat, lon
+    elif timezone:
+         if "Sao_Paulo" in timezone: calc_lat, calc_lon = -23.5, -46.6
+         elif "New_York" in timezone: calc_lat, calc_lon = 40.7, -74.0
+         elif "Tokyo" in timezone: calc_lat, calc_lon = 35.6, 139.6
+    
+    p_hour = AstrologyEngine.calculate_planetary_hour(calc_lat, calc_lon)
+    is_void = False 
+    
+    # 0.5 PERSIST LOCATION (Travel Log)
+    if user_id != "demo" and lat and lon:
+        try:
+            current_time = datetime.now().isoformat()
+            supabase.table("profiles").update({
+                "current_lat": lat,
+                "current_lon": lon,
+                "last_location_update": current_time
+            }).eq("id", user_id).execute()
+            print(f"📍 Location Persisted: {lat}, {lon}")
+        except Exception as e:
+            # We don't want to crash the dashboard if location save fails (e.g. column missing)
+            print(f"⚠️ Location Save Error (Non-Fatal): {e}")
     
     # 1. Check Cache (Daily Stats)
     today_str = datetime.now().strftime("%Y-%m-%d")
