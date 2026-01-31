@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Icon from '../components/Icon';
 import { CelestIcon } from '../components/CelestIcon';
+import CityAutocomplete from '../components/CityAutocomplete';
 
 const Onboarding: React.FC = () => {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const Onboarding: React.FC = () => {
     birthTime: '',
     birthCity: '',
     birthCountry: '',
+    birthLat: null as number | null,  // Coordinates from CityAutocomplete
+    birthLon: null as number | null,
     timeUnknown: false
   });
 
@@ -366,25 +369,31 @@ const Onboarding: React.FC = () => {
             <label htmlFor="birthCity" className="block text-xs font-bold tracking-[0.25em] text-slate-500 uppercase mb-2">
               Local de Nascimento
             </label>
-            <div className={`relative flex items-center border-b transition-all duration-300 ${getInputClass('birthCity', errors.birthCity)}`}>
-              <input
-                id="birthCity"
-                className="block w-full border-0 bg-transparent p-0 pb-3 pr-10 text-white placeholder:text-white/10 focus:ring-0 text-xl font-light outline-none"
-                placeholder="Cidade / Estado / País"
+            <div className="relative">
+              <CityAutocomplete
                 value={formData.birthCity}
-                onChange={(e) => updateFormData({ ...formData, birthCity: e.target.value })}
-                type="text"
+                onChange={(city, lat, lon) => {
+                  updateFormData({
+                    ...formData,
+                    birthCity: city,
+                    birthLat: lat ?? null,
+                    birthLon: lon ?? null
+                  });
+                }}
+                placeholder="Digite sua cidade..."
+                className="border-0 border-b border-white/20 rounded-none bg-transparent pb-3 text-xl font-light"
               />
-              {isValid('birthCity') && !errors.birthCity ? (
-                <Icon name="check_circle" className="text-green-500 absolute right-8 bottom-4 animate-scale-in" />
-              ) : (
-                <Icon name="location_on" className="absolute right-0 bottom-4 text-slate-600" />
+              {formData.birthLat && formData.birthLon && (
+                <div className="flex items-center gap-2 mt-2">
+                  <Icon name="check_circle" className="text-green-500 text-sm" />
+                  <span className="text-xs text-green-400/80">Coordenadas: {formData.birthLat.toFixed(4)}, {formData.birthLon.toFixed(4)}</span>
+                </div>
               )}
             </div>
             {errors.birthCity ? (
               <p className="text-red-400 text-xs mt-1 animate-fade-in">{errors.birthCity}</p>
             ) : (
-              <p className="mt-3 text-xs text-slate-500 font-medium tracking-wide">Estabelece as coordenadas do horizonte.</p>
+              <p className="mt-3 text-xs text-slate-500 font-medium tracking-wide">🌍 Selecione da lista para coordenadas precisas.</p>
             )}
           </div>
         </main >
