@@ -42,24 +42,34 @@ const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ onSave, embedded 
     // UPDATE: Liquid Glass Solid Cards (Apple Health Style)
     // Amor -> Pink (Alma), Work -> Cyan (Mente), Social -> Lime (Corpo)
     // UPDATE: Volumetric Liquid Glass (Solid Gradients + Sheen + Pop Effect)
+    // UPDATE: Volumetric Liquid Glass (Solid Gradients + Sheen + Pop Effect)
+    // USING INLINE STYLES FOR BACKGROUND TO FORCE RENDER ON MOBILE
     const getSelectionStyle = (t: ConnectionType, isActive: boolean) => {
         const base = "relative overflow-hidden h-24 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all duration-300 group";
         const sheen = "before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none";
 
-        // Amor: Pink (Alma) - Solid Gradient (Standard Tailwind Colors)
-        if (t === 'love') return isActive
-            ? `${base} bg-gradient-to-br from-pink-500 to-pink-600 border-pink-500 text-white shadow-[0_10px_30px_-5px_rgba(236,72,153,0.6)] scale-[1.05] z-10 ${sheen}`
-            : `${base} bg-[#1C1C1E]/60 border-white/10 text-pink-400/80 hover:bg-pink-500/10 hover:border-pink-500/40 hover:text-white`;
+        let style = {};
+        let classes = base;
 
-        // Trabalho: Cyan (Mente) - Solid Gradient
-        if (t === 'work') return isActive
-            ? `${base} bg-gradient-to-br from-cyan-400 to-cyan-600 border-cyan-400 text-white shadow-[0_10px_30px_-5px_rgba(34,211,238,0.6)] scale-[1.05] z-10 ${sheen}`
-            : `${base} bg-[#1C1C1E]/60 border-white/10 text-cyan-400/80 hover:bg-cyan-400/10 hover:border-cyan-400/40 hover:text-white`;
+        if (isActive) {
+            // Active: Solid Gradient Background (Inline) + Shadow + White Text
+            classes += ` text-white scale-[1.05] z-10 ${sheen}`;
+            if (t === 'love') {
+                style = { background: 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)', borderColor: '#ec4899', boxShadow: '0 10px 30px -5px rgba(236,72,153,0.6)' };
+            } else if (t === 'work') {
+                style = { background: 'linear-gradient(135deg, #22d3ee 0%, #0891b2 100%)', borderColor: '#22d3ee', boxShadow: '0 10px 30px -5px rgba(34,211,238,0.6)' };
+            } else if (t === 'social') {
+                style = { background: 'linear-gradient(135deg, #a3e635 0%, #4d7c0f 100%)', borderColor: '#a3e635', boxShadow: '0 10px 30px -5px rgba(163,230,53,0.6)' };
+            }
+        } else {
+            // Inactive: Dark Glass
+            classes += ` bg-[#1C1C1E]/60 border-white/10 hover:text-white`;
+            if (t === 'love') classes += " text-pink-400/80 hover:bg-pink-500/10 hover:border-pink-500/40";
+            else if (t === 'work') classes += " text-cyan-400/80 hover:bg-cyan-400/10 hover:border-cyan-400/40";
+            else if (t === 'social') classes += " text-lime-400/80 hover:bg-lime-400/10 hover:border-lime-400/40";
+        }
 
-        // Social: Lime (Corpo) - Solid Gradient
-        return isActive
-            ? `${base} bg-gradient-to-br from-lime-400 to-lime-600 border-lime-400 text-white shadow-[0_10px_30px_-5px_rgba(163,230,53,0.6)] scale-[1.05] z-10 ${sheen}`
-            : `${base} bg-[#1C1C1E]/60 border-white/10 text-lime-400/80 hover:bg-lime-400/10 hover:border-lime-400/40 hover:text-white`;
+        return { className: classes, style };
     };
 
     return (
@@ -68,7 +78,7 @@ const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ onSave, embedded 
             <div className="grid grid-cols-3 gap-3 mb-6">
                 <button
                     onClick={() => setType('love')}
-                    className={getSelectionStyle('love', type === 'love')}
+                    {...getSelectionStyle('love', type === 'love')}
                 >
                     <Icon name="favorite" className="text-2xl drop-shadow-md" />
                     <span className="text-[10px] uppercase font-bold tracking-wider drop-shadow-sm">Amor</span>
@@ -76,7 +86,7 @@ const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ onSave, embedded 
 
                 <button
                     onClick={() => setType('work')}
-                    className={getSelectionStyle('work', type === 'work')}
+                    {...getSelectionStyle('work', type === 'work')}
                 >
                     <Icon name="work" className="text-2xl drop-shadow-md" />
                     <span className="text-[10px] uppercase font-bold tracking-wider drop-shadow-sm">Trabalho</span>
@@ -84,7 +94,7 @@ const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ onSave, embedded 
 
                 <button
                     onClick={() => setType('social')}
-                    className={getSelectionStyle('social', type === 'social')}
+                    {...getSelectionStyle('social', type === 'social')}
                 >
                     <Icon name="groups" className="text-2xl drop-shadow-md" />
                     <span className="text-[10px] uppercase font-bold tracking-wider drop-shadow-sm">Social</span>
