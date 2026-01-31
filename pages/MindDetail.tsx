@@ -5,42 +5,11 @@ import { motion } from 'framer-motion';
 import ErrorState from '../components/ErrorState';
 import { agentApi, DetailResponse } from '../api/agent';
 
-// Map score to context (Fallback/Visual Logic)
-const getVisualContext = (score: number) => {
-    let context = "Trânsito Neutro";
-    let speed = "70%";
-    let filter = "Médio";
-    let memory = "75%";
-
-    if (score > 80) {
-        context = "Mercúrio em Conjunção";
-        speed = "98%";
-        filter = "Ultra";
-        memory = "95%";
-    } else if (score > 60) {
-        context = "Mercúrio Direto";
-        speed = "85%";
-        filter = "Alto";
-        memory = "80%";
-    } else if (score > 40) {
-        context = "Mercúrio Sombrio";
-        speed = "50%";
-        filter = "Baixo";
-        memory = "60%";
-    } else {
-        context = "Mercúrio Retrógrado";
-        speed = "30%";
-        filter = "Ruído";
-        memory = "40%";
-    }
-    return { context, speed, filter, memory };
-};
-
 export const MindDetail: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Allow pre-passing score from Dashboard for instant load (optimistic)
+    // Optimistic Score for Ring Animation
     const initialScore = location.state?.score;
 
     const [loading, setLoading] = useState(true);
@@ -51,7 +20,6 @@ export const MindDetail: React.FC = () => {
         setLoading(true);
         setError(false);
         try {
-            // Determine User ID
             let userId = "demo";
             try {
                 const saved = localStorage.getItem('user_birth_data');
@@ -72,9 +40,33 @@ export const MindDetail: React.FC = () => {
         fetchDetail();
     }, []);
 
-    // Combine Data
     const displayScore = data?.score ?? initialScore ?? 0;
-    const visuals = getVisualContext(displayScore);
+
+    // Dynamic Context from Backend with Fallback
+    const context = data?.context || {
+        main_status: "Sincronizando...",
+        ring_status: "...",
+        metrics: [
+            { label: "Velocidade", value: "...", desc: "Carregando..." },
+            { label: "Filtro", value: "...", desc: "Carregando..." },
+            { label: "Memória", value: "...", desc: "Carregando..." }
+        ]
+    };
+
+    // Helper to map metric label to icon (Visual Layer only)
+    const getMetricIcon = (label: string) => {
+        const l = label.toLowerCase();
+        if (l.includes('veloc') || l.includes('speed')) return 'speed';
+        if (l.includes('filt')) return 'filter_alt';
+        if (l.includes('mem') || l.includes('ram')) return 'psychology';
+        return 'circle';
+    };
+
+    const getMetricColor = (index: number) => {
+        if (index === 0) return 'text-cyan-400';
+        if (index === 1) return 'text-blue-400';
+        return 'text-indigo-400';
+    };
 
     if (loading && !data && initialScore === undefined) {
         return (
@@ -114,13 +106,14 @@ export const MindDetail: React.FC = () => {
                     >
                         <Icon name="arrow_back" className="text-white/70" />
                     </button>
-                    {/* Title moved */}
                 </div>
             </div>
 
             <div className="pt-16 pb-24 px-6 max-w-md mx-auto space-y-8">
 
-                <h1 className="text-[21px] font-semibold tracking-tight text-cyan-400 text-center">Mente</h1>
+                <h1 className="text-[21px] font-semibold tracking-tight text-cyan-400 text-center">
+                    {data ? context.main_status : 'Mente'}
+                </h1>
 
                 {/* Hero Section */}
                 <motion.div
@@ -130,12 +123,8 @@ export const MindDetail: React.FC = () => {
                 >
                     {/* Main Gauge */}
                     <div className="relative w-64 h-64 flex items-center justify-center">
-                        {/* Outer Glow Ring - Reduced Intensity */}
                         <div className="absolute inset-0 rounded-full bg-cyan-500/5 blur-2xl animate-pulse-slow"></div>
-
-                        {/* SVG Ring */}
                         <svg className="w-full h-full transform -rotate-90">
-                            {/* Background Track */}
                             <circle
                                 cx="128"
                                 cy="128"
@@ -146,7 +135,6 @@ export const MindDetail: React.FC = () => {
                                 className="text-white/10"
                                 strokeOpacity={0.08}
                             />
-                            {/* Active Value Ring - Reduced Shadow */}
                             <circle
                                 cx="128"
                                 cy="128"
@@ -164,7 +152,7 @@ export const MindDetail: React.FC = () => {
                         {/* In-Ring Content */}
                         <div className="absolute flex flex-col items-center">
                             <span className="text-cyan-400 text-sm font-medium tracking-wider uppercase mb-1 drop-shadow-sm">
-                                {displayScore > 70 ? 'Hiperfoco' : (displayScore > 40 ? 'Ideias Leves' : 'Descanso')}
+                                {context.ring_status}
                             </span>
                             <span className="text-7xl font-light tracking-tighter text-white font-display">
                                 {displayScore || '--'}
@@ -176,73 +164,35 @@ export const MindDetail: React.FC = () => {
                     </div>
                 </motion.div>
 
-                {/* Detailed Metrics Grid */}
+                {/* Detailed Metrics Grid (Dynamic) */}
                 <div className="grid grid-cols-1 gap-4">
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
-                    >
-                        <div className="flex justify-between items-start mb-2">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-cyan-400`}>
-                                    <Icon name="speed" className="text-lg" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Velocidade</h3>
-                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-cyan-400`}>{visuals.speed}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                            {displayScore > 60 ? 'Processamento Rápido. Facilidade para conectar ideias.' : 'Fluxo mais lento. Exige revisão.'}
-                        </p>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
-                    >
-                        <div className="flex justify-between items-start mb-2">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-blue-400`}>
-                                    <Icon name="filter_alt" className="text-lg" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Filtro</h3>
-                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-blue-400`}>{visuals.filter}</p>
+                    {context.metrics.map((metric, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.1 }}
+                            className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
+                        >
+                            <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center ${getMetricColor(i)}`}>
+                                        <Icon name={getMetricIcon(metric.label)} className="text-lg" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white/90 text-[15px] font-bold tracking-tight">{metric.label}</h3>
+                                        <p className={`text-[11px] font-bold uppercase tracking-wider ${getMetricColor(i)}`}>{metric.value}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                            {displayScore > 60 ? 'Alta Precisão. Foco no essencial.' : 'Distrações altas. Cuidado com ruídos.'}
-                        </p>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
-                    >
-                        <div className="flex justify-between items-start mb-2">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-indigo-400`}>
-                                    <Icon name="psychology" className="text-lg" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Memória</h3>
-                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-indigo-400`}>{visuals.memory}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                            {displayScore > 60 ? 'Retenção Alta. Ótimo para estudos.' : 'Evite sobrecarga de informações hoje.'}
-                        </p>
-                    </motion.div>
+                            <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
+                                {metric.desc}
+                            </p>
+                        </motion.div>
+                    ))}
                 </div>
 
-                {/* Trend Chart (Visualizing Backend Trend) */}
+                {/* Trend Chart */}
                 {data?.trend_data && (
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -288,10 +238,10 @@ export const MindDetail: React.FC = () => {
 
                     <div className="mt-4 pt-4 border-t border-white/5 flex items-center gap-3">
                         <div className="px-2 py-1 rounded bg-white/5 text-[10px] text-white/50 border border-white/5">
-                            Mercúrio Retrógrado: Não
+                            Status: {context.main_status}
                         </div>
                         <div className="px-2 py-1 rounded bg-white/5 text-[10px] text-white/50 border border-white/5">
-                            Biorritmo: {displayScore}%
+                            Score: {displayScore}%
                         </div>
                     </div>
                 </motion.div>

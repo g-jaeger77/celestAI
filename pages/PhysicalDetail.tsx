@@ -5,41 +5,10 @@ import { motion } from 'framer-motion';
 import ErrorState from '../components/ErrorState';
 import { agentApi, DetailResponse } from '../api/agent';
 
-const getVisualContext = (score: number) => {
-    let context = "Marte Neutro";
-    let combustion = "Estável";
-    let impulse = "Moderado";
-    let immune = "Normal";
-
-    if (score > 80) {
-        context = "Marte em Domicílio";
-        combustion = "Explosiva";
-        impulse = "Alto";
-        immune = "Fortaleza";
-    } else if (score > 60) {
-        context = "Marte em Exaltação";
-        combustion = "Alta";
-        impulse = "Ativo";
-        immune = "Alta";
-    } else if (score > 40) {
-        context = "Marte Peregrino";
-        combustion = "Lento";
-        impulse = "Baixo";
-        immune = "Alerta";
-    } else {
-        context = "Marte em Queda";
-        combustion = "Mínima";
-        impulse = "Nulo";
-        immune = "Baixa";
-    }
-    return { context, combustion, impulse, immune };
-};
-
 export const PhysicalDetail: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Aggressive optimistic load if passed from dashboard
     const initialScore = location.state?.score;
 
     const [loading, setLoading] = useState(true);
@@ -50,7 +19,6 @@ export const PhysicalDetail: React.FC = () => {
         setLoading(true);
         setError(false);
         try {
-            // Determine User ID
             let userId = "demo";
             try {
                 const saved = localStorage.getItem('user_birth_data');
@@ -72,7 +40,30 @@ export const PhysicalDetail: React.FC = () => {
     }, []);
 
     const displayScore = data?.score ?? initialScore ?? 0;
-    const visuals = getVisualContext(displayScore);
+
+    const context = data?.context || {
+        main_status: "Analisando...",
+        ring_status: "...",
+        metrics: [
+            { label: "Combustão", value: "...", desc: "Carregando..." },
+            { label: "Impulso", value: "...", desc: "Carregando..." },
+            { label: "Imune", value: "...", desc: "Carregando..." }
+        ]
+    };
+
+    const getMetricIcon = (label: string) => {
+        const l = label.toLowerCase();
+        if (l.includes('comb')) return 'local_fire_department';
+        if (l.includes('imp')) return 'timeline';
+        if (l.includes('imun')) return 'shield';
+        return 'circle';
+    };
+
+    const getMetricColor = (index: number) => {
+        if (index === 0) return 'text-orange-500';
+        if (index === 1) return 'text-yellow-500';
+        return 'text-green-500';
+    };
 
     if (loading && !data && initialScore === undefined) {
         return (
@@ -112,14 +103,14 @@ export const PhysicalDetail: React.FC = () => {
                     >
                         <Icon name="arrow_back" className="text-white/70" />
                     </button>
-                    {/* Title moved */}
                 </div>
             </div>
 
             <div className="pt-16 pb-24 px-6 max-w-md mx-auto space-y-8">
 
-                <h1 className="text-[21px] font-semibold tracking-tight text-[#A4C400] text-center">Corpo</h1>
-
+                <h1 className="text-[21px] font-semibold tracking-tight text-[#A4C400] text-center">
+                    {data ? context.main_status : 'Corpo'}
+                </h1>
 
                 {/* Hero Section */}
                 <motion.div
@@ -129,12 +120,8 @@ export const PhysicalDetail: React.FC = () => {
                 >
                     {/* Main Gauge */}
                     <div className="relative w-64 h-64 flex items-center justify-center">
-                        {/* Outer Glow Ring - Reduced Intensity */}
                         <div className="absolute inset-0 rounded-full bg-orange-500/5 blur-2xl animate-pulse-slow"></div>
-
-                        {/* SVG Ring */}
                         <svg className="w-full h-full transform -rotate-90">
-                            {/* Background Track */}
                             <circle
                                 cx="128"
                                 cy="128"
@@ -145,7 +132,6 @@ export const PhysicalDetail: React.FC = () => {
                                 className="text-white/10"
                                 strokeOpacity={0.08}
                             />
-                            {/* Active Value Ring - Reduced Shadow */}
                             <circle
                                 cx="128"
                                 cy="128"
@@ -163,7 +149,7 @@ export const PhysicalDetail: React.FC = () => {
                         {/* In-Ring Content */}
                         <div className="absolute flex flex-col items-center">
                             <span className="text-[#A4C400] text-sm font-medium tracking-wider uppercase mb-1 drop-shadow-sm">
-                                {displayScore > 60 ? 'Vitalidade Alta' : 'Recuperação'}
+                                {context.ring_status}
                             </span>
                             <span className="text-7xl font-light tracking-tighter text-white font-display">
                                 {displayScore || '--'}
@@ -177,71 +163,33 @@ export const PhysicalDetail: React.FC = () => {
 
                 {/* Detailed Metrics Grid */}
                 <div className="grid grid-cols-1 gap-4">
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
-                    >
-                        <div className="flex justify-between items-start mb-2">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-orange-500`}>
-                                    <Icon name="local_fire_department" className="text-lg" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Combustão</h3>
-                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-orange-500`}>{visuals.combustion}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                            {displayScore > 60 ? 'Metabolismo acelerado. Bom para cardio.' : 'Metabolismo basal. Poupe energia.'}
-                        </p>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
-                    >
-                        <div className="flex justify-between items-start mb-2">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-yellow-500`}>
-                                    <Icon name="timeline" className="text-lg" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Impulso</h3>
-                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-yellow-500`}>{visuals.impulse}</p>
+                    {context.metrics.map((metric, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.1 }}
+                            className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
+                        >
+                            <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center ${getMetricColor(i)}`}>
+                                        <Icon name={getMetricIcon(metric.label)} className="text-lg" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white/90 text-[15px] font-bold tracking-tight">{metric.label}</h3>
+                                        <p className={`text-[11px] font-bold uppercase tracking-wider ${getMetricColor(i)}`}>{metric.value}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                            {displayScore > 60 ? 'Energia cinética alta. Cuidado com exageros.' : 'Controle motor estável. Bom para yoga.'}
-                        </p>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
-                    >
-                        <div className="flex justify-between items-start mb-2">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-green-500`}>
-                                    <Icon name="shield" className="text-lg" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Imune</h3>
-                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-green-500`}>{visuals.immune}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                            {displayScore > 60 ? 'Escudos ativos. Vitalidade alta.' : 'Evite friagem e desgaste excessivo hoje.'}
-                        </p>
-                    </motion.div>
+                            <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
+                                {metric.desc}
+                            </p>
+                        </motion.div>
+                    ))}
                 </div>
 
-                {/* Trend Chart (Visualizing Backend Trend) */}
+                {/* Trend Chart */}
                 {data?.trend_data && (
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -288,7 +236,7 @@ export const PhysicalDetail: React.FC = () => {
 
                     <div className="mt-4 pt-4 border-t border-white/5 flex items-center gap-3">
                         <div className="px-2 py-1 rounded bg-white/5 text-[10px] text-white/50 border border-white/5">
-                            Marte em Sagitário
+                            Status: {context.main_status}
                         </div>
                         <div className="px-2 py-1 rounded bg-white/5 text-[10px] text-white/50 border border-white/5">
                             Vitalidade: {displayScore}%

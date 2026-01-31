@@ -5,36 +5,6 @@ import { motion } from 'framer-motion';
 import ErrorState from '../components/ErrorState';
 import { agentApi, DetailResponse } from '../api/agent';
 
-const getVisualContext = (score: number) => {
-    let social = "Neutro";
-    let intuition = "Média";
-    let phase = "Crescente";
-    let weather = "cloud";
-
-    if (score > 80) {
-        social = "Extrovertido";
-        intuition = "Profética";
-        phase = "Cheia";
-        weather = "sun";
-    } else if (score > 60) {
-        social = "Aberto";
-        intuition = "Clara";
-        phase = "Gibosa";
-        weather = "partly_cloudy_day";
-    } else if (score > 40) {
-        social = "Resumido";
-        intuition = "Confusa";
-        phase = "Nova";
-        weather = "cloud";
-    } else {
-        social = "Baixa";
-        intuition = "Alta"; // Often low social battery means high sensitivity
-        phase = "Minguante";
-        weather = "rainy";
-    }
-    return { social, intuition, phase, weather };
-};
-
 export const EmotionalDetail: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -70,7 +40,30 @@ export const EmotionalDetail: React.FC = () => {
     }, []);
 
     const displayScore = data?.score ?? initialScore ?? 0;
-    const visuals = getVisualContext(displayScore);
+
+    const context = data?.context || {
+        main_status: "Sintonizando...",
+        ring_status: "...",
+        metrics: [
+            { label: "Social", value: "...", desc: "Carregando..." },
+            { label: "Intuição", value: "...", desc: "Carregando..." },
+            { label: "Fase Interna", value: "...", desc: "Carregando..." }
+        ]
+    };
+
+    const getMetricIcon = (label: string) => {
+        const l = label.toLowerCase();
+        if (l.includes('soc')) return 'people';
+        if (l.includes('intu')) return 'visibility';
+        if (l.includes('fase') || l.includes('int')) return 'nightlight';
+        return 'circle';
+    };
+
+    const getMetricColor = (index: number) => {
+        if (index === 0) return 'text-purple-400';
+        if (index === 1) return 'text-fuchsia-400';
+        return 'text-pink-400';
+    };
 
     if (loading && !data && initialScore === undefined) {
         return (
@@ -110,14 +103,14 @@ export const EmotionalDetail: React.FC = () => {
                     >
                         <Icon name="arrow_back" className="text-white/70" />
                     </button>
-                    {/* <h1 className="text-[17px] font-semibold tracking-tight">Emotional</h1> */}
-                    {/* <div className="w-10"></div> */}
                 </div>
             </div>
 
             <div className="pt-16 pb-24 px-6 max-w-md mx-auto space-y-8">
 
-                <h1 className="text-[21px] font-semibold tracking-tight text-[#AF52DE] text-center">Alma</h1>
+                <h1 className="text-[21px] font-semibold tracking-tight text-[#AF52DE] text-center">
+                    {data ? context.main_status : 'Alma'}
+                </h1>
 
                 {/* Hero Section */}
                 <motion.div
@@ -127,12 +120,8 @@ export const EmotionalDetail: React.FC = () => {
                 >
                     {/* Main Gauge */}
                     <div className="relative w-64 h-64 flex items-center justify-center">
-                        {/* Outer Glow Ring - Reduced Intensity */}
                         <div className="absolute inset-0 rounded-full bg-purple-500/5 blur-2xl animate-pulse-slow"></div>
-
-                        {/* SVG Ring */}
                         <svg className="w-full h-full transform -rotate-90">
-                            {/* Background Track */}
                             <circle
                                 cx="128"
                                 cy="128"
@@ -143,7 +132,6 @@ export const EmotionalDetail: React.FC = () => {
                                 className="text-white/10"
                                 strokeOpacity={0.08}
                             />
-                            {/* Active Value Ring - Reduced Shadow */}
                             <circle
                                 cx="128"
                                 cy="128"
@@ -161,7 +149,7 @@ export const EmotionalDetail: React.FC = () => {
                         {/* In-Ring Content */}
                         <div className="absolute flex flex-col items-center">
                             <span className="text-[#AF52DE] text-sm font-medium tracking-wider uppercase mb-1 drop-shadow-sm">
-                                {displayScore > 50 ? 'Conectado' : 'Reflexivo'}
+                                {context.ring_status}
                             </span>
                             <span className="text-7xl font-light tracking-tighter text-white font-display">
                                 {displayScore || '--'}
@@ -175,71 +163,33 @@ export const EmotionalDetail: React.FC = () => {
 
                 {/* Metrics Grid */}
                 <div className="grid grid-cols-1 gap-4">
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
-                    >
-                        <div className="flex justify-between items-start mb-2">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-purple-400`}>
-                                    <Icon name="people" className="text-lg" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Social</h3>
-                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-purple-400`}>{visuals.social}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                            {displayScore > 50 ? 'Aberto a trocas. Ótimo momento para conversas.' : 'Energia introspectiva. Priorize sua paz.'}
-                        </p>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
-                    >
-                        <div className="flex justify-between items-start mb-2">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-fuchsia-400`}>
-                                    <Icon name="visibility" className="text-lg" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Intuição</h3>
-                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-fuchsia-400`}>{visuals.intuition}</p>
+                    {context.metrics.map((metric, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.1 }}
+                            className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
+                        >
+                            <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center gap-3">
+                                    <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center ${getMetricColor(i)}`}>
+                                        <Icon name={getMetricIcon(metric.label)} className="text-lg" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white/90 text-[15px] font-bold tracking-tight">{metric.label}</h3>
+                                        <p className={`text-[11px] font-bold uppercase tracking-wider ${getMetricColor(i)}`}>{metric.value}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                            {displayScore > 50 ? 'Clareza emocional. Siga seus instintos.' : 'Sinais confusos. Use a lógica hoje.'}
-                        </p>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-[#1C1C1E] rounded-2xl p-5 border border-white/5"
-                    >
-                        <div className="flex justify-between items-start mb-2">
-                            <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-pink-400`}>
-                                    <Icon name="nightlight" className="text-lg" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Fase Interna</h3>
-                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-pink-400`}>{visuals.phase}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                            {visuals.weather === 'sun' ? 'Luminosidade interior alta.' : 'Momento de recolhimento e nutrição.'}
-                        </p>
-                    </motion.div>
+                            <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
+                                {metric.desc}
+                            </p>
+                        </motion.div>
+                    ))}
                 </div>
 
-                {/* Trend Chart (Visualizing Backend Trend) */}
+                {/* Trend Chart */}
                 {data?.trend_data && (
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -286,7 +236,7 @@ export const EmotionalDetail: React.FC = () => {
 
                     <div className="mt-4 pt-4 border-t border-white/5 flex items-center gap-3">
                         <div className="px-2 py-1 rounded bg-white/5 text-[10px] text-white/50 border border-white/5">
-                            Lua em Capricórnio
+                            Status: {context.main_status}
                         </div>
                         <div className="px-2 py-1 rounded bg-white/5 text-[10px] text-white/50 border border-white/5">
                             Sensibilidade: {displayScore}%

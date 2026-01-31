@@ -12,19 +12,37 @@ export interface DashboardResponse {
     score_emotional: number;
 }
 
+export interface Metric {
+    label: string;
+    value: string;
+    desc: string;
+}
+
+export interface DetailContext {
+    main_status: string;
+    ring_status: string;
+    metrics: Metric[];
+}
+
 export interface DetailResponse {
     score: number;
     title: string;
     trend_data: Array<{ day: string; value: number }>;
     analysis: string;
     recommendation: string;
+    context: DetailContext;
 }
 
 const API_BASE = "http://localhost:8000";
 
 export const agentApi = {
-    getDashboard: async (userId: string): Promise<DashboardResponse> => {
-        const response = await fetch(`${API_BASE}/agent/dashboard?user_id=${userId}`);
+    getDashboard: async (userId: string, lat?: number, lon?: number, timezone?: string): Promise<DashboardResponse> => {
+        const params = new URLSearchParams({ user_id: userId });
+        if (lat) params.append('lat', lat.toString());
+        if (lon) params.append('lon', lon.toString());
+        if (timezone) params.append('timezone', timezone);
+
+        const response = await fetch(`${API_BASE}/agent/dashboard?${params.toString()}`);
         if (!response.ok) throw new Error("Falha ao carregar dashboard");
         return response.json();
     },
