@@ -557,6 +557,85 @@ def get_user_profile(user_id: str):
         print(f"❌ Supabase Connection Error: {e}")
         return None
 
+# --- Chat Log Persistence (Location-Aware) ---
+
+def save_chat_log(
+    user_id: str,
+    role: str,  # 'user' or 'assistant'
+    message: str,
+    lat: float = None,
+    lon: float = None,
+    timezone_name: str = None,
+    planetary_hour: str = None,
+    moon_phase: str = None,
+    transits: dict = None,
+    tokens_used: int = 0,
+    session_id: str = None
+) -> bool:
+    """
+    Persist a chat message to Supabase with full location and astrological context.
+    Returns True on success, False on failure.
+    """
+    try:
+        data = {
+            "user_id": user_id,
+            "role": role,
+            "message": message,
+            "latitude": lat,
+            "longitude": lon,
+            "timezone": timezone_name,
+            "planetary_hour": planetary_hour,
+            "moon_phase": moon_phase,
+            "transits": transits,
+            "tokens_used": tokens_used,
+            "session_id": session_id
+        }
+        
+        # Remove None values for cleaner storage
+        data = {k: v for k, v in data.items() if v is not None}
+        
+        result = supabase.table("chat_logs").insert(data).execute()
+        
+        if result.data:
+            print(f"💾 Chat log saved: {role} ({len(message)} chars)")
+            return True
+        else:
+            print(f"⚠️ Failed to save chat log: No data returned")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Error saving chat log: {e}")
+        return False
+
+def get_chat_history(user_id: str, limit: int = 20, session_id: str = None) -> List[Dict]:
+    """
+    Retrieve chat history for a user from Supabase.
+    Returns list of messages in chronological order.
+    """
+    try:
+        query = supabase.table("chat_logs")\
+            .select("role, message, created_at, latitude, longitude, planetary_hour")\
+            .eq("user_id", user_id)\
+            .order("created_at", desc=True)\
+            .limit(limit)
+        
+        if session_id:
+            query = query.eq("session_id", session_id)
+        
+        result = query.execute()
+        
+        if result.data:
+            # Reverse to get chronological order
+            history = list(reversed(result.data))
+            print(f"📚 Retrieved {len(history)} messages from history")
+            return history
+        
+        return []
+        
+    except Exception as e:
+        print(f"❌ Error fetching chat history: {e}")
+        return []
+
 # ... (Rate Limit Code Skipped) ...
 
 # Removed duplicate header to fix structure
@@ -1025,6 +1104,49 @@ async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks)
         if request.user_id != "demo":
             # Use the new Insight Processor instead of raw storage
             background_tasks.add_task(insight_processor.process_async, request.user_id, request.message, ai_message)
+            
+            # 4.5 Persist Chat Logs to Supabase (with location context)
+            # Extract location from context if available
+            ctx_lat = request.context.get("lat") if request.context else None
+            ctx_lon = request.context.get("lon") if request.context else None
+            ctx_tz = request.context.get("timezone") if request.context else None
+            session_id = request.context.get("session_id") if request.context else None
+            
+            # Calculate current planetary hour for astrological context
+            p_hour = None
+            try:
+                if ctx_lat and ctx_lon:
+                    p_hour = AstrologyEngine.calculate_planetary_hour(ctx_lat, ctx_lon).get("planet")
+            except:
+                pass
+            
+            # Save user message (async)
+            background_tasks.add_task(
+                save_chat_log,
+                user_id=request.user_id,
+                role="user",
+                message=request.message,
+                lat=ctx_lat,
+                lon=ctx_lon,
+                timezone_name=ctx_tz,
+                planetary_hour=p_hour,
+                session_id=session_id
+            )
+            
+            # Save assistant response (async)
+            background_tasks.add_task(
+                save_chat_log,
+                user_id=request.user_id,
+                role="assistant",
+                message=ai_message,
+                lat=ctx_lat,
+                lon=ctx_lon,
+                timezone_name=ctx_tz,
+                planetary_hour=p_hour,
+                tokens_used=completion.usage.total_tokens,
+                transits=transit_chart,
+                session_id=session_id
+            )
 
         return ChatResponse(
             message=ai_message,
