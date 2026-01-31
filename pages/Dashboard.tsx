@@ -239,7 +239,7 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
             <div className="mb-1">
-              <span className="text-white text-[28px] font-bold leading-none block mb-0.5 tracking-tighter">{actionWindow.time}</span>
+              <span className="text-white text-[22px] font-bold leading-none block mb-0.5 tracking-tighter whitespace-nowrap">{actionWindow.time}</span>
               <p className="text-[#8e8e93] text-[13px] font-medium leading-snug">
                 {actionWindow.desc}
               </p>
