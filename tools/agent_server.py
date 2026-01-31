@@ -83,28 +83,39 @@ ZODIAC_SIGNS = [
     "Sagittarius", "Capricorn", "Aquarius", "Pisces"
 ]
 
-# --- Dynamic Geocoding (Any City Worldwide) ---
+# --- Dynamic Geocoding + Timezone Awareness (SaaS Grade Precision) ---
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError
+from timezonefinder import TimezoneFinder
+import pytz
+from datetime import datetime
 import functools
 
 # Initialize Geocoder (OpenStreetMap - Free, No API Key)
-_geolocator = Nominatim(user_agent="celest_ai_astrology", timeout=5)
+_geolocator = Nominatim(user_agent="celest_ai_astrology", timeout=8)
+_timezone_finder = TimezoneFinder()
 
 # In-Memory Cache for Performance (avoids repeated API calls)
 _geocache = {}
+
+class GeocodingError(Exception):
+    """Raised when city geocoding fails - for API error responses"""
+    pass
 
 def geocode_city(city: str, country: str = "") -> tuple:
     """
     Geocode any city worldwide using OpenStreetMap Nominatim.
     Returns (latitude, longitude) tuple.
-    Results are cached in memory.
+    Raises GeocodingError if city not found (NO silent fallback!).
     """
     cache_key = f"{city.lower().strip()}_{country.lower().strip()}"
     
     # Check cache first
     if cache_key in _geocache:
-        return _geocache[cache_key]
+        cached = _geocache[cache_key]
+        if cached is None:
+            raise GeocodingError(f"Cidade não encontrada: {city}")
+        return cached
     
     try:
         # Build query (city + country for better accuracy)
@@ -117,17 +128,63 @@ def geocode_city(city: str, country: str = "") -> tuple:
             print(f"📍 Geocoded: {query} → ({result[0]:.4f}, {result[1]:.4f})")
             return result
         else:
-            print(f"⚠️ Geocoding failed for: {query}, using default")
+            # Cache the failure to avoid repeated lookups
+            _geocache[cache_key] = None
+            raise GeocodingError(f"Cidade não encontrada: {city}")
             
     except (GeocoderTimedOut, GeocoderServiceError) as e:
-        print(f"⚠️ Geocoder error: {e}, using default")
+        print(f"⚠️ Geocoder error: {e}")
+        raise GeocodingError(f"Erro ao buscar cidade: {city}. Serviço indisponível.")
+    except GeocodingError:
+        raise  # Re-raise our custom error
     except Exception as e:
         print(f"⚠️ Unexpected geocoding error: {e}")
+        raise GeocodingError(f"Erro inesperado ao geocodificar: {city}")
+
+def get_timezone_for_coords(lat: float, lon: float) -> str:
+    """Get IANA timezone string for coordinates (e.g., 'America/Sao_Paulo')"""
+    tz_str = _timezone_finder.timezone_at(lat=lat, lng=lon)
+    return tz_str or "UTC"
+
+def convert_local_to_utc(year: int, month: int, day: int, hour: int, minute: int, lat: float, lon: float) -> tuple:
+    """
+    Convert local birth time to UTC using historical timezone data.
+    Handles Daylight Saving Time (DST) automatically.
     
-    # Default fallback: Greenwich (0,0 area)
-    default = (51.4772, 0.0)
-    _geocache[cache_key] = default
-    return default
+    Returns: (utc_hour_decimal, timezone_name, utc_offset_hours)
+    
+    Example:
+      São Paulo, Jan 1, 1995, 06:00 local
+      -> Brazil was in DST (GMT-2)
+      -> Returns (8.0, 'America/Sao_Paulo', -2)
+    """
+    tz_name = get_timezone_for_coords(lat, lon)
+    
+    try:
+        local_tz = pytz.timezone(tz_name)
+        
+        # Create naive datetime
+        naive_dt = datetime(year, month, day, hour, minute)
+        
+        # Localize to the birth location's timezone (handles historical DST)
+        local_dt = local_tz.localize(naive_dt, is_dst=None)
+        
+        # Convert to UTC
+        utc_dt = local_dt.astimezone(pytz.UTC)
+        
+        # Calculate decimal hour in UTC
+        utc_hour_decimal = utc_dt.hour + (utc_dt.minute / 60.0)
+        
+        # Get UTC offset in hours
+        utc_offset = local_dt.utcoffset().total_seconds() / 3600
+        
+        print(f"🕐 Timezone: {tz_name} | Local: {hour:02d}:{minute:02d} → UTC: {utc_dt.hour:02d}:{utc_dt.minute:02d} (Offset: {utc_offset:+.0f}h)")
+        
+        return (utc_hour_decimal, tz_name, utc_offset, utc_dt.year, utc_dt.month, utc_dt.day)
+        
+    except Exception as e:
+        print(f"⚠️ Timezone conversion error: {e}, using local time as UTC")
+        return (hour + minute/60.0, "UTC", 0, year, month, day)
 
 class AstrologyEngine:
     @staticmethod
@@ -138,15 +195,19 @@ class AstrologyEngine:
     @staticmethod
     def calculate_chart(name: str, year: int, month: int, day: int, hour: int, minute: int, city: str, country: str = "US", time_unknown: bool = False, lat: float = None, lon: float = None):
         try:
-            # 1. Julian Day (Assuming UT for simplicity in MVP)
-            t_hour = hour + (minute / 60.0)
-            jd = swe.julday(year, month, day, t_hour)
-            
-            # 2. Get Geographic Coordinates (Dynamic Geocoding - Any City!)
+            # 1. Get Geographic Coordinates (Dynamic Geocoding - Raises Error if Invalid!)
             if lat is None or lon is None:
                 lat, lon = geocode_city(city, country)
             
-            # 3. Calculate Houses (Placidus System) - Returns Ascendant!
+            # 2. Convert Local Time to UTC (Historical DST Awareness!)
+            utc_hour, tz_name, utc_offset, utc_year, utc_month, utc_day = convert_local_to_utc(
+                year, month, day, hour, minute, lat, lon
+            )
+            
+            # 3. Julian Day in UTC (Now Accurate!)
+            jd = swe.julday(utc_year, utc_month, utc_day, utc_hour)
+            
+            # 4. Calculate Houses (Placidus System) - Returns Ascendant!
             # swe.houses(jd, lat, lon, house_system)
             # Returns: (cusps[12], ascmc[10]) where ascmc[0] = Ascendant, ascmc[1] = MC
             house_cusps = None
@@ -212,6 +273,9 @@ class AstrologyEngine:
                 "location": {"lat": lat, "lon": lon, "city": city}
             }
 
+        except GeocodingError:
+            # Re-raise geocoding errors - these should become HTTP 400s
+            raise
         except Exception as e:
             print(f"Swisseph Error: {e}")
             return {
