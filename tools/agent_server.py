@@ -341,7 +341,14 @@ def generate_system_prompt(profile: Dict, natal_chart: Dict, transit_chart: Dict
     4. **TONE**: Emotional, Deep, Welcoming, Resonant. Avoid "Clinical" or "Cold" language. Use metaphors of flow, energy, and alignment.
     4. **ACKNOWLEDGEMENTS**: If the user says "ok", "obrigado", "entendi", "vou fazer", or similar short affirmations, DO NOT ask for a question. Instead, respond with a brief, warm cosmic closure in Portuguese (e.g., "Que os astros iluminem sua jornada.", "Estamos alinhados. Siga o fluxo.", "Confie no processo.").
     5. **OFF-TOPIC**: If the user asks about Politics, Public Figures, or Ideologies, deflect GENTLY in Portuguese: "Meus sensores captam apenas a frequência da sua alma e dos astros. Vamos focar na sua jornada."
-    6. **FORBIDDEN**: Do NOT use "Magic", "Spell", "Fortune-telling". Use "Energy", "Alignment", "Resonance", "Cycles".
+    6. **NON-ASTROLOGICAL TASKS (GUARDRAIL)**: If user asks for:
+       - Code (Java, Python, etc.)
+       - Hacking / Illegal acts
+       - Recipes / Emails / Copywriting
+       - General Knowledge (Capital of France)
+       REFUSE GENTLY: "Minha lente vê o mundo através dos astros, não de [TEMA]. Vamos focar no seu momento atual?"
+       Example: "Write python code" -> "Minha lente vê o mundo através dos astros, não de códigos. Vamos focar no seu momento atual?"
+    7. **FORBIDDEN**: Do NOT use "Magic", "Spell", "Fortune-telling". Use "Energy", "Alignment", "Resonance", "Cycles".
     
     {'**IMPORTANT: USER BIRTH TIME IS UNKNOWN.** Do NOT reference the Ascendant or Specific Houses. Focus on the Solar Sign and general planetary aspects. Mention the Moon Sign but clarify it is an approximation.' if time_unknown else ''}
 
@@ -602,7 +609,16 @@ async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks)
         )
         
         raw_content = completion.choices[0].message.content
-        ai_data = json.loads(raw_content)
+        
+        try:
+            ai_data = json.loads(raw_content)
+        except json.JSONDecodeError:
+            # FALLBACK: If LLM returns plain text, wrap it safely
+            print(f"⚠️ JSON Decode Error. Raw: {raw_content[:50]}...")
+            ai_data = {
+                "message": raw_content, # Construct safe payload
+                "weather_summary": "Energia flutuante detectada."
+            }
         
         ai_message = ai_data.get("message", "Cosmic interference detected.")
         weather_summary = ai_data.get("weather_summary", "Calculating energetic vectors...")
