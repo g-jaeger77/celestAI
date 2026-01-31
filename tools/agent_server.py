@@ -121,7 +121,8 @@ class AstrologyEngine:
                 "sun": {"sign": "Aries", "house": "1"},
                 "moon": {"sign": "Taurus", "house": "2"},
                 "mars": {"sign": "Gemini", "house": "3"},
-                "ascendant": "Leo"
+                "ascendant": "Leo",
+                "houses": {1: {"sign": "Leo"}, 10: {"sign": "Taurus"}} # Minimal fallback
             }
 
 # --- Soul-Guide Agent Logic --- 
@@ -287,16 +288,26 @@ def get_user_profile(user_id: str):
 
 # ... (Rate Limit Code Skipped) ...
 
-def generate_system_prompt(profile: Dict, natal_chart: Dict, transit_chart: Dict):
-    # Natal
+# Removed duplicate header to fix structure
+def generate_system_prompt(profile, natal_chart, transit_chart):
+    # FALLBACK: If charts are missing, use dummy data to prevent crash
+    if not transit_chart:
+        transit_chart = {
+            'sun': {'sign': 'Unknown', 'longitude': 0},
+            'moon': {'sign': 'Unknown', 'longitude': 0},
+            'mars': {'sign': 'Unknown', 'longitude': 0}
+        }
+    if not natal_chart:
+        # Natal fallback handled by variables below, but good to be safe
+        pass
+
+    time_unknown = profile.get('time_unknown', False)
+
     n_sun = natal_chart['sun']['sign'] if natal_chart else "Unknown"
     n_moon = natal_chart['moon']['sign'] if natal_chart else "Unknown"
-    n_mars = natal_chart['mars']['sign'] if natal_chart else "Unknown"
-    n_asc = natal_chart.get('ascendant', 'Unknown')
-    
-    time_unknown = profile.get('time_unknown', False)
-    
-    # Transits (Now) with Overlay
+    n_asc = natal_chart['houses'][1]['sign'] if natal_chart else "Unknown"
+    # n_asc_lon handled below
+
     t_data_sun = transit_chart['sun']
     t_data_moon = transit_chart['moon']
     t_data_mars = transit_chart['mars']
@@ -513,75 +524,85 @@ async def stripe_webhook(request: Request):
 
 @app.post("/agent/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks):
-    print(f"📩 Received message from {request.user_id}: {request.message}")
-
-    # 0. Check Rate Limit
-    if not check_daily_limit(request.user_id):
-        raise HTTPException(status_code=429, detail="Daily cosmic signal limit reached. Please return tomorrow.")
-
-    profile = None
-    if request.context and "user_profile" in request.context:
-        print("👤 Using profile from request context")
-        profile = request.context["user_profile"]
-    
-    if not profile:
-        profile = get_user_profile(request.user_id)
-    
-    if not profile:
-        profile = {
-            "full_name": "Guest Traveler", 
-            "birth_date": "1990-01-01", 
-            "birth_time": "12:00", 
-            "birth_city": "London",
-            "birth_country": "GB"
-        }
-
-    # 0.5 Recall Memories (Soul-Guide Memory)
-    recalled_context = []
-    if request.user_id != "demo":
-        memories = memory_store.recall_memories(request.user_id, request.message)
-        recalled_context = [m['content'] for m in memories]
-        print(f"🧠 Recalled {len(recalled_context)} memories.")
-
-    # 1. Calculate NATAL Chart
     try:
-        b_date = datetime.strptime(profile.get("birth_date", "1990-01-01"), "%Y-%m-%d")
-        b_time_str = profile.get("birth_time", "12:00")
-        b_hour, b_min = map(int, b_time_str.split(':')[:2])
-        
-        city = profile.get("birth_city", "London")
-        country = profile.get("country", "US") 
-        
-        natal_chart = AstrologyEngine.calculate_chart(
-            profile.get("full_name", "User"), 
-            b_date.year, b_date.month, b_date.day, 
-            b_hour, b_min, 
-            city, country
-        )
-        
-    except Exception as e:
-        print(f"⚠️ Natal calculation failed: {e}")
-        natal_chart = None
+        print(f"📩 Received message from {request.user_id}: {request.message}")
 
-    # 2. Calculate TRANSIT Chart (NOW)
-    # Check for location in context
-    lat, lon = 0.0, 0.0 # Default UTC/Greenwich
-    if request.context and 'location' in request.context and request.context['location']:
+        # 0. Check Rate Limit
         try:
-            loc = request.context['location']
-            lat = float(loc.get('lat', 0.0))
-            lon = float(loc.get('lon', 0.0))
-        except:
-            pass
+            if not check_daily_limit(request.user_id):
+                raise HTTPException(status_code=429, detail="Daily cosmic signal limit reached. Please return tomorrow.")
+        except Exception as e:
+            print(f"⚠️ Rate Limit Check Warning: {e}")
+            # Continue if check fails (Fail Open for now)
 
-    try:
-        transit_chart = AstrologyEngine.get_current_transits(lat, lon)
-    except Exception as e:
-        print(f"⚠️ Transit calculation failed: {e}")
+        profile = None
+        if request.context and "user_profile" in request.context:
+            print("👤 Using profile from request context")
+            profile = request.context["user_profile"]
+        
+        if not profile:
+            profile = get_user_profile(request.user_id)
+        
+        if not profile:
+            profile = {
+                "full_name": "Guest Traveler", 
+                "birth_date": "1990-01-01", 
+                "birth_time": "12:00", 
+                "birth_city": "London",
+                "birth_country": "GB"
+            }
+
+        # 0.5 Recall Memories (Soul-Guide Memory)
+        recalled_context = []
+        if request.user_id != "demo":
+            try:
+                memories = memory_store.recall_memories(request.user_id, request.message)
+                recalled_context = [m['content'] for m in memories]
+                print(f"🧠 Recalled {len(recalled_context)} memories.")
+            except Exception as e:
+                print(f"⚠️ Memory Recall Error: {e}")
+                recalled_context = []
+
+        # 1. Calculate NATAL Chart
+        natal_chart = None
+        try:
+            b_date = datetime.strptime(profile.get("birth_date", "1990-01-01"), "%Y-%m-%d")
+            b_time_str = profile.get("birth_time", "12:00")
+            b_hour, b_min = map(int, b_time_str.split(':')[:2])
+            
+            city = profile.get("birth_city", "London")
+            country = profile.get("country", "US") 
+            
+            natal_chart = AstrologyEngine.calculate_chart(
+                profile.get("full_name", "User"), 
+                b_date.year, b_date.month, b_date.day, 
+                b_hour, b_min, 
+                city, country
+            )
+            
+        except Exception as e:
+            print(f"⚠️ Natal calculation failed: {e}")
+            natal_chart = None
+
+        # 2. Calculate TRANSIT Chart (NOW)
+        # Check for location in context
+        lat, lon = 0.0, 0.0 # Default UTC/Greenwich
+        if request.context and 'location' in request.context and request.context['location']:
+            try:
+                loc = request.context['location']
+                lat = float(loc.get('lat', 0.0))
+                lon = float(loc.get('lon', 0.0))
+            except:
+                pass
+
         transit_chart = None
+        try:
+            transit_chart = AstrologyEngine.get_current_transits(lat, lon)
+        except Exception as e:
+            print(f"⚠️ Transit calculation failed: {e}")
+            transit_chart = None
 
-    # 3. Generate Response
-    try:
+        # 3. Generate Response
         system_prompt = generate_system_prompt(profile, natal_chart, transit_chart)
         
         # Inject Memories into System Prompt
@@ -627,7 +648,7 @@ async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks)
         
         actions = []
         if "meditation" in ai_message.lower():
-             actions.append(Action(label="Start Guided Meditation", type="navigate", payload="/mental"))
+                actions.append(Action(label="Start Guided Meditation", type="navigate", payload="/mental"))
 
         # Construct Weather Report Payload
         weather_report = {
@@ -653,8 +674,18 @@ async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks)
             }
         )
     except Exception as e:
-        print(f"❌ LLM Error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"❌ MASTER ERROR: {e}")
+        return ChatResponse(
+            message="🌌 *Os astros estão em silêncio momentâneo.* \n\nHouve uma pequena interferência no sinal cósmico (Erro Interno). Por favor, tente perguntar novamente em instantes.",
+            actions=[],
+            weather_report={
+                "summary": "Interferência Detectada",
+                "transits": {},
+                "natal": {},
+                "date": datetime.now().strftime("%d/%m/%Y")
+            },
+            metadata={"error": str(e)} # Keep error in metadata for debugging if needed
+        )
 
 class SynastryRequest(BaseModel):
     user_data: Dict[str, str] # {name, date, time, city}
@@ -972,12 +1003,18 @@ async def dashboard_endpoint(user_id: str, lat: Optional[float] = None, lon: Opt
         # Map 8 Sectors to 3 Core Scores
         # Helper to find score by label
         def get_s(label):
-            return next((x['score'] for x in wheel_data if x['label'] == label), 50)
+            val = next((x['score'] for x in wheel_data if x['label'] == label), 50)
+            # Defensive Fix: If val is tuple (score, reasons), extract score
+            if isinstance(val, (tuple, list)):
+                 return int(val[0])
+            return int(val)
             
         sc_mental = get_s("Saúde Mental")
         sc_physical = get_s("Saúde Física")
         # Emotional = Avg of Relacionamento + Espiritualidade
-        sc_emotional = int((get_s("Relacionamento") + get_s("Espiritualidade")) / 2)
+        v_rel = get_s("Relacionamento")
+        v_esp = get_s("Espiritualidade")
+        sc_emotional = int((v_rel + v_esp) / 2)
         
     except Exception as e:
         print(f"⚠️ Engine Error: {e}")

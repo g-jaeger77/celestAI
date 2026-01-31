@@ -4,7 +4,7 @@ import json
 import math
 
 class WheelEngine:
-    """Wrapper para manter compatibilidade com o agent_server.py chamando a nova Calculadora REAL."""
+    """Wrapper para manter compatibilidade com o agent_server.py chamando a nova Calculadora REAL. (v2.1)"""
     def __init__(self, name, year, month, day, hour, minute, city, country="US", lat=0, lon=0, target_date=None):
         # 1. Mapa Natal (User)
         self.user = AstrologicalSubject(name, year, month, day, hour, minute, city, country)
