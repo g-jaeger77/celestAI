@@ -157,7 +157,7 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="flex flex-col items-center gap-1">
                 <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-[#FF9F0A]"></div>
+                  <div className="w-2 h-2 rounded-full bg-[#ec4899]"></div>
                   <span className="text-[11px] uppercase font-bold text-[#8e8e93] tracking-wider">Alma</span>
                 </div>
                 <span className="text-white text-[16px] font-bold tracking-tight">{displayData.score_emotional}%</span>
@@ -215,8 +215,8 @@ const Dashboard: React.FC = () => {
           >
             <div className="flex justify-between items-start mb-auto">
               <div className="flex items-center gap-2">
-                <Icon name="water_drop" className="text-[#FF9F0A] text-[20px]" />
-                <h4 className="text-[#FF9F0A] text-[11px] font-bold uppercase tracking-wider">Alma</h4>
+                <Icon name="water_drop" className="text-[#ec4899] text-[20px]" />
+                <h4 className="text-[#ec4899] text-[11px] font-bold uppercase tracking-wider">Alma</h4>
               </div>
             </div>
             <div className="mb-1">
@@ -252,7 +252,7 @@ const Dashboard: React.FC = () => {
         <div className="px-4">
           <div className="bg-[#1C1C1E] rounded-[22px] p-6 border border-white/5 flex flex-col gap-3 relative overflow-hidden">
             {/* Subtle gradient accent at top */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#32ADE6] via-[#FF9F0A] to-[#A4C400] opacity-50"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#32ADE6] via-[#ec4899] to-[#A4C400] opacity-50"></div>
 
             <div className="flex items-center gap-2.5 mb-1">
               <Icon name="auto_awesome" className="text-white/80" />

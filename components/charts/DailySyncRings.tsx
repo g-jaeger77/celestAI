@@ -74,8 +74,8 @@ const DailySyncRings: React.FC<DailySyncRingsProps> = ({ mind, body, soul }) => 
                         <stop offset="100%" stopColor="#C0EB00" />
                     </linearGradient>
                     <linearGradient id="grad-soul" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#FF9F0A" />
-                        <stop offset="100%" stopColor="#FFD60A" />
+                        <stop offset="0%" stopColor="#ec4899" />
+                        <stop offset="100%" stopColor="#db2777" />
                     </linearGradient>
                 </defs>
 
