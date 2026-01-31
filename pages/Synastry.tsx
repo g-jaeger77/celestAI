@@ -293,22 +293,27 @@ const Synastry: React.FC = () => {
                         </button>
                     </div>
 
-                    {/* Zero State (Apple Style) */}
+                    {/* Zero State (Apple Health Liquid Glass) */}
                     {connections.length === 0 ? (
-                        <div className="mt-12 flex flex-col items-center justify-center text-center animate-in fade-in duration-700">
-                            <div className="w-20 h-20 bg-[#1C1C1E] rounded-full flex items-center justify-center mb-6 shadow-2xl shadow-black/50">
-                                <Icon name="groups" className="text-3xl text-gray-400" />
+                        <div className="mt-8 animate-in fade-in duration-700">
+                            <div className="relative overflow-hidden p-8 rounded-[32px] bg-[#1C1C1E]/60 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/50 text-center mx-auto max-w-sm">
+                                {/* Liquid Glass Highlight (Top) */}
+                                <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
+
+                                <div className="w-20 h-20 bg-black/40 rounded-full flex items-center justify-center mb-6 mx-auto shadow-inner border border-white/5 relative z-10">
+                                    <Icon name="groups" className="text-3xl text-gray-300" />
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2 relative z-10">Nenhuma Conexão</h3>
+                                <p className="text-gray-400 text-sm mb-8 leading-relaxed relative z-10">
+                                    Adicione parceiros, amigos ou colegas para descobrir a sinergia dos mapas.
+                                </p>
+                                <button
+                                    onClick={() => setIsSheetOpen(true)}
+                                    className="px-8 py-3 rounded-full bg-white text-black font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-lg shadow-white/10 w-full relative z-10"
+                                >
+                                    Adicionar
+                                </button>
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-2">Nenhuma Conexão</h3>
-                            <p className="text-gray-400 text-base max-w-[280px] mb-8 leading-relaxed">
-                                Adicione parceiros, amigos ou colegas para descobrir a sinergia dos mapas.
-                            </p>
-                            <button
-                                onClick={() => setIsSheetOpen(true)}
-                                className="px-8 py-3 rounded-full bg-white text-black font-bold text-sm hover:scale-105 active:scale-95 transition-all"
-                            >
-                                Adicionar
-                            </button>
                         </div>
                     ) : (
                         <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-500 relative z-10">
