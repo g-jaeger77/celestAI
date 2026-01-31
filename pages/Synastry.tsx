@@ -323,110 +323,122 @@ const Synastry: React.FC = () => {
                                 />
                             ))}
                         </div>
-                    )}
+                    ))}
                 </div>
             )}
 
-            {/* Loading Overlay */}
-            {loading && step === 1 && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md">
-                    <div className="flex flex-col items-center">
-                        <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+            {/* Upsell / Expansions (Always Visible) */}
+            <div className="mt-8 mb-24 animate-in slide-in-from-bottom-8 duration-700 delay-200">
+                <ShopPromoCard />
+            </div>
+        </div>
+    )
+}
+
+{/* Loading Overlay */ }
+{
+    loading && step === 1 && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md">
+            <div className="flex flex-col items-center">
+                <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+            </div>
+        </div>
+    )
+}
+
+{/* Result View */ }
+{
+    step === 2 && result && activeConnection && (
+        <div className="relative bg-black min-h-screen animate-in slide-in-from-bottom duration-700 z-20">
+
+            {/* Back Button */}
+            <div className="absolute top-12 left-6 z-20">
+                <button onClick={() => setStep(1)} className="p-2 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white hover:bg-white/10 transition-colors">
+                    <Icon name="arrow_back" />
+                </button>
+            </div>
+
+            <div className="pt-24 px-6 pb-32">
+
+                {/* Context Badge */}
+                <div className="flex justify-center mb-6">
+                    <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border ${result.theme === 'love' ? 'border-pink-500/30 text-pink-400 bg-pink-500/10' :
+                        result.theme === 'work' ? 'border-blue-500/30 text-blue-400 bg-blue-500/10' :
+                            'border-amber-500/30 text-amber-400 bg-amber-500/10'
+                        }`}>
+                        {result.theme === 'love' ? 'Amor' : result.theme === 'work' ? 'Trabalho' : 'Social'}
+                    </span>
+                </div>
+
+                {/* Title */}
+                <h2 className="text-center text-3xl font-bold mb-2 bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">
+                    {activeConnection?.name}
+                </h2>
+                <div className="flex justify-center mb-6">
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5">
+                        <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">Score Global</span>
+                        <span className="text-white font-bold">{result.score}%</span>
                     </div>
                 </div>
-            )}
 
-            {/* Result View */}
-            {step === 2 && result && activeConnection && (
-                <div className="relative bg-black min-h-screen animate-in slide-in-from-bottom duration-700 z-20">
+                {/* Radar Chart */}
+                <div className="h-[300px] w-full flex items-center justify-center mb-4">
+                    {/* Radar Component */}
+                    <RadarChart
+                        data={result.radar}
+                        theme={result.theme}
+                        size={300}
+                        partnerLabel={result.partnerName ? result.partnerName.split(' ')[0] : "Parceiro"}
+                    />
+                </div>
 
-                    {/* Back Button */}
-                    <div className="absolute top-12 left-6 z-20">
-                        <button onClick={() => setStep(1)} className="p-2 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white hover:bg-white/10 transition-colors">
-                            <Icon name="arrow_back" />
-                        </button>
-                    </div>
-
-                    <div className="pt-24 px-6 pb-32">
-
-                        {/* Context Badge */}
-                        <div className="flex justify-center mb-6">
-                            <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border ${result.theme === 'love' ? 'border-pink-500/30 text-pink-400 bg-pink-500/10' :
-                                result.theme === 'work' ? 'border-blue-500/30 text-blue-400 bg-blue-500/10' :
-                                    'border-amber-500/30 text-amber-400 bg-amber-500/10'
+                {/* Deal Breaker Card */}
+                {result.dealBreaker && (
+                    <div className={`p-6 rounded-3xl border mb-6 ${result.dealBreaker.isBad
+                        ? 'bg-red-500/10 border-red-500/30'
+                        : 'bg-green-500/10 border-green-500/30'
+                        }`}>
+                        <div className="flex items-center gap-3 mb-3">
+                            <Icon name={result.dealBreaker.isBad ? "warning" : "check_circle"}
+                                className={result.dealBreaker.isBad ? "text-red-400" : "text-green-400"} />
+                            <span className={`text-sm font-bold uppercase tracking-wider ${result.dealBreaker.isBad ? "text-red-400" : "text-green-400"
                                 }`}>
-                                {result.theme === 'love' ? 'Amor' : result.theme === 'work' ? 'Trabalho' : 'Social'}
+                                {result.dealBreaker.title}
                             </span>
                         </div>
-
-                        {/* Title */}
-                        <h2 className="text-center text-3xl font-bold mb-2 bg-gradient-to-b from-white to-gray-400 bg-clip-text text-transparent">
-                            {activeConnection?.name}
-                        </h2>
-                        <div className="flex justify-center mb-6">
-                            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/5">
-                                <span className="text-gray-400 text-xs font-bold uppercase tracking-wider">Score Global</span>
-                                <span className="text-white font-bold">{result.score}%</span>
-                            </div>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                            {result.dealBreaker.text}
+                        </p>
+                        <div className="w-full bg-black/30 h-1.5 rounded-full overflow-hidden mt-4">
+                            <div
+                                className={`h-full rounded-full ${result.dealBreaker.isBad ? 'bg-red-500' : 'bg-green-500'}`}
+                                style={{ width: `${result.dealBreaker.score}%` }}
+                            ></div>
                         </div>
+                    </div>
+                )}
 
-                        {/* Radar Chart */}
-                        <div className="h-[300px] w-full flex items-center justify-center mb-4">
-                            {/* Radar Component */}
-                            <RadarChart
-                                data={result.radar}
-                                theme={result.theme}
-                                size={300}
-                                partnerLabel={result.partnerName ? result.partnerName.split(' ')[0] : "Parceiro"}
-                            />
-                        </div>
-
-                        {/* Deal Breaker Card */}
-                        {result.dealBreaker && (
-                            <div className={`p-6 rounded-3xl border mb-6 ${result.dealBreaker.isBad
-                                ? 'bg-red-500/10 border-red-500/30'
-                                : 'bg-green-500/10 border-green-500/30'
-                                }`}>
-                                <div className="flex items-center gap-3 mb-3">
-                                    <Icon name={result.dealBreaker.isBad ? "warning" : "check_circle"}
-                                        className={result.dealBreaker.isBad ? "text-red-400" : "text-green-400"} />
-                                    <span className={`text-sm font-bold uppercase tracking-wider ${result.dealBreaker.isBad ? "text-red-400" : "text-green-400"
-                                        }`}>
-                                        {result.dealBreaker.title}
-                                    </span>
-                                </div>
-                                <p className="text-gray-300 text-sm leading-relaxed">
-                                    {result.dealBreaker.text}
-                                </p>
-                                <div className="w-full bg-black/30 h-1.5 rounded-full overflow-hidden mt-4">
-                                    <div
-                                        className={`h-full rounded-full ${result.dealBreaker.isBad ? 'bg-red-500' : 'bg-green-500'}`}
-                                        style={{ width: `${result.dealBreaker.score}%` }}
-                                    ></div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* AI Analysis (Mock Text for now if not loaded) */}
-                        <div className="p-6 rounded-3xl bg-[#1C1C1E] border border-white/5 space-y-4">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Icon name="auto_awesome" className="text-purple-400" />
-                                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Oracle Insight</span>
-                            </div>
-                            <div className="prose prose-invert prose-sm">
-                                <p className="text-white/80 italic">{result.message}</p>
-                            </div>
-                        </div>
-
-                        {/* PROMO */}
-                        <div className="mt-6">
-                            <ShopPromoCard />
-                        </div>
-
+                {/* AI Analysis (Mock Text for now if not loaded) */}
+                <div className="p-6 rounded-3xl bg-[#1C1C1E] border border-white/5 space-y-4">
+                    <div className="flex items-center gap-2 mb-2">
+                        <Icon name="auto_awesome" className="text-purple-400" />
+                        <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Oracle Insight</span>
+                    </div>
+                    <div className="prose prose-invert prose-sm">
+                        <p className="text-white/80 italic">{result.message}</p>
                     </div>
                 </div>
-            )}
+
+                {/* PROMO */}
+                <div className="mt-6">
+                    <ShopPromoCard />
+                </div>
+
+            </div>
         </div>
+    )
+}
+        </div >
     );
 };
 
