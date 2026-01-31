@@ -42,7 +42,6 @@ class WheelEngine:
         for i, h_attr in enumerate(house_names):
             house_obj = getattr(subject, h_attr, None)
             if house_obj:
-                # Tenta pegar abs_pos se existir, senão 0 (fallback)
                 chart["houses"][i+1] = {
                     "sign": house_obj.sign,
                     "abs_pos": getattr(house_obj, "abs_pos", 0) 
@@ -112,7 +111,7 @@ class LifeWheelCalculator:
         dignity = self.DIGNITIES.get(planet_name, {}).get(sign, 0)
         return score + dignity
 
-    def _get_occupants_score(self, house_num, chart_source):
+    def _get_occupants_score(self, house_num, chart_source, reasons_list, context_prefix):
         score_mod = 0
         benefics = ["Jupiter", "Venus", "Sun"]
         malefics = ["Saturn", "Mars", "Pluto"] 
@@ -120,21 +119,23 @@ class LifeWheelCalculator:
         
         for p_name, p_data in chart_source['planets'].items():
             if p_data['sign'] == target_sign:
-                if p_name in benefics: score_mod += 20 
+                if p_name in benefics: 
+                    score_mod += 20 
+                    reasons_list.append(f"{context_prefix}: {p_name} na Casa (+20)")
                 elif p_name in malefics:
                     p_score = self._get_planet_score(p_name, chart_source)
-                    if p_score > 60: score_mod += 5  
-                    else: score_mod -= 15 
-                else: score_mod += 5
+                    if p_score > 60: 
+                        score_mod += 5  
+                        reasons_list.append(f"{context_prefix}: {p_name} Digno (+5)")
+                    else: 
+                        score_mod -= 15 
+                        reasons_list.append(f"{context_prefix}: {p_name} Tenso (-15)")
+                else: 
+                    score_mod += 5
+                    reasons_list.append(f"{context_prefix}: {p_name} Neutro (+5)")
         return score_mod
 
-    def _calculate_aspect_impact(self, house_num):
-        """
-        Calcula o impacto de ASPECTOS (Geometria) dos Trânsitos sobre o Regente da Casa Natal.
-        Ex: Casa 2 (Touro) -> Regente Vênus.
-        Onde está Vênus no Mapa Natal? (ex: Capricórnio 10°).
-        Quais planetas do TRÂNSITO fazem aspecto com Vênus Natal a 10°?
-        """
+    def _calculate_aspect_impact(self, house_num, reasons_list):
         impact = 0
         
         # 1. Identificar Regente Natal
@@ -160,53 +161,68 @@ class LifeWheelCalculator:
             
             # Conjunção (0°)
             if diff <= orb:
-                if t_name in benefics: impact += 25  # Grande Benção (Júpiter/Vênus em cima do Regente)
-                elif t_name in malefics: impact -= 20 # Grande Tensão (Saturno esmagando o Regente)
-                else: impact += 5 # Fusão
+                if t_name in benefics: 
+                    impact += 25
+                    reasons_list.append(f"Aspecto: {t_name} Conjunção {ruler_name} (+25)")
+                elif t_name in malefics: 
+                    impact -= 20
+                    reasons_list.append(f"Aspecto: {t_name} Conjunção {ruler_name} (-20)")
+                else: 
+                    impact += 5
                 
             # Trígono (120°)
             elif abs(diff - 120) <= orb:
-                if t_name in benefics: impact += 15 # Fluxo fácil
-                elif t_name in malefics: impact += 5  # Fluxo estruturado
-                else: impact += 10
+                if t_name in benefics: 
+                    impact += 15
+                    reasons_list.append(f"Aspecto: {t_name} Trígono {ruler_name} (+15)")
+                elif t_name in malefics: 
+                    impact += 5
+                    reasons_list.append(f"Aspecto: {t_name} Trígono {ruler_name} (+5)")
+                else: 
+                    impact += 10
+                    reasons_list.append(f"Aspecto: {t_name} Trígono {ruler_name} (+10)")
                 
             # Quadratura (90°)
             elif abs(diff - 90) <= orb:
-                if t_name in benefics: impact -= 5 # Excesso/Indulgência
-                elif t_name in malefics: impact -= 25 # Bloqueio Severo
-                else: impact -= 10
+                if t_name in malefics: 
+                    impact -= 25
+                    reasons_list.append(f"Aspecto: {t_name} Quadratura {ruler_name} (-25)")
+                else: 
+                    impact -= 10
+                    reasons_list.append(f"Aspecto: {t_name} Quadratura {ruler_name} (-10)")
             
             # Oposição (180°)
             elif abs(diff - 180) <= orb:
-                impact -= 15 # Tensão/Confronto
+                impact -= 15
+                reasons_list.append(f"Aspecto: {t_name} Oposição {ruler_name} (-15)")
                 
         return impact
 
     def calculate_sector_score(self, houses):
         """
-        Fórmula Tripla: 
-        1. Natal (Essência) - 50%
-        2. Trânsito Ocupante (Clima Local) - 20%
-        3. Aspectos ao Regente (Geometria) - 30%
+        Retorna (score, reasons_list)
         """
+        reasons = []
+        
         # 1. NATAL
         rulers = [self._get_dynamic_ruler_natal(h) for h in houses]
         ruler_scores = [self._get_planet_score(r, self.natal) for r in rulers]
         ruler_avg = sum(ruler_scores) / len(ruler_scores) if ruler_scores else 50
-        occupant_natal = sum([self._get_occupants_score(h, self.natal) for h in houses]) * 0.5
+        
+        # Ocupantes NATAL
+        occupant_natal = sum([self._get_occupants_score(h, self.natal, reasons, "Natal") for h in houses]) * 0.5
+        
         natal_score = (ruler_avg * 0.6) + 30 + occupant_natal
         
         # 2. TRÂNSITO (Ocupantes da Casa)
-        transit_occupants = sum([self._get_occupants_score(h, self.transit) for h in houses])
+        transit_occupants = sum([self._get_occupants_score(h, self.transit, reasons, "Trânsito") for h in houses])
         
         # 3. ASPECTOS (Ao Regente da Casa)
-        aspect_impact = sum([self._calculate_aspect_impact(h) for h in houses])
+        aspect_impact = sum([self._calculate_aspect_impact(h, reasons) for h in houses])
         
-        # FUSÃO PONDERADA
-        # Natal Base ~ 60-80. Aspectos podem tirar 25 ou dar 25.
-        final_score = (natal_score * 0.5) + (transit_occupants * 0.2) + aspect_impact + 20 # +20 base offset
+        final_score = (natal_score * 0.5) + (transit_occupants * 0.2) + aspect_impact + 20 
         
-        return min(100, max(20, int(final_score)))
+        return min(100, max(20, int(final_score))), list(set(reasons)) # Unique reasons
 
     def generate_wheel(self):
         sectors_map = [
@@ -222,28 +238,26 @@ class LifeWheelCalculator:
         
         results = []
         for s in sectors_map:
-            score = self.calculate_sector_score(s['houses'])
+            score, reasons = self.calculate_sector_score(s['houses'])
             results.append({
                 "label": s['label'],
                 "score": score,
                 "fullMark": 100,
-                "color": s['color']
+                "color": s['color'],
+                "reasons": reasons # NEW FIELD
             })
             
         return results
 
 if __name__ == "__main__":
     try:
-        print("Teste Aspectos:")
-        # Teste com data específica onde sabemos haver aspectos tensos ou fluídos
-        # User: 1990-01-01 (Sol Capricórnio ~10graus)
-        # Transito Hoje: Plutão em Aquário? Saturno em Peixes?
-        
+        print("Teste Metadados Explicativos:")
         engine = WheelEngine("User", 1990, 1, 1, 12, 0, "London", "GB")
         data = engine.generate_wheel()
         
-        score_financas = [x['score'] for x in data if x['label'] == 'Finanças'][0]
-        print(f"Score Finanças (Com Aspectos): {score_financas}")
+        financas = [x for x in data if x['label'] == 'Finanças'][0]
+        print(f"Score Finanças: {financas['score']}")
+        print(f"Motivos: {json.dumps(financas['reasons'], indent=2)}")
         
     except Exception as e:
         print(f"Error: {e}")
