@@ -14,8 +14,8 @@ from datetime import datetime, timedelta
 import uuid
 import stripe
 from fastapi import BackgroundTasks, Request
-from fastapi import BackgroundTasks, Request
 from memory_store import MemoryStore
+from insight_processor import InsightProcessor
 from wheel_engine import WheelEngine
 
 # Load Environment
@@ -33,6 +33,7 @@ if not all([SUPABASE_URL, SUPABASE_KEY, OPENAI_API_KEY]):
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 memory_store = MemoryStore(supabase, openai_client)
+insight_processor = InsightProcessor(openai_client, memory_store)
 
 app = FastAPI(title="Celest AI Soul-Guide Agent")
 
@@ -548,12 +549,10 @@ async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks)
             "date": datetime.now().strftime("%d/%m/%Y")
         }
 
-        # 4. Store New Memory (Background Task)
+        # 4. Store New Memory (Background Task -> Insight Processor)
         if request.user_id != "demo":
-            # Store User Message
-            background_tasks.add_task(memory_store.store_memory, request.user_id, f"User: {request.message}")
-            # Store AI Response
-            background_tasks.add_task(memory_store.store_memory, request.user_id, f"Soul-Guide: {ai_message}")
+            # Use the new Insight Processor instead of raw storage
+            background_tasks.add_task(insight_processor.process_async, request.user_id, request.message, ai_message)
 
         return ChatResponse(
             message=ai_message,
