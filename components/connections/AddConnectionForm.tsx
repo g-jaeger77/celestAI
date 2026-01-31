@@ -39,21 +39,27 @@ const AddConnectionForm: React.FC<AddConnectionFormProps> = ({ onSave, embedded 
 
     // UPDATE: Background is now TINTED (not gray) in unselected state
     // Active state has strong glow + stroke
+    // UPDATE: Liquid Glass Solid Cards (Apple Health Style)
+    // Amor -> Pink (Alma), Work -> Cyan (Mente), Social -> Lime (Corpo)
+    // UPDATE: Volumetric Liquid Glass (Solid Gradients + Sheen + Pop Effect)
     const getSelectionStyle = (t: ConnectionType, isActive: boolean) => {
-        const base = "aspect-square md:aspect-auto md:h-24 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all duration-300";
+        const base = "relative overflow-hidden h-24 rounded-2xl border flex flex-col items-center justify-center gap-2 transition-all duration-300 group";
+        const sheen = "before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/20 before:to-transparent before:pointer-events-none";
 
+        // Amor: Pink (Alma) - Solid Gradient
         if (t === 'love') return isActive
-            ? `${base} border-pink-500 text-pink-400 bg-pink-500/20 shadow-[0_0_25px_rgba(236,72,153,0.5)] scale-[1.05] z-10`
-            : `${base} border-pink-500/30 text-pink-400/80 bg-pink-500/5 hover:bg-pink-500/10 hover:border-pink-500/60 hover:text-pink-400 hover:shadow-[0_0_15px_rgba(236,72,153,0.2)]`;
+            ? `${base} bg-gradient-to-br from-[#ec4899] to-[#be185d] border-[#ec4899] text-white shadow-[0_10px_30px_-5px_rgba(236,72,153,0.6)] scale-[1.05] z-10 ${sheen}`
+            : `${base} bg-[#1C1C1E]/60 border-white/10 text-pink-400/80 hover:bg-[#ec4899]/10 hover:border-[#ec4899]/40 hover:text-white`;
 
+        // Cyan (Work/Mente) - Solid Gradient
         if (t === 'work') return isActive
-            ? `${base} border-blue-500 text-blue-400 bg-blue-500/20 shadow-[0_0_25px_rgba(59,130,246,0.5)] scale-[1.05] z-10`
-            : `${base} border-blue-500/30 text-blue-400/80 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/60 hover:text-blue-400 hover:shadow-[0_0_15px_rgba(59,130,246,0.2)]`;
+            ? `${base} bg-gradient-to-br from-[#22d3ee] to-[#0891b2] border-[#22d3ee] text-white shadow-[0_10px_30px_-5px_rgba(34,211,238,0.6)] scale-[1.05] z-10 ${sheen}`
+            : `${base} bg-[#1C1C1E]/60 border-white/10 text-[#22d3ee]/80 hover:bg-[#22d3ee]/10 hover:border-[#22d3ee]/40 hover:text-white`;
 
-        // social
+        // Lime (Social/Corpo) - Solid Gradient
         return isActive
-            ? `${base} border-amber-500 text-amber-400 bg-amber-500/20 shadow-[0_0_25px_rgba(245,158,11,0.5)] scale-[1.05] z-10`
-            : `${base} border-amber-500/30 text-amber-400/80 bg-amber-500/5 hover:bg-amber-500/10 hover:border-amber-500/60 hover:text-amber-400 hover:shadow-[0_0_15px_rgba(245,158,11,0.2)]`;
+            ? `${base} bg-gradient-to-br from-[#a3e635] to-[#4d7c0f] border-[#a3e635] text-white shadow-[0_10px_30px_-5px_rgba(163,230,53,0.6)] scale-[1.05] z-10 ${sheen}`
+            : `${base} bg-[#1C1C1E]/60 border-white/10 text-[#a3e635]/80 hover:bg-[#a3e635]/10 hover:border-[#a3e635]/40 hover:text-white`;
     };
 
     return (
