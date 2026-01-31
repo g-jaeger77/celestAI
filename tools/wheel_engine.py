@@ -98,14 +98,23 @@ class LifeWheelCalculator:
         except:
             return "Aries"
 
+    def _normalize_sign(self, sign):
+        # Map Kerykeion abbreviations to Full Names
+        MAPPING = {
+            "Ari": "Aries", "Tau": "Taurus", "Gem": "Gemini", "Can": "Cancer",
+            "Leo": "Leo", "Vir": "Virgo", "Lib": "Libra", "Sco": "Scorpio",
+            "Sag": "Sagittarius", "Cap": "Capricorn", "Aqu": "Aquarius", "Pis": "Pisces"
+        }
+        return MAPPING.get(sign, sign) # Return full name or original if not found
+
     def _get_dynamic_ruler_natal(self, house_num):
-        cusp_sign = self._get_house_sign_natal(house_num)
+        cusp_sign = self._normalize_sign(self._get_house_sign_natal(house_num))
         return self.SIGN_RULERS.get(cusp_sign, "Mars")
 
     def _get_planet_score(self, planet_name, chart_source):
         if planet_name not in chart_source['planets']: return 50 
         planet_data = chart_source['planets'][planet_name]
-        sign = planet_data['sign']
+        sign = self._normalize_sign(planet_data['sign'])
         
         score = 50
         dignity = self.DIGNITIES.get(planet_name, {}).get(sign, 0)
@@ -209,8 +218,8 @@ class LifeWheelCalculator:
         ruler_scores = [self._get_planet_score(r, self.natal) for r in rulers]
         ruler_avg = sum(ruler_scores) / len(ruler_scores) if ruler_scores else 50
         
-        # Ocupantes NATAL
-        occupant_natal = sum([self._get_occupants_score(h, self.natal, reasons, "Natal") for h in houses]) * 0.5
+        # Ocupantes NATAL (FULL POWER - Removed 0.5 dampener)
+        occupant_natal = sum([self._get_occupants_score(h, self.natal, reasons, "Natal") for h in houses])
         
         natal_score = (ruler_avg * 0.6) + 30 + occupant_natal
         
@@ -220,7 +229,8 @@ class LifeWheelCalculator:
         # 3. ASPECTOS (Ao Regente da Casa)
         aspect_impact = sum([self._calculate_aspect_impact(h, reasons) for h in houses])
         
-        final_score = (natal_score * 0.5) + (transit_occupants * 0.2) + aspect_impact + 20 
+        # Final Formula: Increased Natal Weight (0.5 -> 0.6)
+        final_score = (natal_score * 0.6) + (transit_occupants * 0.2) + aspect_impact + 20 
         
         return min(100, max(20, int(final_score))), list(set(reasons)) # Unique reasons
 

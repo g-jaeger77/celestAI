@@ -10,6 +10,8 @@ import math
 from openai import OpenAI
 import json
 from datetime import datetime, timedelta
+import asyncio # Added
+# Removed bad import
 
 import uuid
 import stripe
@@ -928,6 +930,8 @@ async def dashboard_endpoint(user_id: str, lat: Optional[float] = None, lon: Opt
     profile = get_user_profile(user_id)
     if not profile: profile = {"full_name": "Traveler"}
 
+    if not profile: profile = {"full_name": "Traveler"}
+
     try:
         b_date = datetime.strptime(profile.get("birth_date", "1990-01-01"), "%Y-%m-%d")
         b_time_str = profile.get("birth_time", "12:00")
@@ -944,16 +948,57 @@ async def dashboard_endpoint(user_id: str, lat: Optional[float] = None, lon: Opt
         print(f"⚠️ Chart Error: {e}")
         natal_chart, transit_chart = None, None
 
-    # Calculate Scores
+    # Calculate Scores using the ROBUST WheelEngine (Gold Master Logic)
     try:
-        sc_mental = calculate_astral_score(natal_chart, transit_chart, 'mental')
-        sc_physical = calculate_astral_score(natal_chart, transit_chart, 'physical')
-        sc_emotional = calculate_astral_score(natal_chart, transit_chart, 'emotional')
-    except:
-        sc_mental, sc_physical, sc_emotional = 75, 75, 75
+        # We need lat/lon for WheelEngine? It uses City/Country string lookup usually.
+        # But we have lat/lon from profile or defaults.
+        # WheelEngine init: Name, Y, M, D, H, M, City, Country
+        
+        # Parse Birth Time
+        b_date = datetime.strptime(profile.get("birth_date", "1990-01-01"), "%Y-%m-%d")
+        b_time_str = profile.get("birth_time", "12:00")
+        b_h, b_m = map(int, b_time_str.split(':')[:2])
+        
+        # Instantiate Engine
+        engine = WheelEngine(
+            profile.get("full_name", "User"),
+            b_date.year, b_date.month, b_date.day, b_h, b_m,
+            profile.get("birth_city", "London"),
+            profile.get("birth_country", "GB")
+        )
+        
+        wheel_data = engine.generate_wheel()
+        
+        # Map 8 Sectors to 3 Core Scores
+        # Helper to find score by label
+        def get_s(label):
+            return next((x['score'] for x in wheel_data if x['label'] == label), 50)
+            
+        sc_mental = get_s("Saúde Mental")
+        sc_physical = get_s("Saúde Física")
+        # Emotional = Avg of Relacionamento + Espiritualidade
+        sc_emotional = int((get_s("Relacionamento") + get_s("Espiritualidade")) / 2)
+        
+    except Exception as e:
+        print(f"⚠️ Engine Error: {e}")
+        sc_mental, sc_physical, sc_emotional = 50, 50, 50
+        
+    except Exception as e:
+        print(f"⚠️ Engine Error: {e}")
+        sc_mental, sc_physical, sc_emotional = 50, 50, 50
+        global debug_last_error
+        debug_last_error = str(e)
 
     # LLM Gen
     try:
+        # Check if we have a debug error to show
+        if 'debug_last_error' in globals():
+             daily_quote = f"DEBUG ERROR: {debug_last_error}"
+        elif 'wheel_data' in locals():
+             # DUMP DATA
+             daily_quote = f"DATA: {str(wheel_data)[:500]}"
+        else:
+             daily_quote = "A sabedoria dos astros..."
         prompt = f"""
         Gere um Snapshot do Dashboard Astrológico em Tempo Real.
         DATE: {datetime.now()}
@@ -984,6 +1029,7 @@ async def dashboard_endpoint(user_id: str, lat: Optional[float] = None, lon: Opt
         data['score_mental'] = sc_mental
         data['score_physical'] = sc_physical
         data['score_emotional'] = sc_emotional
+            
         data['planetary_hour'] = p_hour
         data['is_void'] = is_void
         
@@ -1237,4 +1283,4 @@ async def detail_endpoint(dimension: str, user_id: str):
         )
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("agent_server:app", host="0.0.0.0", port=8000, reload=True)
