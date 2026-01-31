@@ -85,6 +85,54 @@ ZODIAC_SIGNS = [
 
 # --- Astrology Engine (Swisseph Direct) ---
 
+# City Geocoding Lookup (Major Cities - MVP)
+CITY_COORDS = {
+    # Brazil
+    "são paulo": (-23.5505, -46.6333),
+    "sao paulo": (-23.5505, -46.6333),
+    "sp": (-23.5505, -46.6333),
+    "rio de janeiro": (-22.9068, -43.1729),
+    "brasilia": (-15.7975, -47.8919),
+    "salvador": (-12.9714, -38.5014),
+    "belo horizonte": (-19.9167, -43.9345),
+    "curitiba": (-25.4284, -49.2733),
+    "porto alegre": (-30.0346, -51.2177),
+    "recife": (-8.0476, -34.8770),
+    "fortaleza": (-3.7172, -38.5433),
+    # USA
+    "new york": (40.7128, -74.0060),
+    "los angeles": (34.0522, -118.2437),
+    "chicago": (41.8781, -87.6298),
+    "houston": (29.7604, -95.3698),
+    "miami": (25.7617, -80.1918),
+    # Europe
+    "london": (51.5074, -0.1278),
+    "paris": (48.8566, 2.3522),
+    "berlin": (52.5200, 13.4050),
+    "madrid": (40.4168, -3.7038),
+    "rome": (41.9028, 12.4964),
+    "lisbon": (38.7223, -9.1393),
+    # Asia
+    "tokyo": (35.6762, 139.6503),
+    "beijing": (39.9042, 116.4074),
+    "mumbai": (19.0760, 72.8777),
+    "dubai": (25.2048, 55.2708),
+    # Default (Greenwich)
+    "unknown": (51.4772, 0.0),
+}
+
+def get_city_coords(city: str) -> tuple:
+    """Lookup city coordinates. Returns (lat, lon) tuple."""
+    city_lower = city.lower().strip()
+    if city_lower in CITY_COORDS:
+        return CITY_COORDS[city_lower]
+    # Try partial match
+    for key in CITY_COORDS:
+        if key in city_lower or city_lower in key:
+            return CITY_COORDS[key]
+    # Default to Greenwich
+    return CITY_COORDS["unknown"]
+
 class AstrologyEngine:
     @staticmethod
     def get_sign_from_long(longitude):
@@ -92,25 +140,66 @@ class AstrologyEngine:
         return ZODIAC_SIGNS[idx % 12]
 
     @staticmethod
-    def calculate_chart(name: str, year: int, month: int, day: int, hour: int, minute: int, city: str, country: str = "US", time_unknown: bool = False):
+    def calculate_chart(name: str, year: int, month: int, day: int, hour: int, minute: int, city: str, country: str = "US", time_unknown: bool = False, lat: float = None, lon: float = None):
         try:
             # 1. Julian Day (Assuming UT for simplicity in MVP)
             t_hour = hour + (minute / 60.0)
             jd = swe.julday(year, month, day, t_hour)
             
-            # 2. Calculate Planets
+            # 2. Get Geographic Coordinates
+            if lat is None or lon is None:
+                lat, lon = get_city_coords(city)
+            
+            # 3. Calculate Houses (Placidus System) - Returns Ascendant!
+            # swe.houses(jd, lat, lon, house_system)
+            # Returns: (cusps[12], ascmc[10]) where ascmc[0] = Ascendant, ascmc[1] = MC
+            house_cusps = None
+            ascendant_data = {"sign": "Unknown", "longitude": 0.0}
+            mc_data = {"sign": "Unknown", "longitude": 0.0}
+            
+            if not time_unknown:
+                try:
+                    cusps, ascmc = swe.houses(jd, lat, lon, b'P')  # 'P' = Placidus
+                    asc_lon = ascmc[0]
+                    mc_lon = ascmc[1]
+                    ascendant_data = {
+                        "sign": AstrologyEngine.get_sign_from_long(asc_lon),
+                        "longitude": asc_lon
+                    }
+                    mc_data = {
+                        "sign": AstrologyEngine.get_sign_from_long(mc_lon),
+                        "longitude": mc_lon
+                    }
+                    house_cusps = list(cusps)  # Convert tuple to list for JSON serialization
+                except Exception as he:
+                    print(f"House calculation error: {he}")
+            
+            # 4. Calculate Planets
             def get_data(planet_id):
-                # Use Moshier Ephemeris (FLG_MOSEPH) - No external files required!
-                # calc_ut(julian_day, planet, flags)
                 flags = swe.FLG_MOSEPH | swe.FLG_SPEED
                 res = swe.calc_ut(jd, planet_id, flags)
                 
-                # Res is ALWAYS ((lon, lat, dist, speed...), flags) when usually called
                 if isinstance(res, tuple) and len(res) > 0:
-                     coords = res[0] # Get the coordinate tuple
+                     coords = res[0]
                      if isinstance(coords, tuple) and len(coords) > 0:
-                         lon = coords[0]
-                         return {"sign": AstrologyEngine.get_sign_from_long(lon), "house": "Unknown", "longitude": lon}
+                         lon_p = coords[0]
+                         # Determine house placement if cusps available
+                         house_num = "Unknown"
+                         if house_cusps:
+                             for i in range(12):
+                                 next_i = (i + 1) % 12
+                                 cusp_start = house_cusps[i]
+                                 cusp_end = house_cusps[next_i]
+                                 # Handle wrap-around (e.g., 350° to 10°)
+                                 if cusp_start > cusp_end:
+                                     if lon_p >= cusp_start or lon_p < cusp_end:
+                                         house_num = str(i + 1)
+                                         break
+                                 else:
+                                     if cusp_start <= lon_p < cusp_end:
+                                         house_num = str(i + 1)
+                                         break
+                         return {"sign": AstrologyEngine.get_sign_from_long(lon_p), "house": house_num, "longitude": lon_p}
                          
                 return {"sign": "Unknown", "house": "Unknown", "longitude": 0.0}
 
@@ -122,7 +211,9 @@ class AstrologyEngine:
                 "mars": get_data(swe.MARS),
                 "jupiter": get_data(swe.JUPITER),
                 "saturn": get_data(swe.SATURN),
-                "ascendant": "Unknown" if time_unknown else "Unknown"
+                "ascendant": ascendant_data,
+                "mc": mc_data,
+                "location": {"lat": lat, "lon": lon, "city": city}
             }
 
         except Exception as e:
@@ -131,7 +222,7 @@ class AstrologyEngine:
                 "sun": {"sign": "Aries", "house": "1"},
                 "moon": {"sign": "Taurus", "house": "2"},
                 "mars": {"sign": "Gemini", "house": "3"},
-                "ascendant": "Leo"
+                "ascendant": {"sign": "Leo", "longitude": 0.0}
             }
 
     @staticmethod
