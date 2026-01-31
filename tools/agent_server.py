@@ -100,12 +100,18 @@ class AstrologyEngine:
             
             # 2. Calculate Planets
             def get_data(planet_id):
-                # calc_ut returns ((long, lat, dist, speed, ...), flags)
-                res = swe.calc_ut(jd, planet_id)
-                coordinates = res if isinstance(res, tuple) else res[0]
-                if isinstance(coordinates, tuple) and len(coordinates) > 0:
-                    lon = coordinates[0]
-                    return {"sign": AstrologyEngine.get_sign_from_long(lon), "house": "Unknown", "longitude": lon}
+                # Use Moshier Ephemeris (FLG_MOSEPH) - No external files required!
+                # calc_ut(julian_day, planet, flags)
+                flags = swe.FLG_MOSEPH | swe.FLG_SPEED
+                res = swe.calc_ut(jd, planet_id, flags)
+                
+                # Res is ALWAYS ((lon, lat, dist, speed...), flags) when usually called
+                if isinstance(res, tuple) and len(res) > 0:
+                     coords = res[0] # Get the coordinate tuple
+                     if isinstance(coords, tuple) and len(coords) > 0:
+                         lon = coords[0]
+                         return {"sign": AstrologyEngine.get_sign_from_long(lon), "house": "Unknown", "longitude": lon}
+                         
                 return {"sign": "Unknown", "house": "Unknown", "longitude": 0.0}
 
             return {
@@ -566,6 +572,53 @@ async def calculate_synastry_endpoint(request: SynastryRequest):
     except Exception as e:
         print(f"❌ Synastry Calc Error: {e}")
         raise HTTPException(status_code=400, detail=str(e))
+
+# --- Connections Cloud Sync (Persistence) ---
+
+class CloudConnection(BaseModel):
+    user_id: str
+    name: str
+    birth_date: str
+    birth_time: str
+    birth_city: str
+    type: str # love, work, social
+    id: Optional[str] = None # Optional for new
+
+@app.get("/agent/connections/{user_id}")
+async def get_connections(user_id: str):
+    """Fetches user's saved connections from Cloud (Supabase)."""
+    try:
+        res = supabase.table("connections").select("*").eq("user_id", user_id).execute()
+        return res.data
+    except Exception as e:
+        print(f"❌ Fetch Connections Error: {e}")
+        # Return empty list gracefully if table missing (Graceful Fail)
+        return []
+
+@app.post("/agent/connections")
+async def save_connection(conn: CloudConnection):
+    """Saves/Updates a connection to Cloud."""
+    try:
+        payload = conn.dict(exclude_none=True)
+        # Ensure we don't send 'id' if it is None, let DB handle generated UUID?
+        # Ideally frontend sends strict UUID. If new, we might generate it here.
+        if not payload.get("id"):
+            payload["id"] = str(uuid.uuid4())
+            
+        res = supabase.table("connections").upsert(payload).execute()
+        return {"status": "success", "data": res.data}
+    except Exception as e:
+        print(f"❌ Save Connection Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/agent/connections/{connection_id}")
+async def delete_connection(connection_id: str):
+    try:
+        res = supabase.table("connections").delete().eq("id", connection_id).execute()
+        return {"status": "deleted"}
+    except Exception as e:
+        print(f"❌ Delete Connection Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/agent/onboarding")
 async def onboarding_endpoint(request: OnboardingRequest):

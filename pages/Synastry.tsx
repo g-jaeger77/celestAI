@@ -20,25 +20,69 @@ const Synastry: React.FC = () => {
     // Connections State
     const [connections, setConnections] = useState<any[]>([]);
 
-    useEffect(() => {
-        const stored = localStorage.getItem('celest_connections');
+    // Helper: Get User ID
+    const getUserId = () => {
+        const stored = localStorage.getItem('user_birth_data');
         if (stored) {
-            try {
-                const parsed = JSON.parse(stored);
-                if (Array.isArray(parsed)) setConnections(parsed);
-            } catch (e) { }
+            try { return JSON.parse(stored).user_id || null; } catch (e) { return null; }
+        }
+        return null;
+    };
+
+    useEffect(() => {
+        const userId = getUserId();
+        if (userId) {
+            // CLOUD FETCH
+            fetch(`http://127.0.0.1:8000/agent/connections/${userId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (Array.isArray(data)) setConnections(data);
+                })
+                .catch(err => console.warn("Cloud Sync Error", err));
+        } else {
+            // FALLBACK: LocalStorage
+            const stored = localStorage.getItem('celest_connections');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed)) setConnections(parsed);
+                } catch (e) { }
+            }
         }
     }, []);
 
-    const saveConnection = (newConn: any) => {
-        const connWithId = { ...newConn, id: Date.now(), score: Math.floor(Math.random() * 40) + 60 };
+    const saveConnection = async (newConn: any) => {
+        const userId = getUserId();
+        // Optimistic UI Update
+        const localId = Date.now().toString(); // temporary ID
+        const connWithId = { ...newConn, id: localId, user_id: userId };
         const updated = [connWithId, ...connections];
         setConnections(updated);
-        localStorage.setItem('celest_connections', JSON.stringify(updated));
 
         // Trigger simulation immediately for "Impression"
         handleSimulation(connWithId);
         setIsSheetOpen(false);
+
+        // CLOUD SAVE
+        if (userId) {
+            try {
+                const res = await fetch('http://127.0.0.1:8000/agent/connections', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(connWithId)
+                });
+                const savedData = await res.json();
+                if (savedData.data && savedData.data.length > 0) {
+                    // Update state with REAL ID from DB
+                    const realConn = savedData.data[0];
+                    setConnections(prev => prev.map(c => c.id === localId ? realConn : c));
+                }
+            } catch (err) {
+                console.error("Failed to save to cloud", err);
+            }
+        } else {
+            localStorage.setItem('celest_connections', JSON.stringify(updated));
+        }
     };
 
     // Result State
