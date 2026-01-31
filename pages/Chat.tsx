@@ -251,16 +251,37 @@ const Chat: React.FC = () => {
                     ))}
 
                     {isLoading && (
-                        <div className="flex justify-start">
-                            <div className="bg-black/40 backdrop-blur-xl text-cyan-400 p-4 rounded-2xl rounded-bl-sm border border-cyan-500/20 flex gap-2 items-center shadow-[0_0_15px_rgba(0,255,255,0.1)] animate-pulse">
-                                <Sparkles className="w-4 h-4 animate-spin" />
-                                <span className="text-xs uppercase tracking-widest font-bold ml-1">Sintonizando Frequência...</span>
+                        <div className="flex justify-start w-full animate-in fade-in slide-in-from-bottom-2 duration-500">
+                            <div className="
+                                relative overflow-hidden
+                                bg-gradient-to-br from-slate-900/90 to-slate-950/90 backdrop-blur-md
+                                text-cyan-300 p-4 rounded-2xl rounded-tl-sm 
+                                border border-cyan-500/20 
+                                flex gap-3 items-center 
+                                shadow-[0_0_20px_rgba(34,211,238,0.1)]
+                            ">
+                                {/* Inner Glow Pulse */}
+                                <div className="absolute inset-0 bg-cyan-400/5 animate-pulse rounded-2xl"></div>
+
+                                {/* Icon */}
+                                <div className="relative z-10 p-2 bg-cyan-500/10 rounded-full">
+                                    <Icon name="auto_awesome" className="text-xl text-cyan-400 animate-spin-slow" />
+                                </div>
+
+                                {/* Text */}
+                                <div className="flex flex-col relative z-10">
+                                    <span className="text-[10px] uppercase tracking-[0.2em] text-cyan-500/70 font-bold mb-0.5">Celest AI</span>
+                                    <span className="text-sm font-medium text-cyan-100 flex items-center gap-0.5">
+                                        Sintonizando Frequência
+                                        <span className="animate-bounce font-bold text-cyan-400">.</span>
+                                        <span className="animate-bounce delay-100 font-bold text-cyan-400">.</span>
+                                        <span className="animate-bounce delay-200 font-bold text-cyan-400">.</span>
+                                    </span>
+                                </div>
                             </div>
-                            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"></span>
-                            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce delay-75"></span>
-                            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce delay-150"></span>
                         </div>
-                            </div>
+                    )}
+                </div>
         </div>
     )
 }
