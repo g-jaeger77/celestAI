@@ -5,26 +5,38 @@ import math
 
 class WheelEngine:
     """Wrapper para manter compatibilidade com o agent_server.py chamando a nova Calculadora REAL."""
-    def __init__(self, name, year, month, day, hour, minute, city, country="US", lat=0, lon=0):
-        # Gera o mapa usando Kerykeion
+    def __init__(self, name, year, month, day, hour, minute, city, country="US", lat=0, lon=0, target_date=None):
+        # 1. Mapa Natal (User)
         self.user = AstrologicalSubject(name, year, month, day, hour, minute, city, country)
+        self.natal_chart = self._convert_to_json_structure(self.user)
         
-        # Converte o objeto Kerykeion para o formato JSON exigido pela LifeWheelCalculator
-        self.natal_chart = self._convert_to_json_structure()
+        # 2. Mapa de Trânsito (Céu do Momento)
+        # Se não for passado target_date, usa "agora"
+        if not target_date:
+            target_date = datetime.utcnow()
+            
+        # O "Transit Subject" é apenas o céu, localização idealmente deve ser a do usuário atual
+        # mas para trânsito planetário (signo), a localização impacta pouco (apenas Lua muda rápido).
+        # Vamos usar a mesma cidade do nascimento para simplicidade ou UTC se preferir.
+        self.transit = AstrologicalSubject(
+            "Transit", 
+            target_date.year, target_date.month, target_date.day,
+            target_date.hour, target_date.minute,
+            city, country
+        )
+        self.transit_chart = self._convert_to_json_structure(self.transit)
         
         # Instancia a calculadora real
-        self.calculator = LifeWheelCalculator(self.natal_chart)
+        self.calculator = LifeWheelCalculator(self.natal_chart, self.transit_chart)
 
-    def _convert_to_json_structure(self):
+    def _convert_to_json_structure(self, subject):
         """Converte dados do Kerykeion para dicionário estruturado com Casas e Planetas."""
         chart = {
             "houses": {},
             "planets": {}
         }
         
-        # 1. Extrair Casas (Kerykeion guarda em user.houses_list ou similar, depende da versão)
-        # Kerykeion v5.7+: user.first_house, user.second_house...
-        # Vamos usar um fallback robusto iterando atributos
+        # 1. Extrair Casas
         house_names = [
             "first_house", "second_house", "third_house", "fourth_house", 
             "fifth_house", "sixth_house", "seventh_house", "eighth_house", 
@@ -32,22 +44,21 @@ class WheelEngine:
         ]
         
         for i, h_attr in enumerate(house_names):
-            house_obj = getattr(self.user, h_attr, None)
+            house_obj = getattr(subject, h_attr, None)
             if house_obj:
                 chart["houses"][i+1] = {"sign": house_obj.sign}
             else:
-                # Fallback se a estrutura for diferente (ex: lista)
                 try:
-                    h_data = self.user.houses_list[i]
+                    h_data = subject.houses_list[i]
                     chart["houses"][i+1] = {"sign": h_data['sign']}
                 except:
-                    chart["houses"][i+1] = {"sign": "Aries"} # Fallback último caso
+                    chart["houses"][i+1] = {"sign": "Aries"}
         
         # 2. Extrair Planetas
         planets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"]
         
         for p in planets:
-            p_obj = getattr(self.user, p.lower(), None) # .sun, .moon
+            p_obj = getattr(subject, p.lower(), None) # .sun, .moon
             if p_obj:
                 chart["planets"][p] = {
                     "sign": p_obj.sign,
@@ -61,24 +72,21 @@ class WheelEngine:
 
 
 class LifeWheelCalculator:
-    def __init__(self, natal_chart):
+    def __init__(self, natal_chart, transit_chart):
         """
-        Inicia a calculadora com o Mapa Natal Completo (JSON).
-        natal_chart deve conter:
-        - 'houses': {1: {'sign': 'Aries', ...}, 2: {...}}
-        - 'planets': {'Sun': {'sign': 'Leo', 'house': 5, 'speed': ...}, ...}
+        Inicia a calculadora com o Mapa Natal E o Mapa de Trânsito.
         """
-        self.chart = natal_chart
+        self.natal = natal_chart
+        self.transit = transit_chart
         
-        # Mapeamento de Regência (Usa Regentes Tradicionais para melhor cálculo de Dignidade)
+        # Mapeamento de Regência
         self.SIGN_RULERS = {
             "Aries": "Mars", "Taurus": "Venus", "Gemini": "Mercury", "Cancer": "Moon",
             "Leo": "Sun", "Virgo": "Mercury", "Libra": "Venus", "Scorpio": "Mars",
             "Sagittarius": "Jupiter", "Capricorn": "Saturn", "Aquarius": "Saturn", "Pisces": "Jupiter"
         }
 
-        # Tabela Simplificada de Pontuação Base (Dignidades)
-        # 1 = Domicílio, 2 = Exaltação, -1 = Exílio, -2 = Queda
+        # Dignidades (Simplificado)
         self.DIGNITIES = {
             "Sun": {"Leo": 30, "Aries": 20, "Aquarius": -20, "Libra": -20},
             "Moon": {"Cancer": 30, "Taurus": 20, "Capricorn": -20, "Scorpio": -20},
@@ -89,92 +97,98 @@ class LifeWheelCalculator:
             "Saturn": {"Capricorn": 30, "Aquarius": 30, "Libra": 20, "Cancer": -20, "Leo": -20, "Aries": -20}
         }
 
-    def _get_house_sign(self, house_num):
-        """Retorna o signo da cúspide da casa especificada."""
+    def _get_house_sign_natal(self, house_num):
+        """Retorna o signo da cúspide da casa NATAL."""
         try:
-            # Garante que house_num seja inteiro para buscar no dict
-            return self.chart['houses'][int(house_num)]['sign']
-        except (KeyError, ValueError):
-            return "Aries" # Fallback seguro
+            return self.natal['houses'][int(house_num)]['sign']
+        except:
+            return "Aries"
 
-    def _get_dynamic_ruler(self, house_num):
-        """Descobre quem manda nesta casa baseado no signo da cúspide."""
-        cusp_sign = self._get_house_sign(house_num)
+    def _get_dynamic_ruler_natal(self, house_num):
+        """Quem manda nesta casa natal?"""
+        cusp_sign = self._get_house_sign_natal(house_num)
         return self.SIGN_RULERS.get(cusp_sign, "Mars")
 
-    def _get_planet_score(self, planet_name):
-        """Calcula a força do planeta (Regente) no mapa."""
-        if planet_name not in self.chart['planets']:
-            return 50 # Planeta neutro/desconhecido
+    def _get_planet_score(self, planet_name, chart_source):
+        """Calcula força do planeta (Natal ou Transito)."""
+        if planet_name not in chart_source['planets']:
+            return 50 
         
-        planet_data = self.chart['planets'][planet_name]
+        planet_data = chart_source['planets'][planet_name]
         sign = planet_data['sign']
         
-        # Base score (50 é neutro)
         score = 50
-        
-        # Aplica Dignidades
         dignity_table = self.DIGNITIES.get(planet_name, {})
         score += dignity_table.get(sign, 0)
-        
         return score
 
-    def _get_occupants_score(self, house_num):
-        """Calcula bônus/ônus por planetas morando na casa."""
+    def _get_occupants_score(self, house_num, chart_source):
+        """
+        Calcula bônus/ônus por planetas nesta CASAS.
+        IMPORTANTE: Se chart_source for TRANSITO, precisamos ver quais planetas de trânsito
+        caem neste SIGNO DA CASA NATAL (Sobreposição).
+        Se for NATAL, olhamos a casa direta.
+        """
         score_mod = 0
         benefics = ["Jupiter", "Venus", "Sun"]
-        malefics = ["Saturn", "Mars", "Pluto"] # Maléficos funcionais
+        malefics = ["Saturn", "Mars", "Pluto"] 
         
-        # Itera sobre planetas para ver quem está na casa
-        for p_name, p_data in self.chart['planets'].items():
-            # Converte para int para garantir match
-            try:
-                p_house = int(p_data.get('house', 0))
-            except:
-                p_house = 0
+        target_sign_of_house = self._get_house_sign_natal(house_num)
+        
+        # Itera sobre planetas
+        for p_name, p_data in chart_source['planets'].items():
+            p_sign = p_data['sign']
+            
+            # Checa se o planeta está no signo desta casa (Método de Casas de Signo Inteiro ou Aproximado)
+            # Para simplificar e ser robusto: Se o Signo do Planeta == Signo da Cúspide da Casa Natal
+            if p_sign == target_sign_of_house:
+                # Planeta está nesta casa!
+                p_score = self._get_planet_score(p_name, chart_source)
                 
-            if p_house == int(house_num):
                 if p_name in benefics:
-                    score_mod += 15
+                    # Júpiter transitando na casa 2 = $$$
+                    score_mod += 20 
                 elif p_name in malefics:
-                    # Verifica se o maléfico está dignificado (ex: Saturno em Capricórnio ajuda)
-                    p_score = self._get_planet_score(p_name)
                     if p_score > 60:
-                        score_mod += 10 # Maléfico forte = Disciplina
+                        score_mod += 5  # Maléfico Digno = Trabalho duro
                     else:
-                        score_mod -= 15 # Maléfico fraco = Problema
+                        score_mod -= 15 # Maléfico Ruim = Crise
                 else:
-                    score_mod += 5 # Mercúrio/Lua/Outros
+                    score_mod += 5 # Neutros
         
         return score_mod
 
     def calculate_sector_score(self, houses):
         """
-        Lógica de Triangulação Real:
-        1. Identifica Regentes Reais das Casas.
-        2. Calcula Força dos Regentes.
-        3. Calcula Ocupantes.
+        Fórmula Mista: Natal (70%) + Trânsito (30%)
         """
-        # 1. Identificar Regentes Dinâmicos
-        rulers = [self._get_dynamic_ruler(h) for h in houses]
         
-        # 2. Calcular Força dos Regentes
-        ruler_scores = [self._get_planet_score(r) for r in rulers]
+        # --- PARTE 1: NATAL (ESSÊNCIA / POTENCIAL) ---
+        rulers = [self._get_dynamic_ruler_natal(h) for h in houses]
+        ruler_scores = [self._get_planet_score(r, self.natal) for r in rulers]
         ruler_avg = sum(ruler_scores) / len(ruler_scores) if ruler_scores else 50
         
-        # 3. Calcular Ocupantes das Casas
-        occupant_mod = sum([self._get_occupants_score(h) for h in houses])
+        # Ocupantes NATAIS (Planetas que você nasceu com eles ali)
+        occupant_natal = sum([self._get_occupants_score(h, self.natal) for h in houses]) * 0.5 # Peso menor para ocupantes natais vs regente
         
-        # Fórmula Ponderada: Regente (Essência) vale 60% + Ocupantes (Circunstância) + Base
-        final_score = int((ruler_avg * 0.6) + 30 + occupant_mod)
+        natal_total = (ruler_avg * 0.7) + 30 + occupant_natal
         
-        # Limites (Clamp)
+        # --- PARTE 2: TRÂNSITOS (CLIMA ATUAL) ---
+        # Quais planetas estão passando nessas casas AGORA?
+        transit_impact = sum([self._get_occupants_score(h, self.transit) for h in houses])
+        
+        # Exemplo: Júpiter em trânsito na casa (+20) -> Impacto direto
+        
+        # --- FUSÃO ---
+        # Base Natal + Impacto do Momento
+        # Se natal for 80 e Jupiter passar (+20), vai a 100.
+        # Se natal for 40 e Saturno passar (-15), vai a 25.
+        
+        final_score = int(natal_total + transit_impact)
+        
         return min(100, max(20, final_score))
 
     def generate_wheel(self):
-        """Gera o JSON final para o gráfico."""
-        # Definição dos Setores (Apenas quais casas compõem o setor)
-        # Nota: Mantendo as cores originais da UI
         sectors_map = [
             { "label": "Relacionamento", "houses": [7], "color": "#f472b6" },
             { "label": "Carreira", "houses": [10, 6], "color": "#fbbf24" },
@@ -200,10 +214,16 @@ class LifeWheelCalculator:
 
 if __name__ == "__main__":
     try:
-        # Teste Rápido de Verificação
-        print("Testando Engine Real...")
-        engine = WheelEngine("TestUser", 1990, 1, 1, 12, 0, "London", "GB")
-        data = engine.generate_wheel()
-        print(json.dumps(data, indent=2))
+        print("Teste 1: Hoje")
+        engine_now = WheelEngine("User", 1990, 1, 1, 12, 0, "London", "GB")
+        data_now = engine_now.generate_wheel()
+        print(f"Finanças Hoje: {[x['score'] for x in data_now if x['label'] == 'Finanças'][0]}")
+
+        print("Teste 2: Futuro (+5 anos)")
+        future = datetime(2030, 1, 1)
+        engine_future = WheelEngine("User", 1990, 1, 1, 12, 0, "London", "GB", target_date=future)
+        data_future = engine_future.generate_wheel()
+        print(f"Finanças 2030: {[x['score'] for x in data_future if x['label'] == 'Finanças'][0]}")
+        
     except Exception as e:
         print(f"Error: {e}")

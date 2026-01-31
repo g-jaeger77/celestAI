@@ -700,7 +700,8 @@ async def wheel_endpoint(request: ChartDataRequest):
             "User",
             dt.year, dt.month, dt.day,
             dt.hour, dt.minute,
-            request.city, request.country
+            request.city, request.country,
+            target_date=datetime.now()
         )
         data = engine.generate_wheel()
         
