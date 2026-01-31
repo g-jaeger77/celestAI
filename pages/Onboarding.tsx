@@ -185,7 +185,8 @@ const Onboarding: React.FC = () => {
       });
 
       if (!res.ok) {
-        throw new Error("Falha no cadastro (API)");
+        const errData = await res.json();
+        throw new Error(errData.detail || "Falha no cadastro (API)");
       }
 
       const data = await res.json();
@@ -201,10 +202,13 @@ const Onboarding: React.FC = () => {
       // Navigate to loading
       navigate(`/loading?user_id=${userId}`);
 
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      // Fallback for demo or offline
-      alert("Erro ao conectar com o oráculo. Verifique sua conexão.");
+      if (e.message.includes("Payment required")) {
+        alert("⛔ Pagamento Necessário. (Erro 402). Tente reiniciar a simulação.");
+      } else {
+        alert(`Erro ao conectar com o oráculo: ${e.message}`);
+      }
     } finally {
       setLoading(false);
     }
