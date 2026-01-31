@@ -148,12 +148,14 @@ export const ActionDetail: React.FC = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Estado da Lua</h3>
-                                    <p className={`text-[11px] font-bold uppercase tracking-wider ${isWarning ? 'text-red-400' : 'text-yellow-400'}`}>{isWarning ? 'Fora de Curso' : 'Ativa'}</p>
+                                    <p className={`text-[11px] font-bold uppercase tracking-wider ${data?.is_void ? 'text-red-400' : 'text-green-400'}`}>
+                                        {data?.is_void ? 'Fora de Curso' : 'Ativa'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                         <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                            {isWarning ? 'Interrupção de fluxo. Aguarde.' : 'Fluxo contínuo e produtivo.'}
+                            {data?.is_void ? 'Interrupção de fluxo. Aguarde.' : 'Fluxo contínuo e produtivo.'}
                         </p>
                     </motion.div>
 
@@ -170,12 +172,14 @@ export const ActionDetail: React.FC = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-white/90 text-[15px] font-bold tracking-tight">Regente</h3>
-                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-orange-400`}>{isWarning ? 'Saturno (Provável)' : 'Júpiter/Sol'}</p>
+                                    <p className={`text-[11px] font-bold uppercase tracking-wider text-orange-400`}>
+                                        {data?.planetary_hour || 'Sol'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                         <p className="text-[#8e8e93] text-[13px] leading-snug pl-[44px]">
-                            {isWarning ? 'Energia de restrição.' : 'Energia de expansão.'}
+                            {data?.planetary_hour ? `A energia de ${data.planetary_hour} domina esta hora.` : 'Calculando regência...'}
                         </p>
                     </motion.div>
                 </div>

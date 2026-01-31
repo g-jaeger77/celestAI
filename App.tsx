@@ -21,6 +21,7 @@ import { MindDetail } from './pages/MindDetail';
 import SynergyReport from './pages/SynergyReport';
 import LandingPage from './pages/LandingPage';
 import Waitlist from './pages/Waitlist';
+import History from './pages/History';
 
 const App: React.FC = () => {
   return (
@@ -49,6 +50,10 @@ const App: React.FC = () => {
           <Route path="/compatibility-result" element={<CompatibilityResult />} />
           <Route path="/synastry" element={<Synastry />} />
           <Route path="/mind" element={<MindDetail />} />
+
+          {/* Real Routes */}
+          <Route path="/upgrades" element={<Upgrades />} />
+          <Route path="/history" element={<History />} />
         </Routes>
       </MainLayout>
     </HashRouter>

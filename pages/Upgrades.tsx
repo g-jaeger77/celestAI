@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon';
 
 const Upgrades: React.FC = () => {
+    const navigate = useNavigate(); // Add hook
     const [purchasedIds, setPurchasedIds] = useState<string[]>([]);
     const [loadingId, setLoadingId] = useState<string | null>(null);
 
@@ -12,9 +14,14 @@ const Upgrades: React.FC = () => {
         setTimeout(() => {
             setLoadingId(null);
             setPurchasedIds(prev => [...prev, id]);
-            // Trigger Unlock Animation
+            // If it's history, we could redirect immediately or let user click open
         }, 2000);
     };
+
+    const openFeature = (id: string) => {
+        if (id === 'history') navigate('/history');
+    };
+
 
     const isPurchased = (id: string) => purchasedIds.includes(id);
 
@@ -107,6 +114,30 @@ const Upgrades: React.FC = () => {
                             <p className="text-center mt-3 text-[10px] text-gray-500 font-medium uppercase tracking-wider">
                                 {isPurchased('codex') ? "Disponível na sua Biblioteca" : "Download Imediato PDF • Acesso Vitalício"}
                             </p>
+                        </div>
+
+                        {/* CARD C: FUTURE SIGHT (Waitlist) */}
+                        <div className="group bg-[#1C1C1E] p-4 rounded-3xl flex items-center gap-4 hover:bg-[#2C2C2E] transition-colors cursor-pointer border border-white/5 active:scale-[0.99]">
+                            {/* Icon Box */}
+                            <div className="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20 group-hover:bg-purple-500/20 transition-colors">
+                                <Icon name="visibility" className="text-2xl text-purple-400" />
+                            </div>
+
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                                <h4 className="text-white font-bold text-base truncate mb-1">Oráculo do Futuro</h4>
+                                <p className="text-gray-500 text-xs font-medium leading-tight">
+                                    Previsões de longo prazo (+6 meses). Algoritmo em fase beta.
+                                </p>
+                            </div>
+
+                            {/* Button */}
+                            <button
+                                onClick={() => navigate('/waitlist?product=oracle')}
+                                className="px-5 py-2 rounded-full text-xs font-bold transition-all min-w-[90px] flex items-center justify-center bg-white/5 text-purple-400 hover:bg-purple-500 hover:text-white border border-purple-500/30"
+                            >
+                                INTERESSE
+                            </button>
                         </div>
                     </div>
                 </div>

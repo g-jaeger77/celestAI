@@ -36,6 +36,13 @@ const Waitlist: React.FC = () => {
                     icon: "favorite",
                     color: "text-pink-400"
                 };
+            case 'oracle':
+                return {
+                    title: "Visão do Futuro",
+                    desc: "Algoritmo preditivo de longo alcance. Saiba o que os próximos 6 meses reservam.",
+                    icon: "visibility", // icon name guess
+                    color: "text-purple-500"
+                };
             default:
                 return {
                     title: "Loja Premium",

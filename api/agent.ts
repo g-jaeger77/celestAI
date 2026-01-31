@@ -10,6 +10,8 @@ export interface DashboardResponse {
     score_mental: number;
     score_physical: number;
     score_emotional: number;
+    planetary_hour?: string;
+    is_void?: boolean;
 }
 
 export interface Metric {
