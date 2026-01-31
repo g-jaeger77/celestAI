@@ -176,7 +176,7 @@ const Onboarding: React.FC = () => {
       };
 
       // REAL BACKEND CALL
-      const res = await fetch('http://localhost:8000/agent/onboarding', {
+      const res = await fetch('http://127.0.0.1:8000/agent/onboarding', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
