@@ -54,10 +54,38 @@ const Chat: React.FC = () => {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    // --- Cosmic Sound Effect (Web Audio API) ---
+    const playCosmicTone = () => {
+        try {
+            const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+            if (!AudioContext) return;
+
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(440, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 1.5); // Slide up
+
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + 1.5);
+        } catch (e) {
+            console.warn("Audio Context blocked or failed", e);
+        }
+    };
+
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
         stop(); // Stop current speech
         stopListening(); // Stop listening
+        playCosmicTone(); // 🎵 Play magic sound immediately
 
         const userText = input;
         setInput('');
@@ -217,82 +245,84 @@ const Chat: React.FC = () => {
 
                     {isLoading && (
                         <div className="flex justify-start">
-                            <div className="bg-black/40 backdrop-blur-xl text-cyan-400 p-4 rounded-2xl rounded-bl-sm border border-cyan-500/20 flex gap-2 items-center shadow-[0_0_15px_rgba(0,255,255,0.1)]">
-                                <span className="text-xs uppercase tracking-widest font-bold ml-1">Processando</span>
-                                <div className="flex gap-1 ml-2">
-                                    <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"></span>
-                                    <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce delay-75"></span>
-                                    <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce delay-150"></span>
-                                </div>
+                            <div className="bg-black/40 backdrop-blur-xl text-cyan-400 p-4 rounded-2xl rounded-bl-sm border border-cyan-500/20 flex gap-2 items-center shadow-[0_0_15px_rgba(0,255,255,0.1)] animate-pulse">
+                                <Sparkles className="w-4 h-4 animate-spin" />
+                                <span className="text-xs uppercase tracking-widest font-bold ml-1">Sintonizando Frequência...</span>
                             </div>
+                            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"></span>
+                            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce delay-75"></span>
+                            <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce delay-150"></span>
                         </div>
-                    )}
-                    <div ref={messagesEndRef} />
-                </div>
-            </main>
+                            </div>
+        </div>
+    )
+}
+<div ref={messagesEndRef} />
+                </div >
+            </main >
 
-            {/* Input Area */}
-            <footer className="relative z-20 p-4 pb-8">
-                <div className="max-w-3xl mx-auto">
-                    <div className={`
+    {/* Input Area */ }
+    < footer className = "relative z-20 p-4 pb-8" >
+        <div className="max-w-3xl mx-auto">
+            <div className={`
                         relative flex items-center gap-3 p-2 pr-3 pl-4 
                         bg-black/60 backdrop-blur-2xl 
                         border transition-all duration-300 rounded-full
                         ${isListening
-                            ? 'border-orange-500/50 shadow-[0_0_40px_rgba(255,140,0,0.3)]'
-                            : 'border-cyan-500/30 shadow-[0_0_30px_rgba(0,255,255,0.15)] focus-within:shadow-[0_0_50px_rgba(0,255,255,0.25)] focus-within:border-cyan-400/50'}
+                    ? 'border-orange-500/50 shadow-[0_0_40px_rgba(255,140,0,0.3)]'
+                    : 'border-cyan-500/30 shadow-[0_0_30px_rgba(0,255,255,0.15)] focus-within:shadow-[0_0_50px_rgba(0,255,255,0.25)] focus-within:border-cyan-400/50'}
                     `}>
 
-                        {/* Input Field */}
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            placeholder={isListening ? "Ouvindo frequências..." : "Envie uma mensagem ao cosmos..."}
-                            className="flex-1 min-w-0 bg-transparent border-0 text-white text-[15px] placeholder:text-slate-500 focus:ring-0 outline-none font-light tracking-wide py-3"
-                        />
+                {/* Input Field */}
+                <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder={isListening ? "Ouvindo frequências..." : "Envie uma mensagem ao cosmos..."}
+                    className="flex-1 min-w-0 bg-transparent border-0 text-white text-[15px] placeholder:text-slate-500 focus:ring-0 outline-none font-light tracking-wide py-3"
+                />
 
-                        {/* Divider */}
-                        <div className="h-6 w-px bg-white/10"></div>
+                {/* Divider */}
+                <div className="h-6 w-px bg-white/10"></div>
 
-                        {/* Voice Button */}
-                        <button
-                            onClick={toggleListening}
-                            className={`
+                {/* Voice Button */}
+                <button
+                    onClick={toggleListening}
+                    className={`
                                 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300
                                 ${isListening
-                                    ? 'bg-orange-500 text-white shadow-[0_0_15px_rgba(255,140,0,0.8)]'
-                                    : 'text-slate-400 hover:text-cyan-400 hover:bg-white/5'}
+                            ? 'bg-orange-500 text-white shadow-[0_0_15px_rgba(255,140,0,0.8)]'
+                            : 'text-slate-400 hover:text-cyan-400 hover:bg-white/5'}
                             `}
-                        >
-                            <Icon name={isListening ? "mic" : "mic_none"} className="text-xl" />
-                        </button>
+                >
+                    <Icon name={isListening ? "mic" : "mic_none"} className="text-xl" />
+                </button>
 
-                        {/* Send Button */}
-                        <button
-                            onClick={handleSend}
-                            disabled={!input.trim()}
-                            className={`
+                {/* Send Button */}
+                <button
+                    onClick={handleSend}
+                    disabled={!input.trim()}
+                    className={`
                                 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300
                                 ${input.trim()
-                                    ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-[0_0_20px_rgba(0,255,255,0.4)] hover:scale-105 active:scale-95'
-                                    : 'bg-white/5 text-slate-600 cursor-not-allowed'}
+                            ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-[0_0_20px_rgba(0,255,255,0.4)] hover:scale-105 active:scale-95'
+                            : 'bg-white/5 text-slate-600 cursor-not-allowed'}
                             `}
-                        >
-                            <Icon name="send" className="text-lg translate-x-0.5 translate-y-0.5" />
-                        </button>
-                    </div>
+                >
+                    <Icon name="send" className="text-lg translate-x-0.5 translate-y-0.5" />
+                </button>
+            </div>
 
-                    {/* Footer Text */}
-                    <div className="text-center mt-3">
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-900/40">
-                            Conexão Segura • Criptografia Estelar
-                        </p>
-                    </div>
-                </div>
-            </footer>
+            {/* Footer Text */}
+            <div className="text-center mt-3">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-900/40">
+                    Conexão Segura • Criptografia Estelar
+                </p>
+            </div>
         </div>
+            </footer >
+        </div >
     );
 };
 
