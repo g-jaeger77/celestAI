@@ -1,86 +1,84 @@
 {
   "meta": {
-    "project": "Celest AI Soul-Guide",
-    "date": "2026-01-21",
-    "prepared_by": "Standard PRD Generator"
+    "project": "Celest AI",
+    "date": "2026-01-31",
+    "prepared_by": "Piloto do Sistema AntiGravity"
   },
-  "product_overview": "Celest AI is an AI-driven astrological Soul-Guide providing personalized, precise, real-time cosmic and psychological insights through advanced astronomical calculations and large language models, offering a modern mystical experience with therapeutic self-knowledge.",
+  "product_overview": "Celest AI is a personal pocket oracle blending ancient astrological wisdom with AI precision, delivering hyper-personalized, real-time guidance to help users navigate their mental, physical, and emotional states.",
   "core_goals": [
-    "Ensure astronomical calculation precision to the second using local libraries like kerykeion or swisseph.",
-    "Deliver deep psychological interpretations with empathy and personal context using GPT-4o-mini LLM.",
-    "Achieve technological sovereignty by performing backend astrology calculations to reduce dependence on costly external APIs.",
-    "Provide an immersive, premium user interface showcasing celestial aesthetics and interactive animations for a modern mystical user experience."
+    "Encourage daily engagement through the Cosmic Vital Signs morning check habit.",
+    "Achieve user retention via the intelligent Oracle Chat interface.",
+    "Drive conversion with an onboarding funnel including a simulated annual payment gate (Vigor Anual)."
   ],
   "key_features": [
-    "Cosmic Onboarding capturing birth date, time, and location to compute natal charts and generate astrological profiles.",
-    "AI Astrological Chat offering real-time, personalized guidance using natal charts and current transits with a caring, mystical persona.",
-    "Daily Dashboard summarizing key planetary transits and personalized 'Astral Climate' insights highlighting daily focus, challenges, and opportunities.",
-    "Trends & Alignment dashboard displaying personal and relationship (synastry) alignment trends based on user and partner data.",
-    "Synastry/Resonance relationship compatibility calculator analyzing conflict and harmony vectors between users.",
-    "Backend architecture utilizing Python, FastAPI, and precise astrology libraries integrated with GPT-4o-mini for rich interpretations.",
-    "Monetization via Stripe for subscription management unlocking premium features."
+    "Cosmic Onboarding collecting birth data with city autocomplete and calculating Solar, Lunar, and Rising signs.",
+    "Dashboard with Sync Rings showing Mind, Body, and Soul scores based on current planetary transits, plus action windows and daily AI-generated insights.",
+    "Oracle Chat AI persona offering empathetic, mystical yet grounded astrological guidance personalized with user birth chart and chat history.",
+    "Synastry module performing relationship compatibility analysis with a radar chart visualization over six axes."
   ],
   "user_flow_summary": [
-    "Onboarding: User submits birth details to trigger natal chart calculation and profile creation.",
-    "Chat: User interacts with AI chat; system uses cached natal chart and planetary transits to generate contextual prompts for GPT-4o-mini.",
-    "Insights: User accesses daily dashboard to review critical planetary transits and personalized astral climate.",
-    "Trends: User views daily and weekly alignment and partnership synergy on the Trends page.",
-    "Subscription: User completes Stripe payment to upgrade account status, updated in Supabase database."
+    "User registers with birth data via Onboarding flow including city autocomplete and sees visual data security feedback.",
+    "User accesses Dashboard showing Mind, Body, Soul scores and actionable astrological insights including caution periods and optimal activity timings.",
+    "User interacts with Oracle Chat to receive personalized astrological advice, with AI understanding their natal map and prior conversation.",
+    "User utilizes Synastry feature to compare compatibility between two natal charts with graphical radar chart representation."
   ],
   "validation_criteria": [
-    "Astrological calculations verified for second-level precision against standard ephemerides.",
-    "LLM outputs are contextually relevant, empathetic, and strictly based on astrological data without hallucinations.",
-    "System performance ensures latency is masked by UI animations enhancing user experience.",
-    "Data integrity of user profiles and chat history maintained with Supabase consistency checks.",
-    "Payment workflows correctly update user premium status and subscription state in the system."
+    "Successful user registration with accurate birth chart calculation and city autocomplete functionality.",
+    "Dashboard accurately reflects real-time planetary transit calculations and displays correct Mind, Body, Soul scores.",
+    "Oracle Chat provides context-aware, personalized, empathetic, and reliable astrological guidance.",
+    "Synastry compatibility analysis correctly compares two charts and renders graphical radar visualization.",
+    "All frontend and backend components build without errors, pass linting, and meet SEO standards as per design.",
+    "Simulated payment gate functions correctly during onboarding to gauge user purchase intent."
   ],
   "code_summary": {
     "tech_stack": [
       "TypeScript",
       "React",
       "Vite",
-      "TailwindCSS",
-      "Supabase",
+      "Tailwind CSS",
       "Python",
-      "FastAPI"
+      "FastAPI",
+      "Supabase"
     ],
     "features": [
       {
-        "name": "Onboarding",
-        "description": "User onboarding flow capturing birth details.",
+        "name": "Onboarding Flow",
+        "description": "User registration process with birth chart data collection and city autocomplete.",
         "files": [
-          "pages/Onboarding.tsx"
+          "pages/Onboarding.tsx",
+          "components/CityAutocomplete.tsx"
         ]
       },
       {
         "name": "Dashboard",
-        "description": "Daily dashboard with charts and scores.",
+        "description": "Main user dashboard displaying astrological scores (Mind, Body, Soul) and insights.",
         "files": [
           "pages/Dashboard.tsx",
-          "components/charts/DailySyncRings.tsx"
+          "components/charts/DailySyncRings.tsx",
+          "components/ShopPromoCard.tsx"
         ]
       },
       {
-        "name": "Chat",
-        "description": "AI Astrological Chat interface.",
+        "name": "Oracle Chat",
+        "description": "AI-powered chat interface for astrological guidance.",
         "files": [
-          "pages/Chat.tsx"
-        ]
-      },
-      {
-        "name": "Trends",
-        "description": "Dynamic daily trends and alignment with partner support.",
-        "files": [
-          "pages/Trends.tsx",
-          "utils/trendsLogic.ts"
+          "pages/Chat.tsx",
+          "api/index.py"
         ]
       },
       {
         "name": "Synastry",
-        "description": "Relationship compatibility calculator.",
+        "description": "Compatibility analysis between users.",
         "files": [
           "pages/Synastry.tsx",
-          "utils/synastryCalculator.ts"
+          "api/index.py"
+        ]
+      },
+      {
+        "name": "API Client",
+        "description": "Frontend API client for communicating with the backend.",
+        "files": [
+          "api/agent.ts"
         ]
       }
     ]

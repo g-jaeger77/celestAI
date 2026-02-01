@@ -3,48 +3,50 @@
         "TypeScript",
         "React",
         "Vite",
-        "TailwindCSS",
-        "Supabase",
+        "Tailwind CSS",
         "Python",
-        "FastAPI"
+        "FastAPI",
+        "Supabase"
     ],
     "features": [
         {
-            "name": "Onboarding",
-            "description": "User onboarding flow capturing birth details.",
+            "name": "Onboarding Flow",
+            "description": "User registration process with birth chart data collection and city autocomplete.",
             "files": [
-                "pages/Onboarding.tsx"
+                "pages/Onboarding.tsx",
+                "components/CityAutocomplete.tsx"
             ]
         },
         {
             "name": "Dashboard",
-            "description": "Daily dashboard with charts and scores.",
+            "description": "Main user dashboard displaying astrological scores (Mind, Body, Soul) and insights.",
             "files": [
                 "pages/Dashboard.tsx",
-                "components/charts/DailySyncRings.tsx"
+                "components/charts/DailySyncRings.tsx",
+                "components/ShopPromoCard.tsx"
             ]
         },
         {
-            "name": "Chat",
-            "description": "AI Astrological Chat interface.",
+            "name": "Oracle Chat",
+            "description": "AI-powered chat interface for astrological guidance.",
             "files": [
-                "pages/Chat.tsx"
-            ]
-        },
-        {
-            "name": "Trends",
-            "description": "Dynamic daily trends and alignment with partner support.",
-            "files": [
-                "pages/Trends.tsx",
-                "utils/trendsLogic.ts"
+                "pages/Chat.tsx",
+                "api/index.py"
             ]
         },
         {
             "name": "Synastry",
-            "description": "Relationship compatibility calculator.",
+            "description": "Compatibility analysis between users.",
             "files": [
                 "pages/Synastry.tsx",
-                "utils/synastryCalculator.ts"
+                "api/index.py"
+            ]
+        },
+        {
+            "name": "API Client",
+            "description": "Frontend API client for communicating with the backend.",
+            "files": [
+                "api/agent.ts"
             ]
         }
     ]
