@@ -136,7 +136,28 @@ async def stripe_webhook(request: Request, background_tasks: BackgroundTasks):
                 payment_id=data.get("payment_intent")
             )
             print(f"✅ Payment completed for user: {user_id}")
-    
+
+    # Handle: charge.refunded or customer.subscription.deleted (Revocation)
+    elif event_type in ["charge.refunded", "customer.subscription.deleted"]:
+        # For charge.refunded, we need to look up the user via metadata or payment_intent
+        # Note: metadata might not be directly on the charge object depending on how it was passed.
+        # Ideally, we store stripe_payment_id in DB, and revoke by that ID.
+        
+        # Strategy: Use payment_intent ID to find user or use metadata if passed down
+        payment_id = data.get("payment_intent") # For charge
+        subscription_id = data.get("id") # For subscription
+        
+        # Try to find user_id in metadata
+        user_id = data.get("metadata", {}).get("user_id")
+        
+        background_tasks.add_task(
+            revoke_premium_status,
+            user_id=user_id,
+            payment_id=payment_id,
+            subscription_id=subscription_id
+        )
+        print(f"🚫 revocation event flow triggered: {event_type}")
+
     return {"status": "ok"}
 
 # ============================================================
@@ -172,6 +193,47 @@ async def activate_premium_status(user_id: str, payment_id: str = None):
             
     except Exception as e:
         print(f"❌ Error: {e}")
+
+async def revoke_premium_status(user_id: str = None, payment_id: str = None, subscription_id: str = None):
+    """
+    Revokes premium status.
+    Can attempt to find user by user_id OR by stripe_payment_id in DB.
+    """
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        print(f"❌ Supabase not configured")
+        return
+
+    try:
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+        
+        # Logic: Update status to 'free'
+        update_data = {
+            "status": "free",
+            "valid_until": None, # Clear expiration
+            "premium_activated_at": None
+        }
+        
+        query = supabase.table("profiles").update(update_data)
+        
+        if user_id:
+            query = query.eq("id", user_id)
+        elif payment_id:
+            query = query.eq("stripe_payment_id", payment_id)
+        # elif subscription_id:
+        #    query = query.eq("stripe_subscription_id", subscription_id) # Future proofing
+        else:
+            print("⚠️ Cannot revoke: No identifier provided")
+            return
+
+        result = query.execute()
+
+        if result.data:
+            print(f"🚫 Premium revoked successfully.")
+        else:
+            print(f"⚠️ Revocation target not found/updated.")
+            
+    except Exception as e:
+        print(f"❌ Revocation Error: {e}")
 
 # ============================================================
 # ROUTE 3: CHECK STATUS

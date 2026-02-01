@@ -1,49 +1,49 @@
-# TestSprite Execution Report
+# Relatório de Execução TestSprite
 
-## 1️⃣ Document Metadata
-- **Project Name:** Celest AI
-- **Test Date:** 2026-01-25 (simulated date based on logs)
-- **Total Tests:** 15
-- **Tests Passed:** 5
-- **Tests Failed:** 10
-- **Execution Engine:** Playwright (via TestSprite MCP)
+## 1️⃣ Metadados do Documento
+- **Nome do Projeto:** Celest AI
+- **Data do Teste:** 25/01/2026 (data simulada baseada nos logs)
+- **Total de Testes:** 15
+- **Testes Aprovados:** 5
+- **Testes Falharam:** 10
+- **Motor de Execução:** Playwright (via TestSprite MCP)
 
-## 2️⃣ Requirement Validation Summary
+## 2️⃣ Resumo da Validação de Requisitos
 
-### ✅ Passed Requirements
-The following features functioned as expected:
-- **Daily Dashboard Display (TC005):** Users can view their daily astrological summary ("Resumo Astral", "Fluxo Vital") correctly.
-- **Backend API Error Handling (TC008):** The API correctly returns 400 Bad Request for invalid inputs (e.g., missing birth data).
-- **Subscription Webhook Processing (TC009):** Stripe webhooks successfully grant premium access upon subscription.
-- **Data Security & Privacy (TC011):** Profile and chat history data appear protected and accessible only to authenticated users (verified via UI visibility checks).
-- **UI Consistency (TC014):** Key UI elements and "Dark Mode" aesthetics are visible and consistent across pages.
+### ✅ Requisitos Aprovados
+As seguintes funcionalidades operaram conforme o esperado:
+- **Exibição do Dashboard Diário (TC005):** Usuários visualizam seu resumo astrológico diário ("Resumo Astral", "Fluxo Vital") corretamente.
+- **Tratamento de Erros da API Backend (TC008):** A API retorna corretamente "400 Bad Request" para entradas inválidas (ex: dados de nascimento ausentes).
+- **Processamento de Webhook de Assinatura (TC009):** Webhooks do Stripe concedem acesso premium com sucesso após a assinatura.
+- **Segurança e Privacidade de Dados (TC011):** Dados de perfil e histórico de chat parecem protegidos e acessíveis apenas a usuários autenticados (verificado via visibilidade de UI).
+- **Consistência de UI (TC014):** Elementos chave da UI e estética "Dark Mode" são visíveis e consistentes entre as páginas.
 
-### ❌ Failed Requirements (Critical Attention Needed)
-The following critical features failed verification:
-- **Onboarding Flow (TC001, TC002):**
-  - *Issue:* Valid birth data submission failed to display the Natal Chart ("Mapa" tab showed unrelated content).
-  - *Issue:* Invalid data did *not* trigger appropriate validation error messages.
-- **Subscription Cancellation (TC010):**
-  - *Risk:* **CRITICAL.** Revoking a subscription (simulated) did *not* remove premium access. The user could still access the "Laboratório de Sinastria".
-- **Chat Oracle (TC003, TC004):**
-  - *Issue:* Chat interaction tests timed out or were blocked by input field issues (specifically date picker interactions).
-- **Synastry Feature (TC013):**
-  - *Issue:* Could not navigate to the Synastry page from the homepage (Accessibility/Navigation issue).
-- **Performance & Stability (TC007, TC012, TC015):**
-  - *Issue:* Tests faced timeout or input blocking issues ("Seu Nome" field), preventing stability verification.
+### ❌ Requisitos Reprovados (Atenção Crítica Necessária)
+As seguintes funcionalidades críticas falharam na verificação:
+- **Fluxo de Onboarding (TC001, TC002):**
+  - *Problema:* O envio de dados de nascimento válidos falhou ao exibir o Mapa Astral (a aba "Mapa" mostrou conteúdo não relacionado).
+  - *Problema:* Dados inválidos *não* acionaram mensagens de erro de validação apropriadas.
+- **Cancelamento de Assinatura (TC010):**
+  - *Risco:* **CRÍTICO.** Revogar uma assinatura (simulado) *não* removeu o acesso premium. O usuário ainda conseguia acessar o "Laboratório de Sinastria".
+- **Oracle de Chat (TC003, TC004):**
+  - *Problema:* Testes de interação de chat excederam o tempo limite ou foram bloqueados por problemas nos campos de entrada (especificamente interações com o seletor de data).
+- **Recurso de Sinastria (TC013):**
+  - *Problema:* Não foi possível navegar para a página de Sinastria a partir da página inicial (Problema de Acessibilidade/Navegação).
+- **Desempenho e Estabilidade (TC007, TC012, TC015):**
+  - *Problema:* Testes enfrentaram tempo limite ou problemas de bloqueio de entrada (campo "Seu Nome"), impedindo a verificação de estabilidade.
 
-## 3️⃣ Coverage & Matching Metrics
-| Category | Count | Status |
+## 3️⃣ Métricas de Cobertura e Correspondência
+| Categoria | Contagem | Status |
 | :--- | :--- | :--- |
-| **Frontend UI** | 8 | Mix (Design verified, Interactivity failed) |
-| **Backend Logic** | 4 | Mixed (Error handling good, Calculations unverified due to UI blocks) |
-| **Security/Privacy** | 2 | Passed (Access controls functional) |
-| **Subscription/Payment** | 2 | **50% Fail** (Granting works, Revocation fails) |
+| **Frontend UI** | 8 | Misto (Design verificado, Interatividade falhou) |
+| **Lógica Backend** | 4 | Misto (Tratamento de erros bom, Cálculos não verificados devido a bloqueios de UI) |
+| **Segurança/Privacidade** | 2 | Aprovado (Controles de acesso funcionais) |
+| **Assinatura/Pagamento** | 2 | **50% Falha** (Concessão funciona, Revogação falha) |
 
-**Estimated Coverage:** ~40% of critical user flows successfully verified.
+**Cobertura Estimada:** ~40% dos fluxos críticos de usuário verificados com sucesso.
 
-## 4️⃣ Key Gaps / Risks
-1.  **Revenue Risk (High):** Users retain premium access after cancellation (TC010). This requires immediate backend logic review (likely Webhook `customer.subscription.deleted` handling).
-2.  **Onboarding Funnel Block (High):** Users might be confused if invalid data doesn't show errors (TC002), and valid data doesn't show the chart (TC001).
-3.  **Navigation Issues:** Synastry page seems disconnected from the main flow (TC013).
-4.  **Testability:** Several tests failed due to automation being blocked by specific Input fields (e.g., Date Picker, "Seu Nome"). Using standard HTML inputs or `data-testid` attributes would improve test reliability.
+## 4️⃣ Principais Lacunas / Riscos
+1.  **Risco de Receita (Alto):** Usuários mantêm acesso premium após o cancelamento (TC010). Isso requer revisão imediata da lógica de backend (provavelmente tratamento do Webhook `customer.subscription.deleted`).
+2.  **Bloqueio no Funil de Onboarding (Alto):** Usuários podem ficar confusos se dados inválidos não mostrarem erros (TC002), e dados válidos não mostrarem o mapa (TC001).
+3.  **Problemas de Navegação:** Página de Sinastria parece desconectada do fluxo principal (TC013).
+4.  **Testabilidade:** Vários testes falharam devido à automação ser bloqueada por campos de Input específicos (ex: Seletor de Data, "Seu Nome"). Usar inputs HTML padrão ou atributos `data-testid` melhoraria a confiabilidade dos testes.
