@@ -35,7 +35,9 @@ export interface DetailResponse {
     context: DetailContext;
 }
 
-const API_BASE = "http://localhost:8000";
+// Use environment variable or default to relative path (for production Vercel rewrites)
+// In local dev, Vite proxies or we use localhost:8000 if VITE_API_URL is set
+const API_BASE = import.meta.env.VITE_API_URL || "";
 
 const handleResponse = async (response: Response) => {
     if (response.status === 401) {

@@ -4,6 +4,14 @@
     "outputDirectory": "dist",
     "rewrites": [
         {
+            "source": "/agent/(.*)",
+            "destination": "/api/index.py"
+        },
+        {
+            "source": "/payments/(.*)",
+            "destination": "/api/index.py"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
