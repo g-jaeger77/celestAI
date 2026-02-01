@@ -1,366 +1,360 @@
 [
   {
     "id": "TC001",
-    "title": "Onboarding with valid birth details",
-    "description": "Verify that a user can successfully complete the onboarding process by submitting valid birth date, time, and location, resulting in accurate natal chart creation and profile generation.",
+    "title": "User Registration with Valid Birth Data and City Autocomplete",
+    "description": "Verify that a user can successfully register by entering valid birth data and selecting a city using the autocomplete feature, with correct birth chart calculation.",
     "category": "functional",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Navigate to the Onboarding page"
+        "description": "Navigate to the Onboarding registration page"
       },
       {
         "type": "action",
-        "description": "Input a valid birth date, birth time, and birth location"
+        "description": "Input valid birth date, time, and other required birth data"
       },
       {
         "type": "action",
-        "description": "Submit the onboarding form"
+        "description": "Begin typing a city name in the city autocomplete field"
       },
       {
         "type": "assertion",
-        "description": "Verify that natal chart calculation is triggered with second-level precision"
+        "description": "Confirm that a list of city suggestions appears based on input"
+      },
+      {
+        "type": "action",
+        "description": "Select a city from the autocomplete suggestions"
       },
       {
         "type": "assertion",
-        "description": "Confirm user profile is created and stored in the database"
+        "description": "Verify the city is correctly populated in the city field"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
       },
       {
         "type": "assertion",
-        "description": "Check onboarding completes with success message or transition to next step"
+        "description": "Verify successful registration confirmation is shown"
+      },
+      {
+        "type": "assertion",
+        "description": "Check that birth chart calculations (Solar, Lunar, Rising signs) are correctly computed and saved"
       }
     ]
   },
   {
     "id": "TC002",
-    "title": "Onboarding with missing birth details",
-    "description": "Verify that the system handles missing required fields (birth date, time, or location) by displaying appropriate validation errors and preventing form submission.",
+    "title": "User Registration with Invalid Birth Data Inputs",
+    "description": "Verify error handling when user inputs invalid or incomplete birth data during registration.",
     "category": "error handling",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Navigate to the Onboarding page"
+        "description": "Navigate to the Onboarding registration page"
       },
       {
         "type": "action",
-        "description": "Leave birth date empty, fill other fields correctly"
+        "description": "Input invalid birth date formats or missing required birth time"
       },
       {
         "type": "action",
-        "description": "Attempt to submit form"
+        "description": "Attempt to submit the registration form"
       },
       {
         "type": "assertion",
-        "description": "Verify validation error indicating birth date is required"
-      },
-      {
-        "type": "action",
-        "description": "Repeat for missing birth time and location separately"
+        "description": "Validate that relevant, user-friendly error messages are displayed indicating invalid or missing birth data"
       },
       {
         "type": "assertion",
-        "description": "Verify form cannot be submitted until all required fields are valid"
+        "description": "Ensure form submission is prevented until valid data is provided"
       }
     ]
   },
   {
     "id": "TC003",
-    "title": "Astronomical calculation precision validation",
-    "description": "Ensure astrological calculations for a given birth detail are accurate to the second by comparing against standard ephemerides using local astrology libraries.",
-    "category": "functional",
-    "priority": "High",
+    "title": "City Autocomplete Handles No Match and Special Characters",
+    "description": "Verify city autocomplete functionality when users enter non-existent cities, special characters or partial names with no results.",
+    "category": "error handling",
+    "priority": "Medium",
     "steps": [
       {
         "type": "action",
-        "description": "Input known birth details with known ephemerides values"
+        "description": "Navigate to the city autocomplete input field on Onboarding page"
       },
       {
         "type": "action",
-        "description": "Trigger natal chart calculation"
+        "description": "Type a city name that does not exist or use special characters"
       },
       {
         "type": "assertion",
-        "description": "Verify planetary positions and timings match expected values within one second tolerance"
+        "description": "Check that the autocomplete dropdown correctly shows 'no results' or appropriate feedback"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to submit the form without selecting a valid city"
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure the form displays an error preventing submission until a valid city is selected"
       }
     ]
   },
   {
     "id": "TC004",
-    "title": "AI astrological chat context relevance and empathy",
-    "description": "Verify that the AI chat provides relevant, empathetic, and astrology-data based responses drawn from the natal chart and current planetary transits, without hallucinations.",
+    "title": "Dashboard Displays Accurate Mind, Body, Soul Scores Based on Planetary Transits",
+    "description": "Verify that the Dashboard correctly calculates and displays Mind, Body, and Soul scores based on real-time planetary transit data.",
     "category": "functional",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Complete onboarding with valid birth details"
+        "description": "Log in as a registered user with valid birth chart data"
       },
       {
         "type": "action",
-        "description": "Navigate to the Chat interface"
-      },
-      {
-        "type": "action",
-        "description": "Send queries related to personal transits and psychological insights"
+        "description": "Navigate to the Dashboard page"
       },
       {
         "type": "assertion",
-        "description": "Confirm responses incorporate accurate astrological data respecting natal chart and transits"
+        "description": "Verify the Dashboard renders the Sync Rings visualization for Mind, Body, and Soul scores"
       },
       {
         "type": "assertion",
-        "description": "Check tone is empathetic and mystical consistent with product persona"
+        "description": "Confirm that the scores correspond accurately to current planetary transit data"
       },
       {
         "type": "assertion",
-        "description": "Verify no irrelevant or hallucinated content is present in responses"
+        "description": "Check that action windows and caution periods are correctly indicated on the Dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure the daily AI-generated insight text is visible and relevant to astrological data"
       }
     ]
   },
   {
     "id": "TC005",
-    "title": "Daily Dashboard data accuracy and UI rendering",
-    "description": "Verify the Daily Dashboard shows accurate key planetary transit summaries and personalized Astral Climate insights with correct data and smooth celestial UI animations.",
+    "title": "Dashboard Updates Scores and Insights in Real Time",
+    "description": "Verify that the Dashboard dynamically updates Mind, Body, Soul scores and daily insights when planetary transit data changes.",
     "category": "functional",
-    "priority": "High",
+    "priority": "Medium",
     "steps": [
       {
         "type": "action",
-        "description": "Login with a user having complete profile and natal chart"
+        "description": "Log in and open Dashboard page"
       },
       {
         "type": "action",
-        "description": "Navigate to the Daily Dashboard"
+        "description": "Simulate change in planetary transit data via backend or mock API"
       },
       {
         "type": "assertion",
-        "description": "Confirm planetary transits shown correspond precisely to current ephemerides"
+        "description": "Confirm that Sync Rings scores update accordingly without page refresh"
       },
       {
         "type": "assertion",
-        "description": "Verify personalized Astral Climate insights are generated based on natal and transit data"
-      },
-      {
-        "type": "assertion",
-        "description": "Check UI displays celestial aesthetics and animations without glitches or delays"
+        "description": "Verify daily AI-generated insights text updates to reflect new astrological context"
       }
     ]
   },
   {
     "id": "TC006",
-    "title": "Trends & Alignment dashboard calculation correctness",
-    "description": "Validate that the Trends page accurately calculates and displays individual and relationship (synastry) alignment trends using user and partner natal data.",
+    "title": "Oracle Chat Provides Personalized Astrological Guidance Based on User Chart and Chat History",
+    "description": "Verify that Oracle Chat AI understands the user's natal chart and prior conversations, providing context-aware, empathetic, and relevant astrological advice.",
     "category": "functional",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Setup user and partner profiles with valid birth details"
+        "description": "Log in as a user with completed birth data"
       },
       {
         "type": "action",
-        "description": "Navigate to the Trends page"
+        "description": "Navigate to the Oracle Chat page"
+      },
+      {
+        "type": "action",
+        "description": "Send a query related to user's mental or emotional state"
       },
       {
         "type": "assertion",
-        "description": "Verify daily and weekly alignment metrics reflect correct astrological synastry formulas"
+        "description": "Verify the AI response incorporates user's Solar, Lunar, or Rising signs in its guidance"
+      },
+      {
+        "type": "action",
+        "description": "Send a follow-up question related to prior chat topics"
       },
       {
         "type": "assertion",
-        "description": "Confirm UI displays trends clearly with no data errors"
+        "description": "Check that AI shows continuity by referencing previous chat messages"
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure responses are empathetic, mystical but grounded in astrological principles"
       }
     ]
   },
   {
     "id": "TC007",
-    "title": "Synastry relationship compatibility calculation",
-    "description": "Test that the Synastry calculator analyzes relationship compatibility vectors including conflict and harmony accurately per astrological standards.",
-    "category": "functional",
-    "priority": "High",
+    "title": "Oracle Chat Handles Unknown or Unclear Queries Gracefully",
+    "description": "Validate that Oracle Chat provides meaningful fallback responses when user inputs ambiguous, off-topic, or unclear questions.",
+    "category": "error handling",
+    "priority": "Medium",
     "steps": [
       {
         "type": "action",
-        "description": "Input valid birth details for two individuals"
+        "description": "Navigate to Oracle Chat"
       },
       {
         "type": "action",
-        "description": "Invoke the Synastry compatibility calculation"
+        "description": "Input vague or unrelated questions not relevant to astrology or user's chart"
       },
       {
         "type": "assertion",
-        "description": "Verify harmony and conflict vectors are calculated following astrology rules"
+        "description": "Confirm that Chatbot responds with polite clarification requests or redirection to relevant topics"
       },
       {
         "type": "assertion",
-        "description": "Check results are clearly presented with relevant interpretations"
+        "description": "Verify the app does not crash or display errors"
       }
     ]
   },
   {
     "id": "TC008",
-    "title": "Subscription payment flow with Stripe",
-    "description": "Verify the payment workflow correctly processes Stripe payments and updates the user's premium subscription status and privileges within the Supabase database.",
+    "title": "Synastry Feature Correctly Compares Two Natal Charts",
+    "description": "Verify that users can input two natal charts and receive an accurate compatibility analysis based on astrological principles.",
     "category": "functional",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Login as a free-tier user"
+        "description": "Navigate to the Synastry comparison page"
       },
       {
         "type": "action",
-        "description": "Navigate to subscription upgrade page"
+        "description": "Input valid birth data for user A including city autocomplete"
       },
       {
         "type": "action",
-        "description": "Initiate payment via Stripe and complete transaction"
+        "description": "Input valid birth data for user B including city autocomplete"
+      },
+      {
+        "type": "action",
+        "description": "Submit the synastry comparison request"
       },
       {
         "type": "assertion",
-        "description": "Confirm successful transaction completion message"
+        "description": "Verify compatibility calculations are returned and displayed"
       },
       {
         "type": "assertion",
-        "description": "Verify the user's premium subscription status is updated in Supabase"
-      },
-      {
-        "type": "assertion",
-        "description": "Check access to premium features is unlocked post payment"
+        "description": "Confirm that radar chart visualization shows correct data over six compatibility axes"
       }
     ]
   },
   {
     "id": "TC009",
-    "title": "Database integrity after profile creation and chat history update",
-    "description": "Ensure that user profiles and ongoing chat history data are consistently maintained and synchronized in Supabase without data loss or corruption.",
+    "title": "Synastry Radar Chart Renders Correctly for Edge Cases",
+    "description": "Check that the Synastry radar chart renders properly when comparing charts with extreme or boundary birth data values.",
     "category": "functional",
-    "priority": "High",
+    "priority": "Medium",
     "steps": [
       {
         "type": "action",
-        "description": "Complete onboarding and create user profile"
+        "description": "Navigate to Synastry feature"
       },
       {
         "type": "action",
-        "description": "Interact with AI Chat, generating chat history entries"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify user profile data consistency in Supabase"
-      },
-      {
-        "type": "assertion",
-        "description": "Confirm chat history is accurately stored and retrievable"
+        "description": "Input birth data with boundary dates and unusual time zones for both users"
       },
       {
         "type": "action",
-        "description": "Simulate concurrent updates and check for data integrity issues"
+        "description": "Submit the compatibility analysis"
       },
       {
         "type": "assertion",
-        "description": "Ensure no race conditions or data corruption occur"
+        "description": "Verify the radar chart displays without graphical anomalies or errors"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm compatibility scores reflect expected output given the inputs"
       }
     ]
   },
   {
     "id": "TC010",
-    "title": "Performance under load with UI latency masking",
-    "description": "Test that system performance under typical and peak loads maintains low perceived latency by effectively masking delays using UI animations and interactions.",
+    "title": "Simulated Annual Payment Gate Works Correctly during Onboarding",
+    "description": "Verify the simulated payment gate for annual subscription displays during onboarding funnel and correctly handles user response flow.",
     "category": "functional",
-    "priority": "Medium",
+    "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Simulate concurrent users performing onboarding and AI chat interactions"
+        "description": "Complete birth data entry in onboarding"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm that the simulated annual payment gate screen appears"
       },
       {
         "type": "action",
-        "description": "Monitor system response times and backend processing latencies"
+        "description": "Choose to accept the annual payment offer"
       },
       {
         "type": "assertion",
-        "description": "Confirm UI animations effectively mask any latency to maintain smooth user experience"
+        "description": "Verify user is correctly routed to the next step or dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Repeat onboarding and choose to decline the payment offer"
       },
       {
         "type": "assertion",
-        "description": "Verify no UI freeze or crashes under load"
+        "description": "Confirm user can continue without purchase and onboarding completes"
       }
     ]
   },
   {
     "id": "TC011",
-    "title": "Handling edge case birth time inputs",
-    "description": "Verify system handles edge cases such as leap seconds, daylight saving time boundaries, and invalid time zone inputs gracefully during onboarding and calculations.",
-    "category": "error handling",
+    "title": "Frontend and Backend Build Without Errors and Pass Linting",
+    "description": "Ensure that the entire codebase including API client, pages, and components build successfully and pass linting and SEO validations.",
+    "category": "functional",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Input birth details with leap second times (e.g., 23:59:60)"
+        "description": "Run frontend build process"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify frontend build completes without errors or warnings"
       },
       {
         "type": "action",
-        "description": "Input birth times during daylight saving switch hours"
+        "description": "Run backend build and tests"
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm backend builds and passes automated tests"
       },
       {
         "type": "action",
-        "description": "Input invalid or missing time zone information"
+        "description": "Execute linting tools on codebase"
       },
       {
         "type": "assertion",
-        "description": "Verify that precise calculation either correctly interprets or rejects invalid times with clear error messages"
-      },
-      {
-        "type": "assertion",
-        "description": "Check that onboarding does not proceed with invalid time inputs"
-      }
-    ]
-  },
-  {
-    "id": "TC012",
-    "title": "Error handling for failed astrology calculation backend",
-    "description": "Confirm that if the backend astrology calculations fail due to internal errors or library failures, the system handles the error gracefully and provides appropriate user feedback.",
-    "category": "error handling",
-    "priority": "High",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Simulate backend failure or exception during natal chart calculation"
+        "description": "Check no linting errors or style violations found"
       },
       {
         "type": "action",
-        "description": "Attempt user onboarding or astrological query triggering calculation"
+        "description": "Run SEO audit on frontend pages"
       },
       {
         "type": "assertion",
-        "description": "Verify that user receives a clear error message without system crashes"
-      },
-      {
-        "type": "assertion",
-        "description": "Check system logs record the error for troubleshooting"
-      }
-    ]
-  },
-  {
-    "id": "TC013",
-    "title": "AI Chat resilience on incomplete or ambiguous user input",
-    "description": "Validate that AI Chat handles incomplete or ambiguous user questions gracefully by requesting clarifications or providing general guidance without errors.",
-    "category": "error handling",
-    "priority": "Medium",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Send incomplete or unclear astrology-related queries to AI Chat"
-      },
-      {
-        "type": "assertion",
-        "description": "Confirm AI responds appropriately with clarification questions or general advice"
-      },
-      {
-        "type": "assertion",
-        "description": "Verify no system crashes or irrelevant content generation"
+        "description": "Confirm all SEO best practices are met as per design specification"
       }
     ]
   }

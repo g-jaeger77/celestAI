@@ -2,5 +2,14 @@
   "status": "commited",
   "type": "frontend",
   "scope": "codebase",
-  "localEndpoint": "http://localhost:3000"
+  "localEndpoint": "http://localhost:3000",
+  "executionArgs": {
+    "projectName": "celest-ai",
+    "projectPath": "c:/Users/Giancarlo/Documents/Antigravity/05.1 Celest AI Antigravity Workspace/celest-ai/celestAI",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": "sk-user-S1uQKb_kf01cW1W2A-TwtNjpueR4dqcj_imZvCOUtXLiG6zE2xPlljHsOKQBOi_6aSA-tDUd1LY6uygYMh8x6NnLbxVFHbSPBWfjgj4tzSa4ZfvzJ50Yu3WjsCEws54LlUs"
+    }
+  }
 }
