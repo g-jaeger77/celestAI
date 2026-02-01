@@ -20,7 +20,8 @@ const MentalDetail: React.FC = () => {
 
     useEffect(() => {
         // Cache Busting specific endpoint
-        fetch(`http://localhost:8000/agent/detail/mental?user_id=demo&ts=${Date.now()}`)
+        const API_BASE = import.meta.env.VITE_API_URL || "";
+        fetch(`${API_BASE}/agent/detail/mental?user_id=demo&ts=${Date.now()}`)
             .then(res => res.json())
             .then(d => {
                 setData(d);

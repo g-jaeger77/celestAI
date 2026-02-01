@@ -29,7 +29,8 @@ const History: React.FC = () => {
             } catch { }
 
             // Fetch
-            const res = await fetch(`http://localhost:8000/agent/history?user_id=${userId}`);
+            const API_BASE = import.meta.env.VITE_API_URL || "";
+            const res = await fetch(`${API_BASE}/agent/history?user_id=${userId}`);
             if (!res.ok) throw new Error("Falha no histórico");
 
             const json = await res.json();

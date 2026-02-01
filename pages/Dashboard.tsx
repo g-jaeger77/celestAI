@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { SEOHead } from '../components/SEOHead';
 import Icon from '../components/Icon';
 import ShopPromoCard from '../components/ShopPromoCard';
 import DailySyncRings from '../components/charts/DailySyncRings';
@@ -98,10 +98,11 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="relative flex flex-col w-full min-h-screen bg-black text-white pb-32 overflow-hidden font-sans selection:bg-[#32ADE6]/30">
-      <Helmet>
-        <title>Dashboard | Celest AI</title>
-        <meta name="description" content="Seu Dashboard Astrológico Diário." />
-      </Helmet>
+      <SEOHead
+        title="Dashboard"
+        description="Seu Dashboard Astrológico Diário."
+        path="/dashboard"
+      />
 
       {/* Main Content */}
       <div

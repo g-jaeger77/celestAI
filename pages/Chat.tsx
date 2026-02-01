@@ -104,7 +104,8 @@ const Chat: React.FC = () => {
                 content: m.text
             }));
 
-            const response = await fetch('http://localhost:8000/agent/chat', {
+            const API_BASE = import.meta.env.VITE_API_URL || "";
+            const response = await fetch(`${API_BASE}/agent/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { SEOHead } from '../components/SEOHead';
 import Icon from '../components/Icon';
 import { CelestIcon } from '../components/CelestIcon';
 import CityAutocomplete from '../components/CityAutocomplete';
@@ -179,7 +179,8 @@ const Onboarding: React.FC = () => {
       };
 
       // REAL BACKEND CALL
-      const res = await fetch('http://127.0.0.1:8000/agent/onboarding', {
+      const API_BASE = import.meta.env.VITE_API_URL || "";
+      const res = await fetch(`${API_BASE}/agent/onboarding`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -235,10 +236,11 @@ const Onboarding: React.FC = () => {
 
   return (
     <div className="font-display flex flex-col justify-between min-h-screen relative overflow-hidden bg-[#010409]">
-      <Helmet>
-        <title>Onboarding | Celest AI</title>
-        <meta name="description" content="Configure seu perfil astrológico para começar sua jornada." />
-      </Helmet>
+      <SEOHead
+        title="Onboarding"
+        description="Configure seu perfil astrológico para começar sua jornada."
+        path="/onboarding"
+      />
       {/* ... Background ... */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[-10%] right-[-15%] w-[600px] h-[600px] bg-blue-600/10 blur-[120px] rounded-full"></div>

@@ -56,7 +56,8 @@ const Loading: React.FC = () => {
         await new Promise(r => setTimeout(r, 8000));
 
         // Start fetch
-        const res = await fetch(`http://localhost:8000/agent/dashboard?user_id=${userId}`);
+        const API_BASE = import.meta.env.VITE_API_URL || "";
+        const res = await fetch(`${API_BASE}/agent/dashboard?user_id=${userId}`);
         if (res.ok) {
           const data = await res.json();
           setFetchedData(data);

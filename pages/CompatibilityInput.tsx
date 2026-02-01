@@ -29,7 +29,8 @@ const CompatibilityInput: React.FC = () => {
             // Mock delay for effect
             await new Promise(r => setTimeout(r, 1500));
 
-            const response = await fetch('http://localhost:8000/agent/synastry', {
+            const API_BASE = import.meta.env.VITE_API_URL || "";
+            const response = await fetch(`${API_BASE}/agent/synastry`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

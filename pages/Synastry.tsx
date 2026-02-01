@@ -34,7 +34,8 @@ const Synastry: React.FC = () => {
         const userId = getUserId();
         if (userId) {
             // CLOUD FETCH
-            fetch(`http://127.0.0.1:8000/agent/connections/${userId}`)
+            const API_BASE = import.meta.env.VITE_API_URL || "";
+            fetch(`${API_BASE}/agent/connections/${userId}`)
                 .then(res => res.json())
                 .then(data => {
                     if (Array.isArray(data)) setConnections(data);
@@ -67,7 +68,8 @@ const Synastry: React.FC = () => {
         // CLOUD SAVE
         if (userId) {
             try {
-                const res = await fetch('http://127.0.0.1:8000/agent/connections', {
+                const API_BASE = import.meta.env.VITE_API_URL || "";
+                const res = await fetch(`${API_BASE}/agent/connections`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(connWithId)
@@ -147,7 +149,8 @@ const Synastry: React.FC = () => {
                     context: targetContext
                 };
 
-                const res = await fetch('http://127.0.0.1:8000/agent/synastry', {
+                const API_BASE = import.meta.env.VITE_API_URL || "";
+                const res = await fetch(`${API_BASE}/agent/synastry`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(apiPayload)

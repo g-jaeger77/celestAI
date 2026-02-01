@@ -38,7 +38,7 @@ const Trends: React.FC = () => {
                 // Determine API URL (Local vs Prod)
                 // Assuming Vite proxy or direct URL. If .env.local has URL use it.
                 // For now assuming localhost:8000 based on standard setup or /api proxy
-                const API_URL = "http://localhost:8000";
+                const API_URL = import.meta.env.VITE_API_URL || "";
 
                 const res = await fetch(`${API_URL}/agent/wheel`, {
                     method: 'POST',
