@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /agent/
+Disallow: /payments/
+
+Sitemap: https://celest.ai/sitemap.xml
