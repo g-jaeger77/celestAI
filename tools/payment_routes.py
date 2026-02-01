@@ -19,7 +19,8 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
 SUPABASE_URL = os.getenv("VITE_SUPABASE_URL") or os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("VITE_SUPABASE_ANON_KEY") or os.getenv("SUPABASE_ANON_KEY")
 
-# One-time price for annual access (R$97)
+# One-time price for annual access (R$97) - Celest AI - Acesso Vitalício
+# Product: prod_TqHtXOKG2nP4lu
 CELEST_AI_PRICE_ID = os.getenv("STRIPE_PRICE_ID", "price_1SsbK5E3DuJfO0DeiUZhSwvx")
 
 router = APIRouter(prefix="/payments", tags=["payments"])
