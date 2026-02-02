@@ -44,41 +44,35 @@ async def run_test():
         # await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
 
-        # -> Try to input text into the 'Nome Completo' field using a different approach or skip it and continue filling other fields, then submit the form.
-        frame = context.pages[-1]
-        # Click the 'Nome Completo' input field to focus it before typing
-        elem = frame.locator('xpath=html/body/div/div/main/div/div/div[2]/main/div/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
-        
+        # Interact with the page elements to simulate user flow
 
-        frame = context.pages[-1]
-        # Try inputting valid full name again after focusing the field
-        elem = frame.locator('xpath=html/body/div/div/main/div/div/div[2]/main/div/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('João Silva')
+        # -> Input 'Nome Completo' using ID selector
+        # Click and fill Name
+        await page.locator("#full_name").click()
+        await page.locator("#full_name").fill('João Silva')
         
-
-        frame = context.pages[-1]
-        # Input valid birth date
-        elem = frame.locator('xpath=html/body/div/div/main/div/div/div[2]/main/div[2]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('15/08/1990')
+        # -> Input 'Data de Nascimento' using ID selector
+        await page.locator("#birthDate").click()
+        await page.locator("#birthDate").fill('15/08/1990')
         
-
-        frame = context.pages[-1]
-        # Input valid exact birth time
-        elem = frame.locator('xpath=html/body/div/div/main/div/div/div[2]/main/div[3]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('14:30')
+        # -> Input 'Hora Exata' using ID selector
+        await page.locator("#birthTime").click()
+        await page.locator("#birthTime").fill('14:30')
         
-
-        frame = context.pages[-1]
-        # Input valid birth location
-        elem = frame.locator('xpath=html/body/div/div/main/div/div/div[2]/main/div[4]/div/input').nth(0)
-        await page.wait_for_timeout(3000); await elem.fill('São Paulo, Brasil')
+        # -> Input 'Local de Nascimento' using Placeholder (since it is an Autocomplete component)
+        # We assume the CityAutocomplete renders an input with this placeholder
+        await page.get_by_placeholder("Digite sua cidade...").click()
+        await page.get_by_placeholder("Digite sua cidade...").fill('São Paulo, Brasil')
         
+        # Wait for potential autocomplete suggestions if needed, or just proceed if it accepts free text
+        # Assuming manual entry is enough or we pick first option
+        await page.wait_for_timeout(1000)
+        # Select first option if it appears (optional robustness)
+        # await page.keyboard.press("Enter") 
 
-        frame = context.pages[-1]
-        # Click 'Começar Jornada' button to submit the form and compute the natal chart
-        elem = frame.locator('xpath=html/body/div/div/main/div/div/div[2]/footer/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+        # -> Click 'Começar Jornada' button using text locator
+        # "Começar Jornada"
+        await page.get_by_role("button", name="Começar Jornada").click()
         
 
         # -> Click on the 'Astral' tab to check the computed natal chart and astrological profile display.
