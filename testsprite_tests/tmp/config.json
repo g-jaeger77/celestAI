@@ -11,5 +11,6 @@
     "envs": {
       "API_KEY": "sk-user-S1uQKb_kf01cW1W2A-TwtNjpueR4dqcj_imZvCOUtXLiG6zE2xPlljHsOKQBOi_6aSA-tDUd1LY6uygYMh8x6NnLbxVFHbSPBWfjgj4tzSa4ZfvzJ50Yu3WjsCEws54LlUs"
     }
-  }
+  },
+  "proxy": "http://2a8280d9-caf4-492c-a504-6b870b8778c8:mnx75hbsLkCvrYp0z65Y1I3mh9xvVBPb@tun.testsprite.com:8080"
 }

@@ -29,28 +29,19 @@ async def run_test():
         # Open a new page in the browser context
         page = await context.new_page()
         
-        # Navigate to your target URL and wait until the network request is committed
-        await page.goto("http://localhost:3000", wait_until="commit", timeout=10000)
+        # Navigate to your target URL
+        await page.goto("http://localhost:3000/onboarding", wait_until="commit", timeout=10000)
         
-        # Wait for the main page to reach DOMContentLoaded state (optional for stability)
+        # Wait for the main page to reach DOMContentLoaded state
         try:
             await page.wait_for_load_state("domcontentloaded", timeout=3000)
         except async_api.Error:
             pass
-        
-        # Iterate through all iframes and wait for them to load as well
-        for frame in page.frames:
-            try:
-                await frame.wait_for_load_state("domcontentloaded", timeout=3000)
-            except async_api.Error:
-                pass
-        
-        # Interact with the page elements to simulate user flow
-        # -> Click the 'Fazer Mapa Astral Grátis' button to go to the Cosmic Onboarding page.
-        frame = context.pages[-1]
-        # Click the 'Fazer Mapa Astral Grátis' button to navigate to the Cosmic Onboarding page
-        elem = frame.locator('xpath=html/body/div/div/header/div[2]/button').nth(0)
-        await page.wait_for_timeout(3000); await elem.click(timeout=5000)
+
+        # -> Click the 'Fazer Mapa Astral Grátis' button - SKIPPED (Direct Nav)
+        # frame = context.pages[-1]
+        # elem = frame.locator('xpath=html/body/div/div/header/div[2]/button').nth(0)
+        # await page.wait_for_timeout(3000); await elem.click(timeout=5000)
         
 
         # -> Try to input text into the 'Nome Completo' field using a different approach or skip it and continue filling other fields, then submit the form.
