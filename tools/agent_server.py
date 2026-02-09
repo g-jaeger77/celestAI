@@ -888,9 +888,9 @@ async def onboarding_endpoint(request: OnboardingRequest):
     # --- Payment Verification ---
     is_paid = False
 
-    # 1. Simulation Backdoor
-    if request.session_id and request.session_id.startswith("sim_paid"):
-        print("💳 Simulation Mode: Payment Verified.")
+    # 1. Simulation/Bypass Mode
+    if request.session_id and (request.session_id.startswith("sim_paid") or request.session_id.startswith("bypass_")):
+        print(f"💳 Bypass Mode: Payment Verified (Session: {request.session_id})")
         is_paid = True
     
     # 2. Real Stripe Verification
@@ -906,6 +906,7 @@ async def onboarding_endpoint(request: OnboardingRequest):
             print(f"❌ Stripe Error: {e}")
 
     if not is_paid:
+        print(f"⛔ Payment Validation Failed. Session: {request.session_id}")
         raise HTTPException(status_code=402, detail="Payment required. Please complete purchase.")
 
     try:

@@ -217,7 +217,9 @@ const Onboarding: React.FC = () => {
       if (e.message.includes("Payment required")) {
         alert("⛔ Pagamento Necessário. (Erro 402). Tente reiniciar a simulação.");
       } else {
-        alert(`Erro ao conectar com o oráculo: ${e.message}`);
+        console.error("Full Error Object:", e);
+        const errorMsg = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+        alert(`Erro ao conectar com o oráculo: ${errorMsg}`);
       }
     } finally {
       setLoading(false);
