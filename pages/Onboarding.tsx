@@ -219,7 +219,8 @@ const Onboarding: React.FC = () => {
       } else {
         console.error("Full Error Object:", e);
         const errorMsg = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
-        alert(`Erro ao conectar com o oráculo: ${errorMsg}`);
+        const stack = e instanceof Error ? e.stack : '';
+        alert(`DEBUG ERROR: ${errorMsg}\n\nStack: ${stack}`);
       }
     } finally {
       setLoading(false);
