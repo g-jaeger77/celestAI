@@ -143,8 +143,8 @@ export default function CityAutocomplete({
 
             {/* Dropdown with results */}
             {isOpen && results.length > 0 && (
-                <div className="absolute z-50 w-full mt-2 bg-[#1c1c2e] border border-white/20 rounded-xl 
-                        shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
+                <div className="absolute z-[9999] w-full mt-2 bg-[#1c1c2e] border border-white/20 rounded-xl 
+                        shadow-2xl max-h-60 overflow-y-auto">
                     <div className="px-3 py-2 text-xs text-white/50 bg-white/5">
                         🌍 Selecione a localização correta:
                     </div>
