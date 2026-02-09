@@ -6,11 +6,16 @@
   "executionArgs": {
     "projectName": "celest-ai",
     "projectPath": "c:/Users/Giancarlo/Documents/Antigravity/05.1 Celest AI Antigravity Workspace/celest-ai/celestAI",
-    "testIds": [],
-    "additionalInstruction": "",
+    "testIds": [
+      "TC001",
+      "TC004",
+      "TC014"
+    ],
+    "additionalInstruction": "Retry standardizing verification. Ensure app loads correctly before proceeding.",
     "envs": {
       "API_KEY": "sk-user-S1uQKb_kf01cW1W2A-TwtNjpueR4dqcj_imZvCOUtXLiG6zE2xPlljHsOKQBOi_6aSA-tDUd1LY6uygYMh8x6NnLbxVFHbSPBWfjgj4tzSa4ZfvzJ50Yu3WjsCEws54LlUs"
     }
   },
-  "proxy": "http://2a8280d9-caf4-492c-a504-6b870b8778c8:mnx75hbsLkCvrYp0z65Y1I3mh9xvVBPb@tun.testsprite.com:8080"
+  "serverPort": 60512,
+  "proxy": "http://e21b4d74-9f12-4d38-88a7-7a6b0156e1f1:9kSAYhmZs1K9QDfDj6wuR83rHDHwPApx@tun.testsprite.com:8080"
 }

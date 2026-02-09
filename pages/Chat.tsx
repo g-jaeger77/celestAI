@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { SEOHead } from '../components/SEOHead';
 import Icon from '../components/Icon';
 import { CelestIcon } from '../components/CelestIcon';
 import { useSpeechRecognition } from '../components/hooks/useSpeechRecognition';
@@ -168,10 +168,11 @@ const Chat: React.FC = () => {
 
     return (
         <div className="font-display flex flex-col h-screen bg-[#010409] relative overflow-hidden">
-            <Helmet>
-                <title>Chat | Celest AI</title>
-                <meta name="description" content="Converse com seu oráculo astrológico pessoal." />
-            </Helmet>
+            <SEOHead
+                title="Chat"
+                description="Converse com seu oráculo astrológico pessoal."
+                path="/chat"
+            />
 
             {/* Background Image */}
             <div

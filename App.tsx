@@ -1,5 +1,6 @@
 // v1.2.4 (Force Reload)
 import React from 'react';
+import AppErrorBoundary from './components/AppErrorBoundary';
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import Onboarding from './pages/Onboarding';
@@ -26,36 +27,38 @@ import History from './pages/History';
 const App: React.FC = () => {
   return (
     <HashRouter>
-      <MainLayout>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/loading" element={<Loading />} />
-          <Route path="/success" element={<Success />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/physical" element={<PhysicalDetail />} />
-          <Route path="/emotional" element={<EmotionalDetail />} />
-          <Route path="/action" element={<ActionDetail />} />
-          <Route path="/trends" element={<Trends />} />
-          <Route path="/report" element={<SynergyReport />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/chat" element={<Chat />} />
-          {/* Replaced Shop with System Upgrades -> Waitlist */}
-          <Route path="/shop" element={<Waitlist />} />
-          <Route path="/upgrades" element={<Waitlist />} />
-          <Route path="/waitlist" element={<Waitlist />} />
-          <Route path="/interest" element={<Waitlist />} />
+      <AppErrorBoundary>
+        <MainLayout>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/loading" element={<Loading />} />
+            <Route path="/success" element={<Success />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/physical" element={<PhysicalDetail />} />
+            <Route path="/emotional" element={<EmotionalDetail />} />
+            <Route path="/action" element={<ActionDetail />} />
+            <Route path="/trends" element={<Trends />} />
+            <Route path="/report" element={<SynergyReport />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/chat" element={<Chat />} />
+            {/* Replaced Shop with System Upgrades -> Waitlist */}
+            <Route path="/shop" element={<Waitlist />} />
+            <Route path="/upgrades" element={<Waitlist />} />
+            <Route path="/waitlist" element={<Waitlist />} />
+            <Route path="/interest" element={<Waitlist />} />
 
-          <Route path="/compatibility" element={<CompatibilityInput />} />
-          <Route path="/compatibility-result" element={<CompatibilityResult />} />
-          <Route path="/synastry" element={<Synastry />} />
-          <Route path="/mind" element={<MindDetail />} />
+            <Route path="/compatibility" element={<CompatibilityInput />} />
+            <Route path="/compatibility-result" element={<CompatibilityResult />} />
+            <Route path="/synastry" element={<Synastry />} />
+            <Route path="/mind" element={<MindDetail />} />
 
-          {/* Real Routes */}
-          <Route path="/upgrades" element={<Upgrades />} />
-          <Route path="/history" element={<History />} />
-        </Routes>
-      </MainLayout>
+            {/* Real Routes */}
+            <Route path="/upgrades" element={<Upgrades />} />
+            <Route path="/history" element={<History />} />
+          </Routes>
+        </MainLayout>
+      </AppErrorBoundary>
     </HashRouter>
   );
 };

@@ -4,14 +4,13 @@
         "React",
         "Vite",
         "Tailwind CSS",
-        "Python",
-        "FastAPI",
-        "Supabase"
+        "Supabase",
+        "React Router"
     ],
     "features": [
         {
-            "name": "Onboarding Flow",
-            "description": "User registration process with birth chart data collection and city autocomplete.",
+            "name": "Onboarding",
+            "description": "User onboarding flow including city autocomplete",
             "files": [
                 "pages/Onboarding.tsx",
                 "components/CityAutocomplete.tsx"
@@ -19,34 +18,73 @@
         },
         {
             "name": "Dashboard",
-            "description": "Main user dashboard displaying astrological scores (Mind, Body, Soul) and insights.",
+            "description": "Main user dashboard with daily stats navigation",
             "files": [
                 "pages/Dashboard.tsx",
-                "components/charts/DailySyncRings.tsx",
+                "components/dashboard"
+            ]
+        },
+        {
+            "name": "Chat Agent",
+            "description": "AI Chat interface with holographic loader",
+            "files": [
+                "pages/Chat.tsx",
+                "components/HolographicLoader.tsx",
+                "api/agent.ts"
+            ]
+        },
+        {
+            "name": "Synastry & Compatibility",
+            "description": "Compatibility calculation and results display",
+            "files": [
+                "pages/Synastry.tsx",
+                "pages/CompatibilityInput.tsx",
+                "pages/CompatibilityResult.tsx",
+                "utils/synastryCalculator.ts"
+            ]
+        },
+        {
+            "name": "Trends",
+            "description": "Astrological trends visualization",
+            "files": [
+                "pages/Trends.tsx",
+                "utils/trendsLogic.ts"
+            ]
+        },
+        {
+            "name": "Synergy Report",
+            "description": "Synergy analysis logic and display",
+            "files": [
+                "pages/SynergyReport.tsx",
+                "utils/synergyLogic.ts"
+            ]
+        },
+        {
+            "name": "Profile Management",
+            "description": "User profile settings",
+            "files": [
+                "pages/Profile.tsx",
+                "lib/supabase.ts"
+            ]
+        },
+        {
+            "name": "Shop & Upgrades",
+            "description": "In-app purchases and upgrades section",
+            "files": [
+                "pages/Shop.tsx",
+                "pages/Upgrades.tsx",
                 "components/ShopPromoCard.tsx"
             ]
         },
         {
-            "name": "Oracle Chat",
-            "description": "AI-powered chat interface for astrological guidance.",
+            "name": "Detail Views",
+            "description": "Detailed astrological views (Action, Emotional, Mental, Physical, Mind)",
             "files": [
-                "pages/Chat.tsx",
-                "api/index.py"
-            ]
-        },
-        {
-            "name": "Synastry",
-            "description": "Compatibility analysis between users.",
-            "files": [
-                "pages/Synastry.tsx",
-                "api/index.py"
-            ]
-        },
-        {
-            "name": "API Client",
-            "description": "Frontend API client for communicating with the backend.",
-            "files": [
-                "api/agent.ts"
+                "pages/ActionDetail.tsx",
+                "pages/EmotionalDetail.tsx",
+                "pages/MentalDetail.tsx",
+                "pages/MindDetail.tsx",
+                "pages/PhysicalDetail.tsx"
             ]
         }
     ]
