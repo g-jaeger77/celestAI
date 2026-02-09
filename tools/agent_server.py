@@ -1841,5 +1841,37 @@ async def detail_endpoint(dimension: str, user_id: str):
             context=fallback_context
         )
 
+# --- Proxy Endpoint for City Search (Bypass CORS/User-Agent issues) ---
+@app.get("/search_city")
+async def search_city(q: str):
+    """
+    Proxies requests to OpenStreetMap Nominatim to avoid CORS/User-Agent issues in browser.
+    """
+    if not q or len(q) < 3:
+        return []
+    
+    url = "https://nominatim.openstreetmap.org/search"
+    params = {
+        "format": "json",
+        "addressdetails": 1,
+        "limit": 5,
+        "q": q
+    }
+    # User-Agent is MANDATORY for Nominatim
+    headers = {
+        "User-Agent": "CelestAI_Proxy/1.0 (contact@celest.ai)",
+        "Accept-Language": "pt-BR,pt,en"
+    }
+    
+    try:
+        # Use a timeout to prevent hanging
+        response = requests.get(url, params=params, headers=headers, timeout=5)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        print(f"Error querying Nominatim: {e}")
+        # Return empty list on error to gracefully fail in frontend
+        return []
+
 if __name__ == "__main__":
     uvicorn.run("agent_server:app", host="0.0.0.0", port=8000, reload=True)

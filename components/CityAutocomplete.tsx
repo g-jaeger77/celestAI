@@ -61,17 +61,20 @@ export default function CityAutocomplete({
         setIsLoading(true);
 
         try {
-            // OpenStreetMap Nominatim API (FREE - No API Key!)
-            const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=${encodeURIComponent(searchQuery)}`;
+            // Use Backend Proxy to avoid CORS/User-Agent issues with Nominatim
+            // The backend handles the connection to OpenStreetMap
+            const API_BASE = import.meta.env.VITE_API_URL || "";
+            const url = `${API_BASE}/agent/search_city?q=${encodeURIComponent(searchQuery)}`;
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+            const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout for backend
+
+            console.log(`🔍 Searching City: ${searchQuery}`);
 
             const response = await fetch(url, {
                 signal: controller.signal,
                 headers: {
-                    'Accept-Language': 'pt-BR,pt,en'
-                    // Browser sets User-Agent automatically. Manual setting triggers CORS errors.
+                    'Content-Type': 'application/json'
                 }
             });
             clearTimeout(timeoutId);
