@@ -1,0 +1,39 @@
+# Vercel Ignore File
+# Exclude files from the Vercel build to reduce size (250MB limit)
+
+# Dependencies
+.venv
+.env
+.env.local
+node_modules
+
+# Tests & Coverage
+testsprite_tests
+coverage
+tests
+__pycache__
+*.pyc
+
+# Tools & Scripts
+# tools - Required by api/index.py
+tools/debug_*.py
+tools/test_*.py
+tools/verify_*.py
+tools/check_*.py
+tools/__pycache__
+scripts
+.agent
+
+# Documentation & Artifacts
+*.md
+docs
+README.md
+LICENSE
+
+# Git
+.git
+.gitignore
+
+# Misc
+.DS_Store
+*.log

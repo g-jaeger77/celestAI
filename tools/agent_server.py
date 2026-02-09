@@ -91,14 +91,17 @@ ZODIAC_SIGNS = [
 # --- Dynamic Geocoding + Timezone Awareness (SaaS Grade Precision) ---
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut, GeocoderServiceError
-from timezonefinder import TimezoneFinder
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut, GeocoderServiceError
+# from timezonefinder import TimezoneFinder # REMOVED to save 50MB+ (Vercel Limit)
+import requests # Lightweight alternative
 import pytz
 from datetime import datetime
 import functools
 
 # Initialize Geocoder (OpenStreetMap - Free, No API Key)
 _geolocator = Nominatim(user_agent="celest_ai_astrology", timeout=8)
-_timezone_finder = TimezoneFinder()
+# _timezone_finder = TimezoneFinder() # REMOVED
 
 # In-Memory Cache for Performance (avoids repeated API calls)
 _geocache = {}
@@ -147,9 +150,31 @@ def geocode_city(city: str, country: str = "") -> tuple:
         raise GeocodingError(f"Erro inesperado ao geocodificar: {city}")
 
 def get_timezone_for_coords(lat: float, lon: float) -> str:
-    """Get IANA timezone string for coordinates (e.g., 'America/Sao_Paulo')"""
-    tz_str = _timezone_finder.timezone_at(lat=lat, lng=lon)
-    return tz_str or "UTC"
+    """
+    Get IANA timezone string for coordinates using lightweight API 
+    (Replaces heavy TimezoneFinder library).
+    Fallback to UTC on error.
+    """
+    try:
+        # Service 1: w3w or similar? No, let's use a standard public API.
+        # Open-Meteo (Excellent availability)
+        # url = f"https://utc-offset.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&daily=temperature_2m&timezone=auto"
+        # The 'timezone' field in response header or body?
+        # Actually, let's use timeapi.io which is explicit.
+        
+        url = f"https://timeapi.io/api/TimeZone/coordinate?latitude={lat}&longitude={lon}"
+        # Response: {"timeZone": "America/Sao_Paulo", ...}
+        
+        # Timeout is crucial for serverless
+        resp = requests.get(url, timeout=4)
+        if resp.status_code == 200:
+            data = resp.json()
+            return data.get("timeZone", "UTC")
+            
+    except Exception as e:
+        print(f"⚠️ Timezone API Error: {e}")
+        
+    return "UTC"
 
 def convert_local_to_utc(year: int, month: int, day: int, hour: int, minute: int, lat: float, lon: float) -> tuple:
     """
