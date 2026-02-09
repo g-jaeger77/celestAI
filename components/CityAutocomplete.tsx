@@ -64,12 +64,17 @@ export default function CityAutocomplete({
             // OpenStreetMap Nominatim API (FREE - No API Key!)
             const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=${encodeURIComponent(searchQuery)}`;
 
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
             const response = await fetch(url, {
+                signal: controller.signal,
                 headers: {
-                    'Accept-Language': 'pt-BR,pt,en',
-                    'User-Agent': 'CelestAI/1.0'
+                    'Accept-Language': 'pt-BR,pt,en'
+                    // Browser sets User-Agent automatically. Manual setting triggers CORS errors.
                 }
             });
+            clearTimeout(timeoutId);
 
             if (response.ok) {
                 const data: CityResult[] = await response.json();
