@@ -151,6 +151,8 @@ const Onboarding: React.FC = () => {
     const sessionId = getSessionId();
 
     // 🔒 Gating Check / Payment Simulation
+    // TEMPORARILY DISABLED: SaaS Testing Mode enabled by User
+    /* 
     if (!sessionId) {
       // Simulate "Working"
       await new Promise(r => setTimeout(r, 800));
@@ -166,6 +168,10 @@ const Onboarding: React.FC = () => {
       setLoading(false);
       return;
     }
+    */
+
+    // Auto-generate session ID if missing (Bypass Mode)
+    const effectiveSessionId = sessionId || `bypass_${Date.now()}`;
 
     try {
       const payload = {
@@ -174,7 +180,7 @@ const Onboarding: React.FC = () => {
         birth_time: formData.timeUnknown ? '12:00' : formData.birthTime,
         birth_city: formData.birthCity.split(',')[0],
         birth_country: "BR",
-        session_id: sessionId,
+        session_id: effectiveSessionId,
         time_unknown: formData.timeUnknown
       };
 
