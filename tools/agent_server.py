@@ -1854,8 +1854,10 @@ async def search_city(q: str):
     params = {
         "format": "json",
         "addressdetails": 1,
-        "limit": 5,
-        "q": q
+        "limit": 10,  # Increased limit to find relevant cities
+        "q": q,
+        "featuretype": "settlement", # Prioritize cities/towns
+        "countrycodes": "br" # Focused on Brazil for now (User's context)
     }
     # User-Agent is MANDATORY for Nominatim
     headers = {
@@ -1867,7 +1869,20 @@ async def search_city(q: str):
         # Use a timeout to prevent hanging
         response = requests.get(url, params=params, headers=headers, timeout=5)
         response.raise_for_status()
-        return response.json()
+        data = response.json()
+        
+        # Post-Processing: Filter results that don't look like cities
+        # Niminatim can return administrative boundaries that aren't useful.
+        filtered_data = []
+        for item in data:
+            # Check if it has a valid address object
+            addr = item.get('address', {})
+            # We want results that have a city, town, village, or municipality
+            if any(k in addr for k in ['city', 'town', 'village', 'municipality', 'hamlet']):
+                 filtered_data.append(item)
+        
+        return filtered_data
+
     except Exception as e:
         print(f"Error querying Nominatim: {e}")
         # Return empty list on error to gracefully fail in frontend

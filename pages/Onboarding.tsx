@@ -32,7 +32,15 @@ const Onboarding: React.FC = () => {
   React.useEffect(() => {
     const saved = sessionStorage.getItem('onboarding_form');
     if (saved) {
-      setFormData(JSON.parse(saved));
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          setFormData(prev => ({ ...prev, ...parsed }));
+        }
+      } catch (e) {
+        console.error("Error parsing saved onboarding data:", e);
+        sessionStorage.removeItem('onboarding_form');
+      }
     }
   }, []);
 
